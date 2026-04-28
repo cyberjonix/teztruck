@@ -376,10 +376,6 @@ function renderPreview(truck){
     const navHTML = photos.length>1 ? `<button class="pnav prev" onclick="pNav(-1)">&#10094;</button><button class="pnav next" onclick="pNav(1)">&#10095;</button><div class="pcnt">${idx+1}/${photos.length}</div><div class="pdots">${photos.map((_,i)=>`<div class="pdot${i===idx?' on':''}" onclick="pGo(${i})"></div>`).join('')}</div>` : '';
     w.innerHTML=`<img src="${photos[idx]}" alt="${truck.name}">${navHTML}`;
   } else { w.innerHTML='<div class="preview-ph">🚛</div>'; }
-  document.getElementById('previewName').textContent=truck.name;
-  document.getElementById('previewDet').textContent=truck.detail;
-  const wkPmt=(truck.price-10000)/52;
-  document.getElementById('previewPrice').innerHTML=`${fmt(wkPmt)}<span style="font-size:.7rem;font-weight:600;color:var(--su)">/нед</span>`;
   document.getElementById('previewWrap').classList.add('vis');
 }
 function pNav(d){ const tr=trucks.find(x=>x.id===selId); if(!tr||!tr.photos.length)return; pidx=(pidx+d+tr.photos.length)%tr.photos.length; renderPreview(tr); }
