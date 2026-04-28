@@ -1,1459 +1,654 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Tez Truck — Lease to Own</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --orange:    #E8500A;
-  --orange-lt: #FFF0E8;
-  --orange-bd: #FFDCC5;
-  --bg:        #F6F6F4;
-  --surface:   #FFFFFF;
-  --border:    #E8E8E4;
-  --border2:   #F2F2F0;
-  --text:      #111111;
-  --muted:     #666666;
-  --subtle:    #AAAAAA;
-  --green:     #1A8A4A;
-  --green-bg:  #EDF9F2;
-  --green-bd:  #A8DFC0;
-  --red:       #CC3030;
-  --red-bg:    #FFF0F0;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  font-size: 16px;
-}
-
-/* ── HEADER ── */
-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  height: 54px;
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-.logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  cursor: pointer;
-  user-select: none;
-}
-.logo span { color: var(--orange); }
-
-/* ── HERO ── */
-.hero {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 1.5rem 1rem 1.25rem;
-}
-
-.hero-pill {
-  display: inline-block;
-  background: var(--orange-lt);
-  color: var(--orange);
-  border: 1px solid var(--orange-bd);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 20px;
-  margin-bottom: 8px;
-}
-
-.hero h1 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  margin-bottom: 8px;
-}
-.hero h1 span { color: var(--orange); }
-
-.hero-desc {
-  font-size: 0.9rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ── PAGE BODY ── */
-.page {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 1rem 1rem 5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* ── SECTION LABEL ── */
-.slabel {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  margin-bottom: 0.5rem;
-}
-
-/* ── TRUCK LIST ── */
-.trucks-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-.trucks-list-header {
-  display: grid;
-  grid-template-columns: 32px 1fr auto;
-  gap: 0 10px;
-  padding: 8px 14px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-.trucks-list-header span {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--subtle);
-}
-.trucks-list-header .col-r { text-align: right; }
-
-.truck-row {
-  display: grid;
-  grid-template-columns: 32px 1fr auto;
-  align-items: center;
-  gap: 0 10px;
-  padding: 13px 14px;
-  border-bottom: 1px solid var(--border2);
-  cursor: pointer;
-  transition: background 0.1s;
-  position: relative;
-}
-.truck-row:last-child { border-bottom: none; }
-.truck-row:active { background: #F5F5F3; }
-.truck-row.selected {
-  background: var(--orange-lt);
-  border-left: 3px solid var(--orange);
-  padding-left: 11px;
-}
-.truck-row.sold { opacity: 0.35; pointer-events: none; }
-
-.truck-row-num {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #DDD;
-  text-align: center;
-  line-height: 1;
-}
-.truck-row.selected .truck-row-num { color: var(--orange); }
-
-.truck-row-info { min-width: 0; }
-.truck-row-name {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-.truck-row-detail {
-  font-size: 0.72rem;
-  color: var(--subtle);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.truck-row-meta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 4px;
-}
-
-.truck-status {
-  display: inline-block;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 6px;
-  border-radius: 3px;
-}
-.status-available { background: #EBF8F1; color: var(--green); }
-.status-pending   { background: var(--orange-lt); color: var(--orange); }
-.status-sold      { background: #F2F2F2; color: var(--subtle); }
-
-.truck-row-price-col { text-align: right; }
-.truck-row-pay {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--orange);
-  line-height: 1;
-}
-.truck-row-pay-label {
-  font-size: 0.6rem;
-  color: var(--subtle);
-  margin-top: 2px;
-}
-.truck-row-total {
-  font-size: 0.7rem;
-  color: var(--subtle);
-  margin-top: 1px;
-}
-
-/* tap hint banner */
-.tap-hint {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--orange-lt);
-  border-top: 1px solid var(--orange-bd);
-  font-size: 0.78rem;
-  color: var(--orange);
-  font-weight: 600;
-}
-.tap-hint-arrow { font-size: 1rem; animation: bounce 1.4s ease-in-out infinite; }
-@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(3px)} }
-
-/* footnote */
-.list-footnote {
-  font-size: 0.62rem;
-  color: var(--subtle);
-  margin-top: 6px;
-  padding-left: 2px;
-}
-
-/* ── PREVIEW ── */
-.truck-preview {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  display: none;
-}
-.truck-preview.visible { display: block; }
-
-.preview-photo-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 8;
-  background: #F0F0EE;
-  overflow: hidden;
-}
-.preview-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-.preview-placeholder {
-  width:100%; height:100%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:4rem; color:#DDD;
-}
-
-.preview-nav {
-  position:absolute; top:50%; transform:translateY(-50%);
-  background:rgba(255,255,255,0.9);
-  border:1px solid var(--border); color:var(--text);
-  width:40px; height:40px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; cursor:pointer;
-  transition: background 0.15s;
-}
-.preview-nav:active { background:var(--orange); color:white; border-color:var(--orange); }
-.preview-nav.prev { left:10px; }
-.preview-nav.next { right:10px; }
-
-.preview-counter {
-  position:absolute; top:8px; right:10px;
-  background:rgba(0,0,0,0.4); color:white;
-  font-size:0.68rem; font-weight:600;
-  padding:2px 8px; border-radius:10px;
-}
-.preview-dots {
-  position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
-  display:flex; gap:5px;
-}
-.preview-dot {
-  width:6px; height:6px; border-radius:50%;
-  background:rgba(0,0,0,0.2); cursor:pointer; transition:all 0.15s;
-}
-.preview-dot.active { background:var(--orange); transform:scale(1.3); }
-
-.preview-info {
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  border-top: 1px solid var(--border2);
-}
-.preview-info-name { font-size:0.92rem; font-weight:700; }
-.preview-info-detail { font-size:0.72rem; color:var(--subtle); margin-top:2px; }
-.preview-info-price {
-  font-family:'Barlow Condensed', sans-serif;
-  font-size:1.35rem; font-weight:800; color:var(--orange);
-  flex-shrink:0;
-}
-
-/* ── CALCULATOR ── */
-.calc-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-/* lang bar inside calc card */
-.calc-lang-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border2);
-  background: var(--bg);
-}
-.calc-lang-bar-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--subtle);
-}
-
-.lang-switcher {
-  display: flex;
-  gap: 2px;
-  background: var(--border);
-  border-radius: 7px;
-  padding: 3px;
-}
-.lang-btn {
-  background: transparent;
-  border: none;
-  color: var(--subtle);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 5px 9px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.lang-btn .flag { font-size: 0.88rem; }
-.lang-btn .lang-label { letter-spacing: 0.06em; }
-.lang-btn:active { opacity: 0.7; }
-.lang-btn.active { background: var(--orange); color: white; }
-
-/* calc header */
-.calc-header {
-  padding: 14px 14px 0;
-}
-.calc-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: var(--text);
-}
-.calc-subtitle {
-  font-size: 0.75rem;
-  color: var(--subtle);
-  margin-top: 2px;
-}
-
-.calc-placeholder {
-  text-align: center;
-  padding: 2.5rem 1.5rem;
-  color: var(--subtle);
-}
-.calc-placeholder-icon { font-size:2.5rem; margin-bottom:8px; }
-.calc-placeholder p { font-size:0.9rem; line-height:1.5; }
-.calc-placeholder-arrow {
-  font-size: 1.4rem;
-  margin-top: 8px;
-  display: block;
-  animation: bounce 1.2s ease-in-out infinite;
-}
-
-.calc-body { padding: 14px; }
-
-/* selected chip */
-.calc-truck-chip {
-  background: var(--orange-lt);
-  border: 1px solid var(--orange-bd);
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.calc-truck-chip-name { font-size:0.85rem; font-weight:700; }
-.calc-truck-chip-price {
-  font-family:'Barlow Condensed', sans-serif;
-  font-size:1.1rem; font-weight:800; color:var(--orange);
-}
-
-/* result hero — shown at top of calc when truck selected */
-.calc-result-hero {
-  background: var(--green-bg);
-  border: 1.5px solid var(--green-bd);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.calc-result-hero-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-.calc-result-hero-val {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: var(--green);
-  line-height: 1;
-}
-.calc-result-hero-pay {
-  text-align: right;
-}
-.calc-result-hero-pay-val {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--orange);
-  line-height: 1;
-}
-.calc-result-hero-pay-label {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  margin-bottom: 3px;
-}
-
-/* sliders */
-.calc-section { margin-bottom: 18px; }
-.calc-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 8px;
-}
-.calc-label-text {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--muted);
-}
-.calc-value {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text);
-}
-
-input[type="range"] {
-  width: 100%;
-  height: 6px;
-  appearance: none;
-  background: var(--border);
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--orange);
-  cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(232,80,10,0.35);
-}
-input[type="range"]::-moz-range-thumb {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: var(--orange);
-  border: 3px solid white;
-  cursor: pointer;
-}
-.calc-hint {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.65rem;
-  color: var(--subtle);
-  margin-top: 4px;
-}
-
-/* metric pills */
-.lease-summary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.lease-metric {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-}
-.lease-metric-label {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  margin-bottom: 3px;
-}
-.lease-metric-val {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.calc-divider { border:none; border-top:1px solid var(--border2); margin:16px 0; }
-
-/* breakdown */
-.result-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  font-size: 0.85rem;
-}
-.result-row .label { color: var(--muted); }
-.result-row .val { font-weight: 700; }
-.result-row .val.pos { color: var(--green); }
-.result-row .val.neg { color: var(--red); }
-
-/* ── CTA ── */
-.cta-section {
-  background: var(--orange-lt);
-  border-top: 1px solid var(--orange-bd);
-  border-bottom: 1px solid var(--orange-bd);
-  padding: 2rem 1rem;
-}
-.cta-inner {
-  max-width: 680px;
-  margin: 0 auto;
-}
-.cta-tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--orange);
-  margin-bottom: 5px;
-}
-.cta-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.cta-sub {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.5;
-  margin-bottom: 1.25rem;
-}
-.cta-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 20px;
-  border-radius: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  text-decoration: none;
-  flex: 1;
-  min-width: 140px;
-  transition: opacity 0.15s;
-}
-.cta-btn:active { opacity: 0.8; }
-.cta-btn-phone { background: var(--orange); color: white; }
-.cta-btn-tg    { background: #229ED9; color: white; }
-
-/* ── FOOTER ── */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 1.25rem;
-  text-align: center;
-  color: var(--subtle);
-  font-size: 0.78rem;
-  background: var(--surface);
-}
-
-/* ── ADMIN MODAL ── */
-.modal-overlay {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.45);
-  z-index:200; align-items:center; justify-content:center;
-  padding:1rem; backdrop-filter:blur(2px);
-}
-.modal-overlay.open { display:flex; }
-.modal {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:14px; padding:1.25rem;
-  width:100%; max-width:580px; max-height:90vh; overflow-y:auto;
-  box-shadow:0 8px 40px rgba(0,0,0,0.14);
-}
-.modal-header {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:1.25rem; padding-bottom:0.875rem;
-  border-bottom:1px solid var(--border);
-}
-.modal-title { font-size:1rem; font-weight:700; }
-.close-btn {
-  background:none; border:1px solid var(--border);
-  color:var(--subtle); width:32px; height:32px;
-  border-radius:6px; cursor:pointer; font-size:0.9rem;
-  display:flex; align-items:center; justify-content:center;
-}
-.close-btn:active { border-color:var(--red); color:var(--red); }
-
-.admin-password-screen { text-align:center; padding:1.5rem 0; }
-.admin-password-screen p { color:var(--muted); margin-bottom:1rem; font-size:0.9rem; }
-.password-input {
-  background:var(--bg); border:1.5px solid var(--border);
-  border-radius:7px; color:var(--text);
-  font-family:'Inter',sans-serif; font-size:1rem;
-  padding:10px 14px; width:100%; max-width:260px;
-  margin-bottom:1rem; outline:none;
-}
-.password-input:focus { border-color:var(--orange); }
-
-.btn-orange {
-  background:var(--orange); border:none; color:white;
-  font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:700;
-  padding:11px 22px; border-radius:8px; cursor:pointer;
-}
-.btn-secondary {
-  background:transparent; border:1px solid var(--border); color:var(--muted);
-  font-family:'Inter',sans-serif; font-size:0.82rem;
-  padding:8px 14px; border-radius:6px; cursor:pointer;
-}
-.btn-danger {
-  background:transparent; border:1px solid #FFCCCC; color:var(--red);
-  font-family:'Inter',sans-serif; font-size:0.78rem;
-  padding:6px 12px; border-radius:6px; cursor:pointer;
-}
-
-.admin-panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.875rem; }
-.truck-admin-list { display:flex; flex-direction:column; gap:6px; margin-bottom:1.25rem; max-height:260px; overflow-y:auto; }
-.truck-admin-item {
-  background:var(--bg); border:1px solid var(--border);
-  border-radius:7px; padding:9px 12px;
-  display:flex; align-items:center; justify-content:space-between; gap:1rem;
-}
-.truck-admin-name { font-weight:600; font-size:0.85rem; }
-.truck-admin-price { color:var(--muted); font-size:0.78rem; margin-top:1px; }
-.truck-admin-actions { display:flex; gap:6px; flex-shrink:0; }
-
-.add-truck-form { background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:1.1rem; }
-.add-truck-form h3 { font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--subtle); margin-bottom:0.875rem; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
-.form-field { display:flex; flex-direction:column; gap:4px; }
-.form-field.full { grid-column:1 / -1; }
-.form-field label { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--subtle); }
-.form-field input, .form-field select {
-  background:var(--surface); border:1.5px solid var(--border);
-  border-radius:6px; color:var(--text);
-  font-family:'Inter',sans-serif; font-size:0.88rem;
-  padding:9px 10px; outline:none;
-}
-.form-field input:focus, .form-field select:focus { border-color:var(--orange); }
-
-.photos-drop-zone {
-  border:2px dashed var(--border); border-radius:8px;
-  padding:18px; text-align:center; cursor:pointer; user-select:none;
-}
-.photos-drop-zone.drag-over { border-color:var(--orange); background:var(--orange-lt); }
-.photos-drop-zone .drop-icon { font-size:1.6rem; margin-bottom:5px; }
-.photos-drop-zone .drop-main { color:var(--muted); font-size:0.82rem; }
-.photos-drop-zone .drop-sub { color:var(--subtle); font-size:0.72rem; margin-top:2px; }
-
-.photos-preview { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
-.preview-thumb-wrap { position:relative; display:inline-block; }
-.preview-thumb { width:64px; height:64px; object-fit:cover; border-radius:5px; border:1px solid var(--border); display:block; }
-.preview-remove {
-  position:absolute; top:-5px; right:-5px;
-  background:var(--red); border:none; color:white;
-  width:17px; height:17px; border-radius:50%;
-  font-size:8px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; padding:0;
-}
-
-.error-msg { color:var(--red); font-size:0.8rem; margin-top:6px; }
-
-/* ── RESPONSIVE ── */
-@media (min-width: 700px) {
-  .page { padding: 1.5rem 1.5rem 5rem; }
-  .cta-actions { flex-wrap: nowrap; }
-  .cta-btn { flex: none; }
-}
-
-@media (max-width: 400px) {
-  .truck-row-name { font-size: 0.82rem; }
-  .hero h1 { font-size: 2rem; }
-  .form-grid { grid-template-columns: 1fr; }
-}
+:root{--or:#E8500A;--or-lt:#FFF3EE;--or-bd:#FFD5BC;--bg:#FAFAFA;--sur:#FFFFFF;--brd:#EBEBEB;--brd2:#F4F4F4;--tx:#111;--mu:#777;--su:#BBB;--gr:#1B8A4A;--gr-bg:#F0FAF4;--gr-bd:#B2E0C4;--re:#C83030;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased;}
+header{height:52px;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;background:var(--sur);border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:800;letter-spacing:.04em;cursor:pointer;user-select:none;}
+.logo em{color:var(--or);font-style:normal;}
+.lang-pill{display:flex;background:var(--brd2);border:1px solid var(--brd);border-radius:20px;padding:2px;gap:1px;}
+.lbtn{background:transparent;border:none;color:var(--su);font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;padding:4px 8px;border-radius:16px;cursor:pointer;display:flex;align-items:center;gap:3px;transition:all .15s;}
+.lbtn .fl{font-size:.8rem;}
+.lbtn.active{background:var(--or);color:#fff;}
+.hero{padding:1.5rem 1rem 1.25rem;background:var(--sur);border-bottom:1px solid var(--brd);}
+.badge{display:inline-flex;align-items:center;gap:5px;background:var(--or-lt);border:1px solid var(--or-bd);color:var(--or);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:800;line-height:1.05;margin-bottom:6px;}
+.hero h1 em{color:var(--or);font-style:normal;}
+.hero p{font-size:.875rem;color:var(--mu);line-height:1.55;}
+.sec{padding:1rem 0 0;}
+.sec-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--su);padding:0 1rem;margin-bottom:.75rem;}
+.trucks-scroll{display:flex;gap:10px;overflow-x:auto;padding:0 1rem 1rem;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.trucks-scroll::-webkit-scrollbar{display:none;}
+.skel{flex:0 0 200px;background:var(--sur);border:1.5px solid var(--brd);border-radius:14px;overflow:hidden;animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.skel-photo{width:100%;aspect-ratio:4/3;background:#EEEEEB;}
+.skel-body{padding:10px 12px 12px;}
+.skel-line{height:11px;border-radius:4px;background:#EEEEEB;margin-bottom:7px;}
+.skel-line.w70{width:70%}.skel-line.w40{width:40%}
+.tcard{flex:0 0 200px;scroll-snap-align:start;background:var(--sur);border:1.5px solid var(--brd);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .15s;position:relative;}
+.tcard:active{transform:scale(.97);}
+.tcard.sel{border-color:var(--or);box-shadow:0 0 0 2px rgba(232,80,10,.12);}
+.tcard.sold{opacity:.35;pointer-events:none;}
+.tcard-photo{width:100%;aspect-ratio:4/3;background:#F0F0EE;overflow:hidden;position:relative;}
+.tcard-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.tcard-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#DDD;}
+.tcard-sel-ring{position:absolute;inset:0;border:3px solid var(--or);border-radius:12px;pointer-events:none;}
+.tcard-check{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.tcard-st{position:absolute;top:7px;left:7px;}
+.stag{font-size:.56rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;}
+.st-available{background:#E8F7EF;color:var(--gr);}
+.st-pending{background:var(--or-lt);color:var(--or);}
+.st-sold{background:#F0F0F0;color:var(--su);}
+.tcard-body{padding:10px 12px 12px;}
+.tcard-name{font-size:.8rem;font-weight:700;line-height:1.25;margin-bottom:2px;}
+.tcard-det{font-size:.65rem;color:var(--su);margin-bottom:8px;line-height:1.3;}
+.tcard-price{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:var(--tx);}
+.tcard-wk{font-size:.65rem;font-weight:600;color:var(--or);margin-top:1px;}
+.scroll-note{font-size:.62rem;color:var(--su);padding:0 1rem;margin-top:-4px;margin-bottom:8px;}
+.err-banner{margin:0 1rem 1rem;background:#FFF0F0;border:1px solid #FFCCCC;border-radius:10px;padding:12px 14px;font-size:.82rem;color:var(--re);display:none;line-height:1.5;}
+.err-banner.vis{display:block;}
+.preview-wrap{margin:0 1rem;display:none;border-radius:14px;overflow:hidden;border:1px solid var(--brd);}
+.preview-wrap.vis{display:block;}
+.preview-img-wrap{position:relative;width:100%;aspect-ratio:16/8;background:#F0F0EE;overflow:hidden;}
+.preview-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:#DDD;}
+.pnav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.9);border:1px solid var(--brd);color:var(--tx);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+.pnav:active{background:var(--or);color:#fff;border-color:var(--or);}
+.pnav.prev{left:9px;}.pnav.next{right:9px;}
+.pcnt{position:absolute;top:8px;right:10px;background:rgba(0,0,0,.4);color:#fff;font-size:.65rem;font-weight:600;padding:2px 7px;border-radius:10px;}
+.pdots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
+.pdot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.18);cursor:pointer;}
+.pdot.on{background:var(--or);}
+.preview-bar{padding:11px 14px;display:flex;justify-content:space-between;align-items:center;background:var(--sur);border-top:1px solid var(--brd2);}
+.preview-bar-name{font-size:.88rem;font-weight:700;}
+.preview-bar-det{font-size:.68rem;color:var(--su);margin-top:1px;}
+.preview-bar-price{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--or);flex-shrink:0;}
+.calc-wrap{margin:0 1rem;background:var(--sur);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-bottom:1rem;}
+.calc-ph{text-align:center;padding:2.5rem 1.5rem;color:var(--su);}
+.calc-ph-icon{font-size:2.2rem;margin-bottom:8px;}
+.calc-ph p{font-size:.875rem;line-height:1.5;}
+.calc-ph-arrow{font-size:1.2rem;margin-top:8px;display:block;animation:bob 1.2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+.net-hero{padding:16px 14px 14px;background:var(--gr-bg);border-bottom:1.5px solid var(--gr-bd);display:flex;align-items:center;justify-content:space-between;}
+.net-hero-left .lbl{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:3px;}
+.net-hero-left .val{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:800;color:var(--gr);line-height:1;}
+.net-hero-right{text-align:right;}
+.net-hero-right .lbl{font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--su);margin-bottom:3px;}
+.net-hero-right .val{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:var(--or);line-height:1;}
+.calc-chip{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--brd2);background:var(--or-lt);}
+.calc-chip-name{font-size:.82rem;font-weight:700;}
+.calc-chip-price{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;color:var(--or);}
+.calc-body{padding:14px;}
+.cs{margin-bottom:16px;}
+.cl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.cl-text{font-size:.78rem;font-weight:600;color:var(--mu);}
+.cl-val{font-family:'Barlow Condensed',sans-serif;font-size:1.25rem;font-weight:800;color:var(--tx);}
+input[type=range]{width:100%;height:5px;appearance:none;background:var(--brd);border-radius:3px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;border-radius:50%;background:var(--or);border:3px solid #fff;box-shadow:0 2px 6px rgba(232,80,10,.3);}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--or);border:3px solid #fff;}
+.ch{display:flex;justify-content:space-between;font-size:.62rem;color:var(--su);margin-top:4px;}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.metric{background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:9px 11px;}
+.metric-lbl{font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--su);margin-bottom:3px;}
+.metric-val{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:var(--tx);}
+.hdivider{border:none;border-top:1px solid var(--brd2);margin:14px 0;}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.83rem;}
+.bk-row .l{color:var(--mu);}
+.bk-row .v{font-weight:700;}
+.bk-row .v.pos{color:var(--gr);}
+.bk-row .v.neg{color:var(--re);}
+.cta{background:var(--or-lt);border-top:1px solid var(--or-bd);border-bottom:1px solid var(--or-bd);padding:1.75rem 1rem;}
+.cta-tag{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--or);margin-bottom:5px;}
+.cta-h{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;margin-bottom:5px;}
+.cta-p{font-size:.84rem;color:var(--mu);line-height:1.5;margin-bottom:1.1rem;}
+.cta-btns{display:flex;gap:9px;}
+.cbtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 18px;border-radius:10px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;text-decoration:none;flex:1;}
+.cbtn-ph{background:var(--or);color:#fff;}
+.cbtn-tg{background:#229ED9;color:#fff;}
+footer{border-top:1px solid var(--brd);padding:1.1rem;text-align:center;color:var(--su);font-size:.75rem;background:var(--sur);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--sur);border:1px solid var(--brd);border-radius:16px;padding:1.25rem;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.15);}
+.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;padding-bottom:.875rem;border-bottom:1px solid var(--brd);}
+.mhdr-title{font-size:.95rem;font-weight:700;}
+.xbtn{background:none;border:1px solid var(--brd);color:var(--su);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
+.setup-step{background:var(--bg);border:1px solid var(--brd);border-radius:10px;padding:14px;margin-bottom:10px;}
+.setup-step h3{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--or);margin-bottom:8px;}
+.setup-step p{font-size:.82rem;color:var(--mu);line-height:1.6;margin-bottom:6px;}
+.setup-step a{color:var(--or);}
+.setup-step code{background:#F0F0EE;padding:2px 6px;border-radius:4px;font-size:.78rem;font-family:monospace;color:var(--tx);}
+.setup-step pre{background:#111;color:#7fff7f;font-family:monospace;font-size:.7rem;padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0;line-height:1.5;}
+.copy-snippet{background:var(--or);border:none;color:#fff;font-size:.68rem;font-weight:700;padding:5px 12px;border-radius:4px;cursor:pointer;margin-top:4px;}
+.setup-success{background:var(--gr-bg);border:1px solid var(--gr-bd);border-radius:8px;padding:12px;font-size:.8rem;color:var(--gr);line-height:1.6;margin-top:10px;}
+.adm-pass{text-align:center;padding:1.5rem 0;}
+.adm-pass p{color:var(--mu);margin-bottom:.875rem;font-size:.875rem;}
+.pinput{background:var(--bg);border:1.5px solid var(--brd);border-radius:7px;color:var(--tx);font-family:'Inter',sans-serif;font-size:1rem;padding:10px 14px;width:100%;max-width:250px;margin-bottom:1rem;outline:none;}
+.pinput:focus{border-color:var(--or);}
+.btn-or{background:var(--or);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:700;padding:10px 20px;border-radius:8px;cursor:pointer;}
+.btn-or:disabled{opacity:.5;cursor:not-allowed;}
+.btn-sec{background:transparent;border:1px solid var(--brd);color:var(--mu);font-family:'Inter',sans-serif;font-size:.8rem;padding:7px 13px;border-radius:6px;cursor:pointer;}
+.btn-del{background:transparent;border:1px solid #FFCCCC;color:var(--re);font-family:'Inter',sans-serif;font-size:.75rem;padding:6px 11px;border-radius:6px;cursor:pointer;}
+.adm-ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+.tal{display:flex;flex-direction:column;gap:6px;margin-bottom:1.1rem;max-height:220px;overflow-y:auto;}
+.tai{background:var(--bg);border:1px solid var(--brd);border-radius:7px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.tai-name{font-weight:600;font-size:.83rem;}
+.tai-price{color:var(--mu);font-size:.75rem;margin-top:1px;}
+.tai-acts{display:flex;gap:5px;flex-shrink:0;}
+.af{background:var(--bg);border:1px solid var(--brd);border-radius:9px;padding:1rem;margin-top:10px;}
+.af h3{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--su);margin-bottom:.75rem;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.ff{display:flex;flex-direction:column;gap:3px;}
+.ff.full{grid-column:1/-1;}
+.ff label{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--su);}
+.ff input,.ff select{background:var(--sur);border:1.5px solid var(--brd);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:.85rem;padding:8px 9px;outline:none;}
+.ff input:focus,.ff select:focus{border-color:var(--or);}
+.existing-photos{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.exph-wrap{position:relative;}
+.exph{width:62px;height:62px;object-fit:cover;border-radius:6px;border:1px solid var(--brd);display:block;}
+.exph-del{position:absolute;top:-5px;right:-5px;background:var(--re);border:2px solid #fff;color:#fff;width:18px;height:18px;border-radius:50%;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:700;}
+.dz{border:2px dashed var(--brd);border-radius:8px;padding:16px;text-align:center;cursor:pointer;user-select:none;transition:all .15s;}
+.dz:hover,.dz.dz-over{border-color:var(--or);background:var(--or-lt);}
+.dz-icon{font-size:1.5rem;margin-bottom:4px;}
+.dz-main{color:var(--mu);font-size:.8rem;}
+.dz-sub{color:var(--su);font-size:.7rem;margin-top:2px;}
+.uq{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.uqi{position:relative;width:62px;}
+.uqi-img{width:62px;height:62px;object-fit:cover;border-radius:6px;border:1px solid var(--brd);display:block;}
+.uqi-ov{position:absolute;inset:0;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.uqi-prog{background:rgba(0,0,0,.5);}
+.uqi-bar{width:38px;height:4px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;}
+.uqi-fill{height:100%;background:#fff;border-radius:2px;animation:progani 1.2s ease-in-out infinite;}
+@keyframes progani{0%{width:20%}50%{width:80%}100%{width:20%}}
+.uqi-done{background:rgba(27,138,74,.65);color:#fff;font-size:1.3rem;}
+.uqi-err{background:rgba(200,48,48,.65);color:#fff;font-size:.68rem;text-align:center;padding:3px;}
+.uqi-rm{position:absolute;top:-5px;right:-5px;background:#888;border:none;color:#fff;width:16px;height:16px;border-radius:50%;font-size:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.emsg{color:var(--re);font-size:.78rem;margin-top:5px;}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(10px);background:#111;color:#fff;font-size:.82rem;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;transition:all .25s;pointer-events:none;z-index:300;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:380px){.hero h1{font-size:1.9rem;}.fg{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <div class="logo" id="logoTap">TEZ<span> TRUCK</span></div>
-  <button class="admin-btn" id="adminBtn" onclick="openAdmin()" style="display:none" data-i18n="admin">Admin</button>
+  <div class="logo" id="logoTap">TEZ<em> TRUCK</em></div>
+  <div class="lang-pill">
+    <button class="lbtn" onclick="setLang('ru')" id="btn-ru"><span class="fl">🇷🇺</span>РУ</button>
+    <button class="lbtn" onclick="setLang('en')" id="btn-en"><span class="fl">🇺🇸</span>EN</button>
+    <button class="lbtn" onclick="setLang('tg')" id="btn-tg"><span class="fl">🇹🇯</span>ТЧ</button>
+    <button class="lbtn" onclick="setLang('uz')" id="btn-uz"><span class="fl">🇺🇿</span>ЎЗ</button>
+  </div>
 </header>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-pill" data-i18n="heroTag">Lease to Own Program</div>
-  <h1 data-i18n-html="heroTitle">Become a Truck <span>Owner.</span></h1>
-  <p class="hero-desc" data-i18n="heroDesc">Take the truck · pay weekly · it's yours in 12 months. No bank needed.</p>
+  <div class="badge">🚛 <span data-i="heroTag"></span></div>
+  <h1 data-ih="heroTitle"></h1>
+  <p data-i="heroDesc"></p>
 </div>
 
-<!-- PAGE -->
-<div class="page">
-
-  <!-- TRUCK LIST -->
-  <div>
-    <div class="slabel" data-i18n="fleetTitle">Available Fleet</div>
-    <div class="trucks-card">
-      <div class="trucks-list-header">
-        <span></span>
-        <span data-i18n="colTruck">Truck</span>
-        <span class="col-r" data-i18n="colPayment">Payment/wk</span>
-      </div>
-      <div id="trucksList"></div>
-      <div class="tap-hint" id="tapHint">
-        <span class="tap-hint-arrow">👇</span>
-        <span data-i18n="tapHint">Tap a truck to see your full weekly breakdown</span>
-      </div>
-    </div>
-    <div class="list-footnote" data-i18n="calcNote">* Est. based on $12,000 gross / $1,800 diesel / $300 tolls</div>
+<div class="sec">
+  <div class="sec-label" data-i="fleetTitle"></div>
+  <div class="trucks-scroll" id="trucksScroll">
+    <div class="skel"><div class="skel-photo"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w40"></div></div></div>
+    <div class="skel"><div class="skel-photo"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w40"></div></div></div>
+    <div class="skel"><div class="skel-photo"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w40"></div></div></div>
   </div>
-
-  <!-- PREVIEW -->
-  <div class="truck-preview" id="truckPreview">
-    <div class="preview-photo-wrap" id="previewPhotoWrap">
-      <div class="preview-placeholder">🚛</div>
-    </div>
-    <div class="preview-info">
-      <div>
-        <div class="preview-info-name" id="previewName"></div>
-        <div class="preview-info-detail" id="previewDetail"></div>
-      </div>
-      <div class="preview-info-price" id="previewPrice"></div>
-    </div>
-  </div>
-
-  <!-- CALCULATOR -->
-  <div class="calc-card" id="calculator">
-    <div class="calc-lang-bar">
-      <div class="calc-lang-bar-label" data-i18n="langLabel">Language</div>
-      <div class="lang-switcher">
-        <button class="lang-btn active" onclick="setLang('en')" id="btn-en"><span class="flag">🇺🇸</span><span class="lang-label">EN</span></button>
-        <button class="lang-btn" onclick="setLang('ru')" id="btn-ru"><span class="flag">🇷🇺</span><span class="lang-label">РУ</span></button>
-        <button class="lang-btn" onclick="setLang('tg')" id="btn-tg"><span class="flag">🇹🇯</span><span class="lang-label">ТЧ</span></button>
-        <button class="lang-btn" onclick="setLang('uz')" id="btn-uz"><span class="flag">🇺🇿</span><span class="lang-label">ЎЗ</span></button>
-      </div>
-    </div>
-    <div class="calc-header">
-      <div class="calc-title" data-i18n="calcTitle">Your Weekly Numbers</div>
-      <div class="calc-subtitle" data-i18n="calcSubtitle">Select a truck above to calculate</div>
-    </div>
-    <div class="calc-body">
-      <div id="calcContent">
-        <div class="calc-placeholder">
-          <div class="calc-placeholder-icon">☝️</div>
-          <p data-i18n="calcHint">Select a truck from the list above<br>to see your full weekly breakdown</p>
-          <span class="calc-placeholder-arrow">↑</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <div class="scroll-note" data-i="calcNote"></div>
 </div>
 
-<!-- CTA -->
-<div class="cta-section">
-  <div class="cta-inner">
-    <div class="cta-tag" data-i18n="ctaTag">Ready to get started?</div>
-    <div class="cta-title" data-i18n="ctaTitle">Talk to us today</div>
-    <div class="cta-sub" data-i18n="ctaSub">We'll find the right truck for you and walk you through the numbers</div>
-    <div class="cta-actions">
-      <a href="tel:+12673725777" class="cta-btn cta-btn-phone">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.15 1.17 2 2 0 012.12 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.46-.46a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        267-372-5777
-      </a>
-      <a href="https://t.me/insonixub" target="_blank" class="cta-btn cta-btn-tg">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.19 14.447l-2.955-.924c-.642-.204-.655-.642.136-.953l11.57-4.461c.537-.194 1.006.131.621.139z"/></svg>
-        @insonixub
-      </a>
-    </div>
+<div class="err-banner" id="errBanner"></div>
+
+<div class="preview-wrap" id="previewWrap">
+  <div class="preview-img-wrap" id="previewImgWrap"><div class="preview-ph">🚛</div></div>
+  <div class="preview-bar">
+    <div><div class="preview-bar-name" id="previewName"></div><div class="preview-bar-det" id="previewDet"></div></div>
+    <div class="preview-bar-price" id="previewPrice"></div>
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <p data-i18n="footer">© 2026 Tez Truck. All rights reserved.</p>
-</footer>
+<div style="height:1rem"></div>
 
-<!-- ADMIN MODAL -->
+<div class="calc-wrap" id="calcWrap">
+  <div class="calc-ph">
+    <div class="calc-ph-icon">☝️</div>
+    <p data-i="calcHint"></p>
+    <span class="calc-ph-arrow">↑</span>
+  </div>
+</div>
+
+<div class="cta">
+  <div class="cta-tag" data-i="ctaTag"></div>
+  <div class="cta-h" data-i="ctaTitle"></div>
+  <div class="cta-p" data-i="ctaSub"></div>
+  <div class="cta-btns">
+    <a href="tel:+12673725777" class="cbtn cbtn-ph">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.15 1.17 2 2 0 012.12 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.46-.46a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      267-372-5777
+    </a>
+    <a href="https://t.me/insonixub" target="_blank" class="cbtn cbtn-tg">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.19 14.447l-2.955-.924c-.642-.204-.655-.642.136-.953l11.57-4.461c.537-.194 1.006.131.621.139z"/></svg>
+      @insonixub
+    </a>
+  </div>
+</div>
+
+<footer><p data-i="footer"></p></footer>
+<div class="toast" id="toast"></div>
+
 <div class="modal-overlay" id="adminModal">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" data-i18n="adminPanel">Admin Panel</div>
-      <button class="close-btn" onclick="closeAdmin()">✕</button>
+    <div class="mhdr">
+      <div class="mhdr-title" id="modalTitle">Admin</div>
+      <button class="xbtn" onclick="closeAdmin()">&#x2715;</button>
     </div>
     <div id="adminContent"></div>
   </div>
 </div>
 
 <script>
-// ===== TRANSLATIONS =====
-const I18N = {
-  en: {
-    admin:'Admin', langLabel:'Language', heroTag:'Lease to Own Program',
-    heroTitle:'Become a Truck <span>Owner.</span>',
-    heroDesc:"Take the truck · pay weekly · it's yours in 12 months. No bank needed.",
-    fleetTitle:'Available Fleet', colTruck:'Truck', colPayment:'Payment/wk',
-    tapHint:'Tap a truck to see your full weekly breakdown',
-    calcNote:'* Est. based on $12,000 gross / $1,800 diesel / $300 tolls',
-    calcTitle:'Your Weekly Numbers', calcSubtitle:'Select a truck above to calculate',
-    calcHint:'Select a truck from the list above\nto see your full weekly breakdown',
-    ctaTag:'Ready to get started?', ctaTitle:'Talk to us today',
-    ctaSub:"We'll find the right truck for you and walk you through the numbers",
-    footer:'© 2026 Tez Truck. All rights reserved.',
-    adminPanel:'Admin Panel', adminPrompt:'Enter password to manage fleet',
-    unlock:'Unlock',
-    statusAvailable:'Free', statusPending:'Reserved', statusSold:'Taken',
-    leaseTerms:'Payment Terms', downPayment:'Down Payment', remainingBal:'Balance',
-    weeklyLease:'Weekly Payment', weeklyIncome:'Your Weekly Numbers',
-    weeklyGross:'Weekly Gross Revenue', diesel:'Diesel', tolls:'Tolls',
-    weeklyBreakdown:'Breakdown', grossRevenue:'Gross Revenue',
-    companyFee:'Company Fee (10%)', adminCosts:'Insurance / IFTA / ELD',
-    truckPayment:'Truck Payment', ownerNet:'Your Net / Week', total:'Total Price',
-    fleetMgmt:'Fleet Management', addTruck:'Add New Truck', editTruck:'Edit Truck',
-    truckName:'Truck Name', truckNamePh:'e.g. 2021 Kenworth T680',
-    specsPh:'e.g. 500HP Paccar MX-13 • 12-Speed Auto', specs:'Specs',
-    totalPrice:'Total Price ($)', status:'Status', photos:'Photos',
-    uploadPhotos:'Click to upload photos', saveTruck:'Save', cancel:'Cancel',
-    edit:'Edit', delete:'Delete', deleteCfm:'Delete this truck?',
-    wrongPass:'Incorrect password.', fillFields:'Please fill in all required fields.',
-  },
-  ru: {
-    admin:'Админ', langLabel:'Язык', heroTag:'Программа Выкупа Трака',
-    heroTitle:'Стань владельцем <span>трака.</span>',
-    heroDesc:'Берёшь трак — платишь еженедельно — через год он твой. Никаких банков.',
-    fleetTitle:'Доступные Траки', colTruck:'Трак', colPayment:'Платёж/нед',
-    tapHint:'Нажмите на трак чтобы увидеть полный расчёт',
-    calcNote:'* Расчёт при $12,000 выручке, $1,800 дизель, $300 дороги',
-    calcTitle:'Ваши Еженедельные Цифры', calcSubtitle:'Выберите трак выше для расчёта',
-    calcHint:'Выберите трак из списка выше\nчтобы посчитать выплаты',
-    ctaTag:'Готовы начать?', ctaTitle:'Позвоните нам',
-    ctaSub:'Подберём трак и разберём все цифры вместе',
-    footer:'© 2026 Tez Truck. Все права защищены.',
-    adminPanel:'Панель Администратора', adminPrompt:'Введите пароль',
-    unlock:'Войти',
-    statusAvailable:'Свободен', statusPending:'Занят', statusSold:'Выкуплен',
-    leaseTerms:'Условия Выкупа', downPayment:'Первый Взнос', remainingBal:'Остаток',
-    weeklyLease:'Платёж в неделю', weeklyIncome:'Ваши Цифры за Неделю',
-    weeklyGross:'Недельный Заработок', diesel:'Дизель', tolls:'Платные Дороги',
-    weeklyBreakdown:'Разбивка', grossRevenue:'Заработок',
-    companyFee:'Комиссия компании (10%)', adminCosts:'Страховка / IFTA / ELD',
-    truckPayment:'Выплата за Трак', ownerNet:'Чистый доход / Неделя', total:'Полная Цена',
-    fleetMgmt:'Управление Парком', addTruck:'Добавить Трак', editTruck:'Редактировать',
-    truckName:'Название', truckNamePh:'напр. 2021 Kenworth T680',
-    specsPh:'напр. 500HP Paccar MX-13 • 12-Speed Auto', specs:'Характеристики',
-    totalPrice:'Полная Цена ($)', status:'Статус', photos:'Фото',
-    uploadPhotos:'Нажмите чтобы загрузить фото', saveTruck:'Сохранить', cancel:'Отмена',
-    edit:'Изменить', delete:'Удалить', deleteCfm:'Удалить этот трак?',
-    wrongPass:'Неверный пароль.', fillFields:'Заполните все поля.',
-  },
-  tg: {
-    admin:'Админ', langLabel:'Забон', heroTag:'Барномаи Харидани Трак',
-    heroTitle:'Соҳиби <span>трак шав.</span>',
-    heroDesc:'Трак мегирӣ — ҳар ҳафта мепардозӣ — як сол мегузарад, трак моли туст.',
-    fleetTitle:'Тракҳои Мавҷуда', colTruck:'Трак', colPayment:'Пардохт/ҳафта',
-    tapHint:'Тракро пахш кунед то ҳисобро бинед',
-    calcNote:'* Бо $12,000 даромад, $1,800 дизел, $300 роҳ',
-    calcTitle:'Рақамҳои Ҳафтаии Шумо', calcSubtitle:'Трак интихоб кунед',
-    calcHint:'Трак интихоб кун\nто пардохтро ҳисоб кунем',
-    ctaTag:'Шурӯъ карданӣ ҳастед?', ctaTitle:'Ба мо занг занед',
-    ctaSub:'Тракро интихоб мекунем ва ҳамаи рақамҳоро баррасӣ мекунем',
-    footer:'© 2026 Tez Truck. Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
-    adminPanel:'Панели Админ', adminPrompt:'Паролро ворид кунед',
-    unlock:'Дохил шав',
-    statusAvailable:'Озод аст', statusPending:'Банд аст', statusSold:'Харида шуд',
-    leaseTerms:'Шартҳои Харид', downPayment:'Пардохти Аввала', remainingBal:'Боқимонда',
-    weeklyLease:'Пардохти Ҳафта', weeklyIncome:'Рақамҳои Ҳафтаии Шумо',
-    weeklyGross:'Даромади Ҳафтаина', diesel:'Дизел', tolls:'Пули Роҳ',
-    weeklyBreakdown:'Ҳисоб', grossRevenue:'Даромади Умумӣ',
-    companyFee:'Пули Ширкат (10%)', adminCosts:'Суғурта / IFTA / ELD',
-    truckPayment:'Пардохти Трак', ownerNet:'Фоидаи Холис / Ҳафта', total:'Нархи Пурра',
-    fleetMgmt:'Идораи Парк', addTruck:'Трак Илова Кун', editTruck:'Тағйир Деҳ',
-    truckName:'Номи Трак', truckNamePh:'масалан 2021 Kenworth T680',
-    specsPh:'масалан 500HP Paccar MX-13 • 12-Speed Auto', specs:'Хусусиятҳо',
-    totalPrice:'Нархи Пурра ($)', status:'Ҳолат', photos:'Аксҳо',
-    uploadPhotos:'Клик кун — аксҳоро бор кун', saveTruck:'Нигоҳ доред', cancel:'Бекор',
-    edit:'Тағйир', delete:'Нест кун', deleteCfm:'Ин тракро нест кунем?',
-    wrongPass:'Парол нодуруст.', fillFields:'Ҳамаи майдонҳоро пур кун.',
-  },
-  uz: {
-    admin:'Admin', langLabel:'Til', heroTag:'Trakni Sotib Olish Dasturi',
-    heroTitle:"Trakni o'zingniki <span>qil.</span>",
-    heroDesc:"Trakni olasan — har hafta to'lashing — bir yilda traking bo'ladi.",
-    fleetTitle:'Mavjud Traklar', colTruck:'Trak', colPayment:"To'lov/hafta",
-    tapHint:"Trakni tanlang — haftalik hisobni ko'rasiz",
-    calcNote:"* $12,000 daromad, $1,800 dizel, $300 yo'l asosida",
-    calcTitle:'Haftalik Raqamlaringiz', calcSubtitle:'Yuqoridan trak tanlang',
-    calcHint:"Trakni tanla\nto'lovlarni hisoblab ko'ramiz",
-    ctaTag:'Boshlashga tayyormisiz?', ctaTitle:"Bizga qo'ng'iroq qiling",
-    ctaSub:"To'g'ri trakni tanlab, barcha raqamlarni tushuntiramiz",
-    footer:'© 2026 Tez Truck. Barcha huquqlar himoyalangan.',
-    adminPanel:'Admin Paneli', adminPrompt:'Parolni kiriting',
-    unlock:'Kirish',
-    statusAvailable:"Bo'sh", statusPending:'Band', statusSold:'Sotib olindi',
-    leaseTerms:'Sotib Olish Shartlari', downPayment:"Boshlang'ich To'lov", remainingBal:'Qoldiq',
-    weeklyLease:"Haftalik To'lov", weeklyIncome:'Haftalik Raqamlaringiz',
-    weeklyGross:'Haftalik Daromad', diesel:'Dizel', tolls:"Yo'l To'lovi",
-    weeklyBreakdown:'Hisob', grossRevenue:'Umumiy Daromad',
-    companyFee:"Kompaniya ulushi (10%)", adminCosts:"Sug'urta / IFTA / ELD",
-    truckPayment:"Trak To'lovi", ownerNet:'Sof Daromad / Hafta', total:"To'liq Narx",
-    fleetMgmt:'Parkni Boshqarish', addTruck:"Trak Qo'shish", editTruck:'Tahrirlash',
-    truckName:'Trak Nomi', truckNamePh:'masalan 2021 Kenworth T680',
-    specsPh:'masalan 500HP Paccar MX-13 • 12-Speed Auto', specs:"Texnik Ma'lumot",
-    totalPrice:"To'liq Narx ($)", status:'Holat', photos:'Rasmlar',
-    uploadPhotos:'Rasm yuklash uchun bosing', saveTruck:'Saqlash', cancel:'Bekor',
-    edit:'Tahrirlash', delete:"O'chirish", deleteCfm:"Bu trakni o'chiramizmi?",
-    wrongPass:"Parol noto'g'ri.", fillFields:'Barcha maydonlarni to\'ldiring.',
-  }
+// ╔══════════════════════════════════════════════════╗
+// ║  SUPABASE CONFIG — вставь свои данные сюда       ║
+// ╚══════════════════════════════════════════════════╝
+const SB_URL    = 'https://wuyuhxddswxrrzquogsh.supabase.co';
+const SB_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
+const BUCKET    = 'truck-photos';
+const TABLE     = 'trucks';
+const PASS      = 'teztruck2026';
+// ════════════════════════════════════════════════════
+const READY     = !SB_URL.includes('ТВОЙ');
+
+// ── Supabase REST ────────────────────────────────────
+async function sb(path, opts={}) {
+  const r = await fetch(SB_URL + path, {
+    ...opts,
+    headers: {
+      'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json', 'Prefer': 'return=representation',
+      ...(opts.headers || {})
+    }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  const ct = r.headers.get('content-type') || '';
+  return ct.includes('json') ? r.json() : r.text();
+}
+const dbGet  = ()       => sb(`/rest/v1/${TABLE}?order=sort_order.asc,created_at.asc`);
+const dbAdd  = d        => sb(`/rest/v1/${TABLE}`, {method:'POST', body:JSON.stringify(d)});
+const dbPatch= (id,d)   => sb(`/rest/v1/${TABLE}?id=eq.${id}`, {method:'PATCH', body:JSON.stringify(d)});
+const dbDel  = id       => sb(`/rest/v1/${TABLE}?id=eq.${id}`, {method:'DELETE', headers:{Prefer:''}});
+const stgDel = paths    => sb(`/storage/v1/object/${BUCKET}`, {method:'DELETE', body:JSON.stringify({prefixes:paths})});
+
+async function stgUp(file) {
+  const ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+  const r = await fetch(`${SB_URL}/storage/v1/object/${BUCKET}/${path}`, {
+    method: 'POST',
+    headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
+    body: file
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return `${SB_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+}
+
+// ── i18n ─────────────────────────────────────────────
+const T = {
+  ru:{heroTag:'Программа Выкупа Трака',heroTitle:'Стань владельцем <em>трака.</em>',heroDesc:'Берёшь трак — платишь еженедельно — через год он твой. Никаких банков.',fleetTitle:'Доступные Траки',calcNote:'* При $12,000 выручке, $1,800 дизель, $300 дороги',calcHint:'Выбери трак выше\nчтобы увидеть свои цифры',ctaTag:'Готовы начать?',ctaTitle:'Позвоните нам',ctaSub:'Подберём трак и разберём все цифры вместе',footer:'© 2026 Tez Truck. Все права защищены.',adminPanel:'Панель Администратора',adminPrompt:'Введите пароль',unlock:'Войти',sAvail:'Свободен',sPend:'Занят',sSold:'Выкуплен',colPmt:'платёж/нед',dpLbl:'Первый Взнос',balLbl:'Остаток',wkLbl:'Платёж/нед',grossLbl:'Недельный Заработок',diesel:'Дизель',tolls:'Платные Дороги',bkLbl:'Разбивка',gross:'Заработок',fee:'Комиссия (10%)',admin600:'Страховка/IFTA/ELD',trkPmt:'Выплата за Трак',netLbl:'Чистый доход / Неделя',mgmt:'Управление Парком',addT:'Добавить трак',editT:'Редактировать',fName:'Название',fNamePh:'напр. 2021 Kenworth T680',fDet:'Характеристики',fDetPh:'напр. 500HP Paccar MX-13',fPrice:'Цена ($)',fStatus:'Статус',fPhotos:'Фото',save:'Сохранить',saving:'Сохранение...',cancel:'Отмена',editBtn:'Изменить',delBtn:'Удалить',delCfm:'Удалить этот трак?',wrongPw:'Неверный пароль.',fillAll:'Заполните все поля.',savedOk:'Сохранено ✓',deletedOk:'Удалено ✓',loadErr:'Ошибка загрузки. Проверь настройки Supabase.'},
+  en:{heroTag:'Lease to Own Program',heroTitle:'Become a Truck <em>Owner.</em>',heroDesc:"Take the truck · pay weekly · it's yours in 12 months. No bank needed.",fleetTitle:'Available Fleet',calcNote:'* Based on $12k gross / $1,800 diesel / $300 tolls',calcHint:'Select a truck above\nto see your numbers',ctaTag:'Ready to start?',ctaTitle:'Call us today',ctaSub:"We'll find the right truck and walk you through the numbers",footer:'© 2026 Tez Truck. All rights reserved.',adminPanel:'Admin Panel',adminPrompt:'Enter password',unlock:'Unlock',sAvail:'Free',sPend:'Reserved',sSold:'Taken',colPmt:'pmt/wk',dpLbl:'Down Payment',balLbl:'Balance',wkLbl:'Weekly Pmt',grossLbl:'Weekly Gross',diesel:'Diesel',tolls:'Tolls',bkLbl:'Breakdown',gross:'Gross Revenue',fee:'Company Fee (10%)',admin600:'Insurance/IFTA/ELD',trkPmt:'Truck Payment',netLbl:'Net / Week',mgmt:'Fleet Mgmt',addT:'Add Truck',editT:'Edit Truck',fName:'Name',fNamePh:'e.g. 2021 Kenworth T680',fDet:'Specs',fDetPh:'e.g. 500HP Paccar MX-13',fPrice:'Price ($)',fStatus:'Status',fPhotos:'Photos',save:'Save',saving:'Saving...',cancel:'Cancel',editBtn:'Edit',delBtn:'Delete',delCfm:'Delete this truck?',wrongPw:'Incorrect password.',fillAll:'Please fill in all fields.',savedOk:'Saved ✓',deletedOk:'Deleted ✓',loadErr:'Load error. Check Supabase config.'},
+  tg:{heroTag:'Барномаи Харидани Трак',heroTitle:'Соҳиби <em>трак шав.</em>',heroDesc:'Трак мегирӣ — ҳар ҳафта мепардозӣ — як сол трак моли туст.',fleetTitle:'Тракҳои Мавҷуда',calcNote:'* Бо $12,000 даромад, $1,800 дизел, $300 роҳ',calcHint:'Трак интихоб кун\nто ҳисоб кунем',ctaTag:'Шурӯъ карданӣ ҳастед?',ctaTitle:'Ба мо занг занед',ctaSub:'Тракро интихоб мекунем ва рақамҳоро баррасӣ мекунем',footer:'© 2026 Tez Truck. Ҳамаи ҳуқуқҳо ҳифз шудаанд.',adminPanel:'Панели Админ',adminPrompt:'Паролро ворид кунед',unlock:'Дохил шав',sAvail:'Озод',sPend:'Банд',sSold:'Харида шуд',colPmt:'пардохт/ҳафта',dpLbl:'Пардохти Аввала',balLbl:'Боқимонда',wkLbl:'Пардохт/ҳафта',grossLbl:'Даромади Ҳафтаина',diesel:'Дизел',tolls:'Пули Роҳ',bkLbl:'Ҳисоб',gross:'Даромади Умумӣ',fee:'Пули Ширкат (10%)',admin600:'Суғурта/IFTA/ELD',trkPmt:'Пардохт барои Трак',netLbl:'Даромади Соф / Ҳафта',mgmt:'Идоракунии Парк',addT:'Трак илова кун',editT:'Тағйир деҳ',fName:'Ном',fNamePh:'масалан 2021 Kenworth T680',fDet:'Хусусиятҳо',fDetPh:'масалан 500HP Paccar',fPrice:'Нарх ($)',fStatus:'Ҳолат',fPhotos:'Аксҳо',save:'Нигоҳ дор',saving:'Нигоҳ доштан...',cancel:'Бекор',editBtn:'Тағйир',delBtn:'Нест кун',delCfm:'Нест кунем?',wrongPw:'Парол нодуруст.',fillAll:'Ҳамаро пур кун.',savedOk:'Нигоҳ дошта шуд ✓',deletedOk:'Нест шуд ✓',loadErr:'Хато дар боркунӣ.'},
+  uz:{heroTag:'Trakni Sotib Olish Dasturi',heroTitle:"Trakni o'zingniki <em>qil.</em>",heroDesc:"Trakni ol — hafta sayin to'la — bir yilda traking bo'ladi.",fleetTitle:'Mavjud Traklar',calcNote:"* $12k daromad, $1,800 dizel, $300 yo'l asosida",calcHint:"Trakni tanlang\nhisoblaymiz",ctaTag:'Boshlashga tayyormisiz?',ctaTitle:"Qo'ng'iroq qiling",ctaSub:"To'g'ri trakni topamiz va raqamlarni tushuntiramiz",footer:'© 2026 Tez Truck. Barcha huquqlar himoyalangan.',adminPanel:'Admin Paneli',adminPrompt:'Parolni kiriting',unlock:'Kirish',sAvail:"Bo'sh",sPend:'Band',sSold:'Sotildi',colPmt:"to'lov/hafta",dpLbl:"Boshlang'ich To'lov",balLbl:'Qoldiq',wkLbl:"To'lov/hafta",grossLbl:'Haftalik Daromad',diesel:'Dizel',tolls:"Yo'l To'lovi",bkLbl:'Hisob',gross:'Umumiy Daromad',fee:"Kompaniya (10%)",admin600:"Sug'urta/IFTA/ELD",trkPmt:"Trak To'lovi",netLbl:'Sof Daromad / Hafta',mgmt:'Park Boshqaruv',addT:"Trak Qo'sh",editT:'Tahrirlash',fName:'Nomi',fNamePh:'masalan 2021 Kenworth T680',fDet:'Xususiyat',fDetPh:'masalan 500HP Paccar',fPrice:"Narx ($)",fStatus:'Holat',fPhotos:'Rasmlar',save:'Saqlash',saving:'Saqlanmoqda...',cancel:'Bekor',editBtn:'Tahrirlash',delBtn:"O'chirish",delCfm:"O'chiramizmi?",wrongPw:"Parol noto'g'ri.",fillAll:"Barcha maydonlarni to'ldiring.",savedOk:"Saqlandi ✓",deletedOk:"O'chirildi ✓",loadErr:"Yuklashda xato."}
 };
-
-let currentLang = 'en';
-function t(key) { return I18N[currentLang][key] || I18N['en'][key] || key; }
-
-function setLang(lang) {
-  currentLang = lang;
-  ['en','ru','tg','uz'].forEach(l => document.getElementById('btn-'+l).classList.toggle('active', l===lang));
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
-  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+let lang = 'ru';
+function t(k){ return T[lang][k] || T.ru[k] || k; }
+function setLang(l) {
+  lang = l;
+  ['ru','en','tg','uz'].forEach(x => document.getElementById('btn-'+x).classList.toggle('active', x===l));
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.getAttribute('data-i')));
+  document.querySelectorAll('[data-ih]').forEach(el => el.innerHTML = t(el.getAttribute('data-ih')));
   renderTrucks();
-  if (selectedTruckId) {
-    const truck = trucks.find(x => x.id === selectedTruckId);
-    if (truck) { renderCalculator(truck); renderPreview(truck); }
-  } else {
-    document.getElementById('calcContent').innerHTML = calcPlaceholder();
-    document.querySelector('.calc-subtitle').textContent = t('calcSubtitle');
-  }
+  if (selId) { const tr = trucks.find(x=>x.id===selId); if(tr){renderPreview(tr);renderCalc(tr);} }
+  else showCalcPh();
 }
 
-// ===== DATA =====
-const ADMIN_PASS = 'teztruck2026';
+// ── State ────────────────────────────────────────────
+let trucks=[], selId=null, pidx=0, editId=null, uploadQ=[], toDel=[];
 
-let trucks = JSON.parse(localStorage.getItem('ir_trucks') || 'null') || [
-  { id:1, name:'2020 Kenworth T680',        detail:'500HP Paccar MX-13 • 12-Speed Auto', price:85000, status:'available', photos:[] },
-  { id:2, name:'2019 Peterbilt 579',         detail:'455HP Paccar MX-13 • 10-Speed Auto', price:72000, status:'available', photos:[] },
-  { id:3, name:'2021 Freightliner Cascadia', detail:'500HP Detroit DD15 • 12-Speed Auto', price:95000, status:'available', photos:[] },
-  { id:4, name:'2018 Volvo VNL 860',         detail:'475HP D13 • Automated Manual',       price:64000, status:'pending',  photos:[] }
-];
-
-let selectedTruckId = null;
-let editingTruckId  = null;
-let newTruckPhotos  = [];
-let editTruckPhotos = [];
-let previewPhotoIdx = 0;
-
-function saveTrucks() {
-  try { localStorage.setItem('ir_trucks', JSON.stringify(trucks)); }
-  catch(e) {
-    const slim = trucks.map(x => ({...x, photos:(x.photos||[]).slice(0,2)}));
-    try { localStorage.setItem('ir_trucks', JSON.stringify(slim)); } catch(e2) {}
-  }
+// ── Toast ────────────────────────────────────────────
+let toastTm;
+function showToast(msg, ms=2400){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTm); toastTm=setTimeout(()=>el.classList.remove('show'),ms);
 }
 
-function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
-function statusLabel(s) { return t({available:'statusAvailable',pending:'statusPending',sold:'statusSold'}[s]||s); }
-
-const DEFAULT_GROSS = 12000, DEFAULT_DOWN = 15000, DEFAULT_DIESEL = 1800, DEFAULT_TOLL = 300;
-
-function quickCalc(truck) {
-  const dp = Math.min(DEFAULT_DOWN, truck.price * 0.15);
-  const weeklyPayment = (truck.price - dp) / 52;
-  const net = DEFAULT_GROSS - DEFAULT_GROSS*0.10 - 600 - DEFAULT_DIESEL - DEFAULT_TOLL - weeklyPayment;
-  return { weeklyPayment, net };
+// ── Load trucks ──────────────────────────────────────
+async function loadTrucks(){
+  if(!READY){ loadDemo(); return; }
+  try { trucks = await dbGet() || []; renderTrucks(); }
+  catch(e) { showErr(t('loadErr')); loadDemo(); }
 }
-
-// ===== RENDER LIST =====
-function renderTrucks() {
-  const list = document.getElementById('trucksList');
-  if (!list) return;
-  list.innerHTML = '';
-  trucks.forEach((truck, i) => {
-    const isSel = selectedTruckId === truck.id;
-    const { weeklyPayment } = quickCalc(truck);
-    const row = document.createElement('div');
-    row.className = 'truck-row' + (truck.status==='sold'?' sold':'') + (isSel?' selected':'');
-    row.onclick = () => selectTruck(truck.id);
-    row.innerHTML = `
-      <div class="truck-row-num">${i+1}</div>
-      <div class="truck-row-info">
-        <div class="truck-row-name">${truck.name}</div>
-        <div class="truck-row-detail">${truck.detail}</div>
-        <div class="truck-row-meta">
-          <span class="truck-status status-${truck.status}">${statusLabel(truck.status)}</span>
-          <span style="font-size:0.62rem;color:var(--subtle)">${fmt(truck.price)}</span>
-        </div>
-      </div>
-      <div class="truck-row-price-col">
-        <div class="truck-row-pay">${fmt(weeklyPayment)}</div>
-        <div class="truck-row-pay-label" data-i18n="colPayment">${t('colPayment')}</div>
-      </div>`;
-    list.appendChild(row);
-  });
-  // hide tap hint once a truck is selected
-  const hint = document.getElementById('tapHint');
-  if (hint) hint.style.display = selectedTruckId ? 'none' : 'flex';
-}
-
-// ===== PREVIEW =====
-function renderPreview(truck) {
-  const wrap = document.getElementById('previewPhotoWrap');
-  const photos = truck.photos || [];
-  const idx = Math.min(previewPhotoIdx, Math.max(0, photos.length-1));
-  if (photos.length > 0) {
-    wrap.innerHTML = `
-      <img src="${photos[idx]}" alt="${truck.name}">
-      ${photos.length > 1 ? `
-        <button class="preview-nav prev" onclick="previewNav(-1)">&#8249;</button>
-        <button class="preview-nav next" onclick="previewNav(1)">&#8250;</button>
-        <div class="preview-counter">${idx+1} / ${photos.length}</div>
-        <div class="preview-dots">${photos.map((_,i)=>`<div class="preview-dot${i===idx?' active':''}" onclick="previewGoTo(${i})"></div>`).join('')}</div>
-      ` : ''}`;
-  } else {
-    wrap.innerHTML = '<div class="preview-placeholder">🚛</div>';
-  }
-  document.getElementById('previewName').textContent = truck.name;
-  document.getElementById('previewDetail').textContent = truck.detail;
-  document.getElementById('previewPrice').textContent = fmt(truck.price);
-  document.getElementById('truckPreview').classList.add('visible');
-}
-
-function previewNav(dir) {
-  const truck = trucks.find(x => x.id === selectedTruckId);
-  if (!truck||!truck.photos.length) return;
-  previewPhotoIdx = (previewPhotoIdx + dir + truck.photos.length) % truck.photos.length;
-  renderPreview(truck);
-}
-function previewGoTo(i) {
-  previewPhotoIdx = i;
-  const truck = trucks.find(x => x.id === selectedTruckId);
-  if (truck) renderPreview(truck);
-}
-
-function selectTruck(id) {
-  const truck = trucks.find(x => x.id === id);
-  if (!truck || truck.status==='sold') return;
-  selectedTruckId = truck.id;
-  previewPhotoIdx = 0;
+function loadDemo(){
+  trucks=[
+    {id:'d1',name:'2020 Kenworth T680',detail:'500HP Paccar MX-13 • 12-Speed Auto',price:85000,status:'available',photos:[]},
+    {id:'d2',name:'2019 Peterbilt 579',detail:'455HP Paccar MX-13 • 10-Speed Auto',price:72000,status:'available',photos:[]},
+    {id:'d3',name:'2021 Freightliner Cascadia',detail:'500HP Detroit DD15 • 12-Speed Auto',price:95000,status:'available',photos:[]},
+    {id:'d4',name:'2018 Volvo VNL 860',detail:'475HP D13 • Automated Manual',price:64000,status:'pending',photos:[]}
+  ];
   renderTrucks();
-  renderPreview(truck);
-  renderCalculator(truck);
-  // scroll to preview smoothly
-  setTimeout(() => {
-    document.getElementById('truckPreview').scrollIntoView({behavior:'smooth', block:'nearest'});
-  }, 60);
 }
+function showErr(msg){ const b=document.getElementById('errBanner'); b.textContent='⚠️ '+msg; b.classList.add('vis'); }
 
-// ===== CALCULATOR =====
-function calcPlaceholder() {
-  return `<div class="calc-placeholder">
-    <div class="calc-placeholder-icon">☝️</div>
-    <p>${t('calcHint').replace('\n','<br>')}</p>
-    <span class="calc-placeholder-arrow">↑</span>
-  </div>`;
-}
+// ── Render trucks ────────────────────────────────────
+const DG=12000,DD_MAX=15000,DDi=1800,DT=300;
+function qc(truck){ const dp=Math.min(DD_MAX,truck.price*.15); return{wk:(truck.price-dp)/52}; }
+function fmt(n){ return '$'+Math.round(n).toLocaleString(); }
+function stLbl(s){ return t({available:'sAvail',pending:'sPend',sold:'sSold'}[s]||s); }
 
-function renderCalculator(truck) {
-  const content = document.getElementById('calcContent');
-  document.querySelector('.calc-subtitle').textContent = truck.name;
-  const dpInit = Math.min(15000, truck.price);
-  const grossInit = 12000, dieselInit = 1800, tollInit = 300;
-
-  function calc(dp, gross, diesel, toll) {
-    const remaining = truck.price - dp;
-    const weeklyLease = remaining / 52;
-    const fee10 = gross * 0.10;
-    const net = gross - fee10 - 600 - diesel - toll - weeklyLease;
-    return { weeklyLease, fee10, net, remaining };
-  }
-  const r0 = calc(dpInit, grossInit, dieselInit, tollInit);
-
-  content.innerHTML = `
-    <div class="calc-result-hero">
-      <div>
-        <div class="calc-result-hero-label">${t('ownerNet')}</div>
-        <div class="calc-result-hero-val" id="r-net">${fmt(r0.net)}</div>
-      </div>
-      <div class="calc-result-hero-pay">
-        <div class="calc-result-hero-pay-label">${t('weeklyLease')}</div>
-        <div class="calc-result-hero-pay-val" id="r-lease-hero">${fmt(r0.weeklyLease)}</div>
-      </div>
-    </div>
-
-    <div class="slabel" style="margin-bottom:10px">${t('leaseTerms')}</div>
-
-    <div class="calc-section">
-      <div class="calc-label">
-        <span class="calc-label-text">${t('downPayment')}</span>
-        <span class="calc-value" id="dpVal">${fmt(dpInit)}</span>
-      </div>
-      <input type="range" id="dpSlider" min="5000" max="${truck.price}" step="500" value="${dpInit}">
-      <div class="calc-hint"><span>$5,000</span><span>${fmt(truck.price)}</span></div>
-    </div>
-
-    <div class="lease-summary">
-      <div class="lease-metric">
-        <div class="lease-metric-label">${t('remainingBal')}</div>
-        <div class="lease-metric-val" id="balVal">${fmt(truck.price - dpInit)}</div>
-      </div>
-      <div class="lease-metric">
-        <div class="lease-metric-label">${t('weeklyLease')}</div>
-        <div class="lease-metric-val" id="wlVal">${fmt(r0.weeklyLease)}</div>
-      </div>
-    </div>
-
-    <hr class="calc-divider">
-    <div class="slabel" style="margin-bottom:10px">${t('weeklyIncome')}</div>
-
-    <div class="calc-section">
-      <div class="calc-label">
-        <span class="calc-label-text">${t('weeklyGross')}</span>
-        <span class="calc-value" id="grossVal">${fmt(grossInit)}</span>
-      </div>
-      <input type="range" id="grossSlider" min="9000" max="15000" step="100" value="${grossInit}">
-      <div class="calc-hint"><span>$9,000</span><span>$15,000</span></div>
-    </div>
-
-    <div class="calc-section">
-      <div class="calc-label">
-        <span class="calc-label-text">${t('diesel')}</span>
-        <span class="calc-value" id="dieselVal">${fmt(dieselInit)}</span>
-      </div>
-      <input type="range" id="dieselSlider" min="1000" max="3000" step="50" value="${dieselInit}">
-      <div class="calc-hint"><span>$1,000</span><span>$3,000</span></div>
-    </div>
-
-    <div class="calc-section">
-      <div class="calc-label">
-        <span class="calc-label-text">${t('tolls')}</span>
-        <span class="calc-value" id="tollVal">${fmt(tollInit)}</span>
-      </div>
-      <input type="range" id="tollSlider" min="0" max="1000" step="25" value="${tollInit}">
-      <div class="calc-hint"><span>$0</span><span>$1,000</span></div>
-    </div>
-
-    <hr class="calc-divider">
-    <div class="slabel" style="margin-bottom:8px">${t('weeklyBreakdown')}</div>
-
-    <div class="result-row"><span class="label">${t('grossRevenue')}</span><span class="val pos" id="r-gross">${fmt(grossInit)}</span></div>
-    <div class="result-row"><span class="label">${t('companyFee')}</span><span class="val neg" id="r-fee">−${fmt(r0.fee10)}</span></div>
-    <div class="result-row"><span class="label">${t('adminCosts')}</span><span class="val neg">−$600</span></div>
-    <div class="result-row"><span class="label">${t('diesel')}</span><span class="val neg" id="r-diesel">−${fmt(dieselInit)}</span></div>
-    <div class="result-row"><span class="label">${t('tolls')}</span><span class="val neg" id="r-toll">−${fmt(tollInit)}</span></div>
-    <div class="result-row"><span class="label">${t('truckPayment')}</span><span class="val neg" id="r-lease">−${fmt(r0.weeklyLease)}</span></div>`;
-
-  function update() {
-    const dp     = +document.getElementById('dpSlider').value;
-    const gross  = +document.getElementById('grossSlider').value;
-    const diesel = +document.getElementById('dieselSlider').value;
-    const toll   = +document.getElementById('tollSlider').value;
-    const r = calc(dp, gross, diesel, toll);
-    document.getElementById('dpVal').textContent    = fmt(dp);
-    document.getElementById('grossVal').textContent = fmt(gross);
-    document.getElementById('dieselVal').textContent= fmt(diesel);
-    document.getElementById('tollVal').textContent  = fmt(toll);
-    document.getElementById('balVal').textContent   = fmt(r.remaining);
-    document.getElementById('wlVal').textContent    = fmt(r.weeklyLease);
-    document.getElementById('r-gross').textContent  = fmt(gross);
-    document.getElementById('r-fee').textContent    = '−' + fmt(r.fee10);
-    document.getElementById('r-diesel').textContent = '−' + fmt(diesel);
-    document.getElementById('r-toll').textContent   = '−' + fmt(toll);
-    document.getElementById('r-lease').textContent  = '−' + fmt(r.weeklyLease);
-    document.getElementById('r-lease-hero').textContent = fmt(r.weeklyLease);
-    const netEl = document.getElementById('r-net');
-    netEl.textContent = fmt(r.net);
-    netEl.style.color = r.net >= 0 ? 'var(--green)' : 'var(--red)';
-  }
-  ['dpSlider','grossSlider','dieselSlider','tollSlider'].forEach(id => {
-    document.getElementById(id).addEventListener('input', update);
+function renderTrucks(){
+  const sc=document.getElementById('trucksScroll');
+  sc.innerHTML='';
+  if(!trucks.length){ sc.innerHTML='<div style="padding:1rem;color:var(--su);font-size:.85rem">Нет доступных траков</div>'; return; }
+  trucks.forEach(truck=>{
+    const isSel=selId===truck.id;
+    const{wk}=qc(truck);
+    const ph=(truck.photos||[])[0];
+    const phHTML=ph?`<img src="${ph}" alt="${truck.name}" onerror="this.parentNode.innerHTML='<div class=tcard-ph>🚛</div>'">`:'<div class="tcard-ph">🚛</div>';
+    const card=document.createElement('div');
+    card.className='tcard'+(truck.status==='sold'?' sold':'')+(isSel?' sel':'');
+    card.onclick=()=>pick(truck.id);
+    card.innerHTML=`<div class="tcard-photo">${phHTML}<div class="tcard-st"><span class="stag st-${truck.status}">${stLbl(truck.status)}</span></div>${isSel?'<div class="tcard-sel-ring"></div><div class="tcard-check">&#x2713;</div>':''}</div>
+      <div class="tcard-body"><div class="tcard-name">${truck.name}</div><div class="tcard-det">${truck.detail}</div><div class="tcard-price">${fmt(truck.price)}</div><div class="tcard-wk">${fmt(wk)}/${t('colPmt').split('/')[1]||'wk'}</div></div>`;
+    sc.appendChild(card);
   });
 }
 
-// ===== ADMIN =====
-function openAdmin() {
-  document.getElementById('adminModal').classList.add('open');
-  document.getElementById('adminContent').innerHTML = `
-    <div class="admin-password-screen">
-      <p>${t('adminPrompt')}</p>
-      <input class="password-input" type="password" id="adminPass" placeholder="Password"
-        onkeydown="if(event.key==='Enter')checkAdmin()">
-      <br>
-      <button class="btn-orange" onclick="checkAdmin()">${t('unlock')}</button>
-      <p id="passError" class="error-msg"></p>
-    </div>`;
+// ── Preview ──────────────────────────────────────────
+function renderPreview(truck){
+  const w=document.getElementById('previewImgWrap'), photos=truck.photos||[];
+  const idx=Math.min(pidx,Math.max(0,photos.length-1));
+  if(photos.length){
+    const navHTML = photos.length>1 ? `<button class="pnav prev" onclick="pNav(-1)">&#10094;</button><button class="pnav next" onclick="pNav(1)">&#10095;</button><div class="pcnt">${idx+1}/${photos.length}</div><div class="pdots">${photos.map((_,i)=>`<div class="pdot${i===idx?' on':''}" onclick="pGo(${i})"></div>`).join('')}</div>` : '';
+    w.innerHTML=`<img src="${photos[idx]}" alt="${truck.name}">${navHTML}`;
+  } else { w.innerHTML='<div class="preview-ph">🚛</div>'; }
+  document.getElementById('previewName').textContent=truck.name;
+  document.getElementById('previewDet').textContent=truck.detail;
+  document.getElementById('previewPrice').textContent=fmt(truck.price);
+  document.getElementById('previewWrap').classList.add('vis');
 }
+function pNav(d){ const tr=trucks.find(x=>x.id===selId); if(!tr||!tr.photos.length)return; pidx=(pidx+d+tr.photos.length)%tr.photos.length; renderPreview(tr); }
+function pGo(i){ pidx=i; const tr=trucks.find(x=>x.id===selId); if(tr)renderPreview(tr); }
 
-function closeAdmin() {
-  document.getElementById('adminModal').classList.remove('open');
-  newTruckPhotos = []; editTruckPhotos = []; editingTruckId = null;
-}
-
-function checkAdmin() {
-  if (document.getElementById('adminPass').value === ADMIN_PASS) renderAdminPanel();
-  else document.getElementById('passError').textContent = t('wrongPass');
-}
-
-function renderAdminPanel() {
-  const c = document.getElementById('adminContent');
-  newTruckPhotos = []; editingTruckId = null;
-  c.innerHTML = `
-    <div class="admin-panel-header">
-      <div class="slabel" style="margin:0">${t('fleetMgmt')}</div>
-    </div>
-    <div class="truck-admin-list" id="truckAdminList"></div>
-    <div class="add-truck-form" id="addTruckForm">
-      <h3 id="formTitle">${t('addTruck')}</h3>
-      <div class="form-grid">
-        <div class="form-field full"><label>${t('truckName')}</label><input type="text" id="f-name" placeholder="${t('truckNamePh')}"></div>
-        <div class="form-field full"><label>${t('specs')}</label><input type="text" id="f-detail" placeholder="${t('specsPh')}"></div>
-        <div class="form-field"><label>${t('totalPrice')}</label><input type="number" id="f-price" placeholder="85000"></div>
-        <div class="form-field"><label>${t('status')}</label>
-          <select id="f-status">
-            <option value="available">${t('statusAvailable')}</option>
-            <option value="pending">${t('statusPending')}</option>
-            <option value="sold">${t('statusSold')}</option>
-          </select>
-        </div>
-        <div class="form-field full">
-          <label>${t('photos')}</label>
-          <div class="photos-drop-zone" id="photoDropZone">
-            <div class="drop-icon">📷</div>
-            <p class="drop-main">${t('uploadPhotos')}</p>
-            <p class="drop-sub">or drag & drop here</p>
-            <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
-          </div>
-          <div class="photos-preview" id="photoPreview"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn-orange" onclick="saveTruckForm()">${t('saveTruck')}</button>
-        <button class="btn-secondary" id="cancelEdit" style="display:none" onclick="cancelEdit()">${t('cancel')}</button>
-      </div>
-      <p id="formError" class="error-msg"></p>
-    </div>`;
-  renderAdminList();
-  initDropZone('photoDropZone','photoInput','new');
-}
-
-function renderAdminList() {
-  const list = document.getElementById('truckAdminList');
-  list.innerHTML = '';
-  trucks.forEach(truck => {
-    const item = document.createElement('div');
-    item.className = 'truck-admin-item';
-    item.innerHTML = `
-      <div>
-        <div class="truck-admin-name">${truck.name}</div>
-        <div class="truck-admin-price">${fmt(truck.price)} &nbsp;<span class="truck-status status-${truck.status}">${statusLabel(truck.status)}</span></div>
-      </div>
-      <div class="truck-admin-actions">
-        <button class="btn-secondary" onclick="editTruck(${truck.id})">${t('edit')}</button>
-        <button class="btn-danger" onclick="deleteTruck(${truck.id})">${t('delete')}</button>
-      </div>`;
-    list.appendChild(item);
-  });
-}
-
-// ===== PHOTO HELPERS =====
-function compressImage(file) {
-  return new Promise(resolve => {
-    const img = new Image(), url = URL.createObjectURL(file);
-    img.onload = () => {
-      const MAX=800; let w=img.width, h=img.height;
-      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
-      const c=document.createElement('canvas'); c.width=w; c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg',0.8));
-    };
-    img.onerror=()=>{URL.revokeObjectURL(url);resolve(null);};
-    img.src=url;
-  });
-}
-
-function processFiles(files, mode) {
-  const imgs = Array.from(files).filter(f=>f.type.startsWith('image/'));
-  if(!imgs.length) return;
-  Promise.all(imgs.map(compressImage)).then(results => {
-    const valid = results.filter(Boolean);
-    if(mode==='new'){newTruckPhotos.push(...valid);renderPhotoPreview('photoPreview',newTruckPhotos,'new');}
-    else{editTruckPhotos.push(...valid);renderPhotoPreview('photoPreview',editTruckPhotos,'edit');}
-  });
-}
-
-function renderPhotoPreview(id, photos, mode) {
-  const c=document.getElementById(id); if(!c) return;
-  c.innerHTML=photos.map((src,i)=>`
-    <div class="preview-thumb-wrap">
-      <img class="preview-thumb" src="${src}">
-      <button class="preview-remove" onclick="removePhoto(${i},'${mode}')">✕</button>
-    </div>`).join('');
-}
-
-function removePhoto(i,mode){
-  if(mode==='new'){newTruckPhotos.splice(i,1);renderPhotoPreview('photoPreview',newTruckPhotos,'new');}
-  else{editTruckPhotos.splice(i,1);renderPhotoPreview('photoPreview',editTruckPhotos,'edit');}
-}
-
-function initDropZone(zoneId,inputId,mode){
-  const zone=document.getElementById(zoneId), input=document.getElementById(inputId);
-  if(!zone||!input) return;
-  zone.addEventListener('click',()=>input.click());
-  input.addEventListener('change',()=>processFiles(input.files,mode));
-  zone.addEventListener('dragenter',e=>{e.preventDefault();zone.classList.add('drag-over');});
-  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
-  zone.addEventListener('dragleave',e=>{if(!zone.contains(e.relatedTarget))zone.classList.remove('drag-over');});
-  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');processFiles(e.dataTransfer.files,mode);});
-}
-
-function saveTruckForm(){
-  const name=document.getElementById('f-name').value.trim();
-  const detail=document.getElementById('f-detail').value.trim();
-  const price=parseFloat(document.getElementById('f-price').value);
-  const status=document.getElementById('f-status').value;
-  const err=document.getElementById('formError');
-  if(!name||!detail||isNaN(price)||price<=0){err.textContent=t('fillFields');return;}
-  err.textContent='';
-  if(editingTruckId){
-    const tr=trucks.find(x=>x.id===editingTruckId);
-    tr.name=name;tr.detail=detail;tr.price=price;tr.status=status;
-    tr.photos=editTruckPhotos.length?editTruckPhotos:(tr.photos||[]);
-    editingTruckId=null;
-  } else {
-    trucks.push({id:Date.now(),name,detail,price,status,photos:[...newTruckPhotos]});
-  }
-  newTruckPhotos=[];editTruckPhotos=[];
-  saveTrucks();renderTrucks();renderAdminPanel();
-}
-
-function editTruck(id){
+function pick(id){
   const truck=trucks.find(x=>x.id===id);
-  editingTruckId=id; editTruckPhotos=[...(truck.photos||[])]; newTruckPhotos=[];
-  document.getElementById('formTitle').textContent=t('editTruck');
-  document.getElementById('f-name').value=truck.name;
-  document.getElementById('f-detail').value=truck.detail;
-  document.getElementById('f-price').value=truck.price;
-  document.getElementById('f-status').value=truck.status;
-  document.getElementById('cancelEdit').style.display='inline-block';
-  renderPhotoPreview('photoPreview',editTruckPhotos,'edit');
-  const zone=document.getElementById('photoDropZone');
-  if(zone){const nz=zone.cloneNode(true);zone.parentNode.replaceChild(nz,zone);initDropZone('photoDropZone','photoInput','edit');}
-  document.getElementById('addTruckForm').scrollIntoView({behavior:'smooth'});
+  if(!truck||truck.status==='sold')return;
+  selId=truck.id; pidx=0;
+  renderTrucks(); renderPreview(truck); renderCalc(truck);
+  document.getElementById('previewWrap').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function cancelEdit(){editingTruckId=null;editTruckPhotos=[];renderAdminPanel();}
+function showCalcPh(){
+  document.getElementById('calcWrap').innerHTML=`<div class="calc-ph"><div class="calc-ph-icon">&#x261D;&#xFE0F;</div><p>${t('calcHint').replace('\n','<br>')}</p><span class="calc-ph-arrow">&#x2191;</span></div>`;
+}
 
-function deleteTruck(id){
-  if(!confirm(t('deleteCfm'))) return;
-  trucks=trucks.filter(x=>x.id!==id);
-  if(selectedTruckId===id){
-    selectedTruckId=null;
-    document.getElementById('truckPreview').classList.remove('visible');
-    document.getElementById('calcContent').innerHTML=calcPlaceholder();
-    document.querySelector('.calc-subtitle').textContent=t('calcSubtitle');
+// ── Calculator ───────────────────────────────────────
+function renderCalc(truck){
+  const w=document.getElementById('calcWrap');
+  const dpI=Math.min(DD_MAX,truck.price);
+  function c(dp,gr,di,to){ const rem=truck.price-dp,wl=rem/52,f10=gr*.1; return{wl,f10,net:gr-f10-600-di-to-wl,rem}; }
+  const r0=c(dpI,DG,DDi,DT);
+  w.innerHTML=`
+    <div class="calc-chip"><div class="calc-chip-name">${truck.name}</div><div class="calc-chip-price">${fmt(truck.price)}</div></div>
+    <div class="net-hero">
+      <div class="net-hero-left"><div class="lbl">${t('netLbl')}</div><div class="val" id="rn">${fmt(r0.net)}</div></div>
+      <div class="net-hero-right"><div class="lbl">${t('wkLbl')}</div><div class="val" id="rlh">${fmt(r0.wl)}</div></div>
+    </div>
+    <div class="calc-body">
+      <div class="cs"><div class="cl"><span class="cl-text">${t('dpLbl')}</span><span class="cl-val" id="dv">${fmt(dpI)}</span></div><input type="range" id="dp" min="5000" max="${truck.price}" step="500" value="${dpI}"><div class="ch"><span>$5,000</span><span>${fmt(truck.price)}</span></div></div>
+      <div class="metrics"><div class="metric"><div class="metric-lbl">${t('balLbl')}</div><div class="metric-val" id="bv">${fmt(r0.rem)}</div></div><div class="metric"><div class="metric-lbl">${t('wkLbl')}</div><div class="metric-val" id="wv">${fmt(r0.wl)}</div></div></div>
+      <hr class="hdivider">
+      <div class="cs"><div class="cl"><span class="cl-text">${t('grossLbl')}</span><span class="cl-val" id="gv">${fmt(DG)}</span></div><input type="range" id="gr" min="9000" max="15000" step="100" value="${DG}"><div class="ch"><span>$9,000</span><span>$15,000</span></div></div>
+      <div class="cs"><div class="cl"><span class="cl-text">${t('diesel')}</span><span class="cl-val" id="diev">${fmt(DDi)}</span></div><input type="range" id="di" min="1000" max="3000" step="50" value="${DDi}"><div class="ch"><span>$1,000</span><span>$3,000</span></div></div>
+      <div class="cs"><div class="cl"><span class="cl-text">${t('tolls')}</span><span class="cl-val" id="tv">${fmt(DT)}</span></div><input type="range" id="to" min="0" max="1000" step="25" value="${DT}"><div class="ch"><span>$0</span><span>$1,000</span></div></div>
+      <hr class="hdivider">
+      <div class="sec-label" style="padding:0;margin-bottom:8px">${t('bkLbl')}</div>
+      <div class="bk-row"><span class="l">${t('gross')}</span><span class="v pos" id="rg">${fmt(DG)}</span></div>
+      <div class="bk-row"><span class="l">${t('fee')}</span><span class="v neg" id="rf">&#8722;${fmt(r0.f10)}</span></div>
+      <div class="bk-row"><span class="l">${t('admin600')}</span><span class="v neg">&#8722;$600</span></div>
+      <div class="bk-row"><span class="l">${t('diesel')}</span><span class="v neg" id="rdi">&#8722;${fmt(DDi)}</span></div>
+      <div class="bk-row"><span class="l">${t('tolls')}</span><span class="v neg" id="rto">&#8722;${fmt(DT)}</span></div>
+      <div class="bk-row"><span class="l">${t('trkPmt')}</span><span class="v neg" id="rl">&#8722;${fmt(r0.wl)}</span></div>
+    </div>`;
+  function upd(){
+    const dp=+document.getElementById('dp').value,gr=+document.getElementById('gr').value,
+          di=+document.getElementById('di').value,to=+document.getElementById('to').value,r=c(dp,gr,di,to);
+    document.getElementById('dv').textContent=fmt(dp); document.getElementById('gv').textContent=fmt(gr);
+    document.getElementById('diev').textContent=fmt(di); document.getElementById('tv').textContent=fmt(to);
+    document.getElementById('bv').textContent=fmt(r.rem); document.getElementById('wv').textContent=fmt(r.wl);
+    document.getElementById('rg').textContent=fmt(gr); document.getElementById('rf').textContent='\u2212'+fmt(r.f10);
+    document.getElementById('rdi').textContent='\u2212'+fmt(di); document.getElementById('rto').textContent='\u2212'+fmt(to);
+    document.getElementById('rl').textContent='\u2212'+fmt(r.wl); document.getElementById('rlh').textContent=fmt(r.wl);
+    const ne=document.getElementById('rn'); ne.textContent=fmt(r.net); ne.style.color=r.net>=0?'var(--gr)':'var(--re)';
   }
-  saveTrucks();renderTrucks();renderAdminList();
+  ['dp','gr','di','to'].forEach(id=>document.getElementById(id).addEventListener('input',upd));
 }
 
-document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
+// ══ ADMIN ════════════════════════════════════════════
+function openAdmin(){
+  document.getElementById('adminModal').classList.add('open');
+  if(!READY){ renderSetup(); return; }
+  renderPassScreen();
+}
+function closeAdmin(){ document.getElementById('adminModal').classList.remove('open'); editId=null; uploadQ=[]; toDel=[]; }
 
-// swipe for photo preview
+function renderPassScreen(){
+  document.getElementById('modalTitle').textContent=t('adminPanel');
+  document.getElementById('adminContent').innerHTML=`<div class="adm-pass"><p>${t('adminPrompt')}</p><input class="pinput" type="password" id="ap" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" onkeydown="if(event.key==='Enter')chkPass()"><br><button class="btn-or" onclick="chkPass()">${t('unlock')}</button><p id="pe" class="emsg"></p></div>`;
+  setTimeout(()=>document.getElementById('ap')?.focus(),100);
+}
+function chkPass(){ if(document.getElementById('ap').value===PASS)renderPanel(); else document.getElementById('pe').textContent=t('wrongPw'); }
+
+function renderSetup(){
+  document.getElementById('modalTitle').textContent='🔧 Настройка Supabase';
+  const sql=`-- Выполни в Supabase → SQL Editor → New query:
+
+CREATE TABLE trucks (
+  id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name        text NOT NULL,
+  detail      text NOT NULL,
+  price       numeric NOT NULL,
+  status      text DEFAULT 'available',
+  photos      text[] DEFAULT '{}',
+  sort_order  int DEFAULT 0,
+  created_at  timestamptz DEFAULT now()
+);
+
+ALTER TABLE trucks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read"  ON trucks FOR SELECT USING (true);
+CREATE POLICY "Public write" ON trucks FOR ALL    USING (true);`;
+  document.getElementById('adminContent').innerHTML=`
+    <p style="font-size:.84rem;color:var(--mu);margin-bottom:14px;line-height:1.6">Supabase не подключён. Займёт ~5 минут.</p>
+    <div class="setup-step"><h3>1 · Создай проект</h3><p>Зайди на <a href="https://supabase.com" target="_blank">supabase.com</a> → Sign up → New Project → регион <strong>US East</strong>.</p></div>
+    <div class="setup-step"><h3>2 · Создай таблицу</h3><p>SQL Editor → New query → вставь и нажми Run:</p><pre id="sqlcode">${sql}</pre><button class="copy-snippet" onclick="copyEl('sqlcode')">Копировать SQL</button></div>
+    <div class="setup-step"><h3>3 · Storage Bucket</h3><p>Storage → New bucket → название: <code>truck-photos</code> → Public: <strong>✓ вкл</strong> → Create.<br>Потом: Policies → New policy → For full customization → ALL → USING <code>true</code> → Save.</p></div>
+    <div class="setup-step"><h3>4 · Вставь ключи в index.html</h3><p>Settings → API → скопируй <strong>Project URL</strong> и <strong>anon public</strong>.<br>Найди вверху скрипта и замени:</p><pre>const SB_URL = 'https://xxxx.supabase.co';
+const SB_KEY = 'eyJhbGc...';</pre><p style="margin-top:6px">Затем <code>git push</code> → Vercel задеплоит. Готово!</p></div>
+    <div class="setup-success">&#x2705; После подключения — все изменения сохраняются в Supabase мгновенно.<br>&#x2705; Фото загружаются прямо через сайт.<br>&#x2705; git push для обновления данных больше не нужен.</div>`;
+}
+function copyEl(id){ navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>showToast('SQL скопирован ✓')); }
+
+// ── Panel ────────────────────────────────────────────
+function renderPanel(){
+  document.getElementById('modalTitle').textContent=t('adminPanel');
+  document.getElementById('adminContent').innerHTML=`
+    <div class="adm-ph"><div class="sec-label" style="padding:0;margin:0">${t('mgmt')}</div><button class="btn-sec" onclick="showForm(null)">+ ${t('addT')}</button></div>
+    <div class="tal" id="tal"></div>
+    <div id="formWrap"></div>`;
+  renderList();
+}
+function renderList(){
+  const l=document.getElementById('tal'); if(!l)return; l.innerHTML='';
+  trucks.forEach(tr=>{
+    const d=document.createElement('div'); d.className='tai';
+    d.innerHTML=`<div><div class="tai-name">${esc(tr.name)}</div><div class="tai-price">${fmt(tr.price)} <span class="stag st-${tr.status}">${stLbl(tr.status)}</span></div></div>
+      <div class="tai-acts"><button class="btn-sec" onclick="showForm('${tr.id}')">${t('editBtn')}</button><button class="btn-del" onclick="delTruck('${tr.id}')">${t('delBtn')}</button></div>`;
+    l.appendChild(d);
+  });
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// ── Form ─────────────────────────────────────────────
+function showForm(id){
+  editId=id; uploadQ=[]; toDel=[];
+  const truck=id?trucks.find(x=>x.id===id):null;
+  const fw=document.getElementById('formWrap'); if(!fw)return;
+  const existingHTML = truck&&(truck.photos||[]).length
+    ? `<div class="existing-photos">${(truck.photos||[]).map((u,i)=>`<div class="exph-wrap" id="ep${i}"><img class="exph" src="${u}"><button class="exph-del" onclick="rmEx(${i},'${u}')">&#x2715;</button></div>`).join('')}</div>`
+    : '';
+  fw.innerHTML=`
+    <div class="af">
+      <h3>${truck?t('editT'):t('addT')}</h3>
+      <div class="fg">
+        <div class="ff full"><label>${t('fName')}</label><input id="fn" type="text" placeholder="${t('fNamePh')}" value="${truck?esc(truck.name):''}"></div>
+        <div class="ff full"><label>${t('fDet')}</label><input id="fd" type="text" placeholder="${t('fDetPh')}" value="${truck?esc(truck.detail):''}"></div>
+        <div class="ff"><label>${t('fPrice')}</label><input id="fp" type="number" placeholder="85000" value="${truck?truck.price:''}"></div>
+        <div class="ff"><label>${t('fStatus')}</label><select id="fs">
+          <option value="available"${truck?.status==='available'?' selected':''}>${t('sAvail')}</option>
+          <option value="pending"${truck?.status==='pending'?' selected':''}>${t('sPend')}</option>
+          <option value="sold"${truck?.status==='sold'?' selected':''}>${t('sSold')}</option>
+        </select></div>
+        <div class="ff full">
+          <label>${t('fPhotos')}</label>
+          ${existingHTML}
+          <div class="dz" id="dz"><div class="dz-icon">&#x1F4F7;</div><div class="dz-main">Нажми или перетащи фото</div><div class="dz-sub">JPG · PNG · WEBP</div><input type="file" id="fi" accept="image/*" multiple style="display:none"></div>
+          <div class="uq" id="uq"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <button class="btn-or" id="sbtn" onclick="saveTruck()">${t('save')}</button>
+        <button class="btn-sec" onclick="cancelForm()">${t('cancel')}</button>
+      </div>
+      <p id="fe" class="emsg"></p>
+    </div>`;
+  initDZ();
+  fw.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function rmEx(i, url){
+  const path=url.split('/'+BUCKET+'/')[1]; if(path) toDel.push(path);
+  const tr=trucks.find(x=>x.id===editId); if(tr) tr.photos=tr.photos.filter(p=>p!==url);
+  document.getElementById('ep'+i)?.remove();
+}
+function cancelForm(){ editId=null; uploadQ=[]; toDel=[]; const fw=document.getElementById('formWrap'); if(fw)fw.innerHTML=''; }
+
+// ── Drop zone ────────────────────────────────────────
+function initDZ(){
+  const z=document.getElementById('dz'), inp=document.getElementById('fi'); if(!z||!inp)return;
+  z.addEventListener('click',()=>inp.click());
+  inp.addEventListener('change',()=>addFiles(inp.files));
+  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('dz-over');});
+  z.addEventListener('dragleave',e=>{if(!z.contains(e.relatedTarget))z.classList.remove('dz-over');});
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('dz-over');addFiles(e.dataTransfer.files);});
+}
+function addFiles(files){
+  Array.from(files).filter(f=>f.type.startsWith('image/')).forEach(file=>{
+    uploadQ.push({file, prev:URL.createObjectURL(file), status:'pending', url:null, id:Math.random().toString(36).slice(2)});
+  });
+  renderUQ();
+}
+function renderUQ(){
+  const c=document.getElementById('uq'); if(!c)return;
+  c.innerHTML=uploadQ.map(it=>`<div class="uqi" id="uqi${it.id}"><img class="uqi-img" src="${it.prev}">
+    ${it.status==='pending'?`<button class="uqi-rm" onclick="rmQ('${it.id}')">&#x2715;</button>`:''}
+    ${it.status==='uploading'?`<div class="uqi-ov uqi-prog"><div class="uqi-bar"><div class="uqi-fill"></div></div></div>`:''}
+    ${it.status==='done'?`<div class="uqi-ov uqi-done">&#x2713;</div>`:''}
+    ${it.status==='error'?`<div class="uqi-ov uqi-err">ERR</div>`:''}
+  </div>`).join('');
+}
+function rmQ(id){ uploadQ=uploadQ.filter(x=>x.id!==id); renderUQ(); }
+
+async function uploadAll(){
+  for(const it of uploadQ.filter(x=>x.status==='pending')){
+    it.status='uploading'; renderUQ();
+    try{ it.url=await stgUp(it.file); it.status='done'; }
+    catch(e){ it.status='error'; console.error(e); }
+    renderUQ();
+  }
+  return uploadQ.filter(x=>x.status==='done').map(x=>x.url);
+}
+
+// ── Save ─────────────────────────────────────────────
+async function saveTruck(){
+  const name=document.getElementById('fn').value.trim();
+  const detail=document.getElementById('fd').value.trim();
+  const price=parseFloat(document.getElementById('fp').value);
+  const status=document.getElementById('fs').value;
+  const err=document.getElementById('fe'); const btn=document.getElementById('sbtn');
+  if(!name||!detail||isNaN(price)||price<=0){ err.textContent=t('fillAll'); return; }
+  err.textContent=''; btn.disabled=true; btn.innerHTML=`<span class="spin"></span>${t('saving')}`;
+  try{
+    const newUrls = uploadQ.some(x=>x.status==='pending') ? await uploadAll() : [];
+    if(toDel.length) await stgDel(toDel).catch(()=>{});
+    const existing = editId?(trucks.find(x=>x.id===editId)?.photos||[]):[];
+    const photos=[...existing,...newUrls];
+    const payload={name,detail,price,status,photos};
+    if(editId){
+      await dbPatch(editId,payload);
+      const i=trucks.findIndex(x=>x.id===editId); if(i>=0) trucks[i]={...trucks[i],...payload};
+    } else {
+      const [row]=await dbAdd(payload); trucks.push(row);
+    }
+    renderTrucks(); renderList(); cancelForm(); showToast(t('savedOk'));
+    if(selId===editId){ const tr=trucks.find(x=>x.id===selId); if(tr)renderPreview(tr); }
+  } catch(e){ err.textContent='Ошибка: '+e.message; }
+  finally{ btn.disabled=false; btn.innerHTML=t('save'); }
+}
+
+// ── Delete ───────────────────────────────────────────
+async function delTruck(id){
+  if(!confirm(t('delCfm')))return;
+  try{
+    const tr=trucks.find(x=>x.id===id);
+    if(tr?.photos?.length){
+      const paths=tr.photos.map(u=>u.split('/'+BUCKET+'/')[1]).filter(Boolean);
+      if(paths.length) await stgDel(paths).catch(()=>{});
+    }
+    await dbDel(id);
+    trucks=trucks.filter(x=>x.id!==id);
+    if(selId===id){ selId=null; document.getElementById('previewWrap').classList.remove('vis'); showCalcPh(); }
+    renderTrucks(); renderList(); showToast(t('deletedOk'));
+  } catch(e){ showToast('Ошибка: '+e.message); }
+}
+
+// ── Swipe preview ────────────────────────────────────
 (function(){
   let sx=0;
-  document.addEventListener('touchstart',e=>{const w=document.getElementById('previewPhotoWrap');if(w&&w.contains(e.target))sx=e.touches[0].clientX;},{passive:true});
-  document.addEventListener('touchend',e=>{const w=document.getElementById('previewPhotoWrap');if(!w||!w.contains(e.target))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)previewNav(dx<0?1:-1);},{passive:true});
+  document.addEventListener('touchstart',e=>{const w=document.getElementById('previewImgWrap');if(w&&w.contains(e.target))sx=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',e=>{const w=document.getElementById('previewImgWrap');if(!w||!w.contains(e.target))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)pNav(dx<0?1:-1);},{passive:true});
 })();
 
-// SECRET ADMIN: desktop A+D+M / mobile tap logo 5x
+// ── Secret admin: logo x5 tap OR press A+D+M ─────────
 (function(){
-  const keys=new Set();
-  document.addEventListener('keydown',e=>{keys.add(e.key.toLowerCase());if(keys.has('a')&&keys.has('d')&&keys.has('m')){openAdmin();keys.clear();}});
-  document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
-  let taps=0, timer;
+  const ks=new Set();
+  document.addEventListener('keydown',e=>{ks.add(e.key.toLowerCase());if(ks.has('a')&&ks.has('d')&&ks.has('m')){openAdmin();ks.clear();}});
+  document.addEventListener('keyup',e=>ks.delete(e.key.toLowerCase()));
+  let tps=0,tm;
   document.getElementById('logoTap').addEventListener('click',()=>{
-    taps++; clearTimeout(timer);
-    timer=setTimeout(()=>taps=0,3000);
-    if(taps>=5){taps=0;openAdmin();}
+    tps++;clearTimeout(tm);tm=setTimeout(()=>tps=0,3000);if(tps>=5){tps=0;openAdmin();}
   });
 })();
+document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
 
-renderTrucks();
+// ── Boot ─────────────────────────────────────────────
+setLang('ru');
+loadTrucks();
 </script>
 </body>
 </html>
