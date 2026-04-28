@@ -49,8 +49,9 @@ header{height:52px;padding:0 1rem;display:flex;align-items:center;justify-conten
 .tcard-body{padding:10px 12px 12px;}
 .tcard-name{font-size:.8rem;font-weight:700;line-height:1.25;margin-bottom:2px;}
 .tcard-det{font-size:.65rem;color:var(--su);margin-bottom:8px;line-height:1.3;}
-.tcard-price{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:var(--tx);}
-.tcard-wk{font-size:.65rem;font-weight:600;color:var(--or);margin-top:1px;}
+.tcard-price{font-size:.65rem;font-weight:500;color:var(--su);margin-top:3px;}
+.tcard-wk{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:800;color:var(--or);line-height:1.1;}
+.tcard-wk-lbl{font-size:.6rem;font-weight:600;color:var(--su);margin-top:1px;}
 .scroll-note{font-size:.62rem;color:var(--su);padding:0 1rem;margin-top:-4px;margin-bottom:8px;}
 .err-banner{margin:0 1rem 1rem;background:#FFF0F0;border:1px solid #FFCCCC;border-radius:10px;padding:12px 14px;font-size:.82rem;color:var(--re);display:none;line-height:1.5;}
 .err-banner.vis{display:block;}
@@ -70,6 +71,7 @@ header{height:52px;padding:0 1rem;display:flex;align-items:center;justify-conten
 .preview-bar-name{font-size:.88rem;font-weight:700;}
 .preview-bar-det{font-size:.68rem;color:var(--su);margin-top:1px;}
 .preview-bar-price{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:var(--or);flex-shrink:0;}
+.preview-bar-sub{font-size:.62rem;font-weight:500;color:var(--su);text-align:right;margin-top:1px;}
 .calc-wrap{margin:0 1rem;background:var(--sur);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-bottom:1rem;}
 .calc-ph{text-align:center;padding:2.5rem 1.5rem;color:var(--su);}
 .calc-ph-icon{font-size:2.2rem;margin-bottom:8px;}
@@ -84,6 +86,7 @@ header{height:52px;padding:0 1rem;display:flex;align-items:center;justify-conten
 .net-hero-right .val{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:800;color:var(--or);line-height:1;}
 .calc-chip{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--brd2);background:var(--or-lt);}
 .calc-chip-name{font-size:.82rem;font-weight:700;}
+.calc-chip-det{font-size:.65rem;color:var(--mu);}
 .calc-chip-price{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;color:var(--or);}
 .calc-body{padding:14px;}
 .cs{margin-bottom:16px;}
@@ -209,10 +212,6 @@ footer{border-top:1px solid var(--brd);padding:1.1rem;text-align:center;color:va
 
 <div class="preview-wrap" id="previewWrap">
   <div class="preview-img-wrap" id="previewImgWrap"><div class="preview-ph">🚛</div></div>
-  <div class="preview-bar">
-    <div><div class="preview-bar-name" id="previewName"></div><div class="preview-bar-det" id="previewDet"></div></div>
-    <div class="preview-bar-price" id="previewPrice"></div>
-  </div>
 </div>
 
 <div style="height:1rem"></div>
@@ -300,10 +299,10 @@ async function stgUp(file) {
 
 // ── i18n ─────────────────────────────────────────────
 const T = {
-  ru:{heroTag:'Программа Выкупа Трака',heroTitle:'Стань владельцем <em>трака.</em>',heroDesc:'Берёшь трак — платишь еженедельно — через год он твой. Никаких банков.',fleetTitle:'Доступные Траки',calcNote:'* При $12,000 выручке, $1,800 дизель, $300 дороги',calcHint:'Выбери трак выше\nчтобы увидеть свои цифры',ctaTag:'Готовы начать?',ctaTitle:'Позвоните нам',ctaSub:'Подберём трак и разберём все цифры вместе',footer:'© 2026 Tez Truck. Все права защищены.',adminPanel:'Панель Администратора',adminPrompt:'Введите пароль',unlock:'Войти',sAvail:'Свободен',sPend:'Занят',sSold:'Выкуплен',colPmt:'платёж/нед',dpLbl:'Первый Взнос',balLbl:'Остаток',wkLbl:'Платёж/нед',grossLbl:'Недельный Заработок',diesel:'Дизель',tolls:'Платные Дороги',bkLbl:'Разбивка',gross:'Заработок',fee:'Комиссия (10%)',admin600:'Страховка/IFTA/ELD',trkPmt:'Выплата за Трак',netLbl:'Чистый доход / Неделя',mgmt:'Управление Парком',addT:'Добавить трак',editT:'Редактировать',fName:'Название',fNamePh:'напр. 2021 Kenworth T680',fDet:'Характеристики',fDetPh:'напр. 500HP Paccar MX-13',fPrice:'Цена ($)',fStatus:'Статус',fPhotos:'Фото',save:'Сохранить',saving:'Сохранение...',cancel:'Отмена',editBtn:'Изменить',delBtn:'Удалить',delCfm:'Удалить этот трак?',wrongPw:'Неверный пароль.',fillAll:'Заполните все поля.',savedOk:'Сохранено ✓',deletedOk:'Удалено ✓',loadErr:'Ошибка загрузки. Проверь настройки Supabase.'},
-  en:{heroTag:'Lease to Own Program',heroTitle:'Become a Truck <em>Owner.</em>',heroDesc:"Take the truck · pay weekly · it's yours in 12 months. No bank needed.",fleetTitle:'Available Fleet',calcNote:'* Based on $12k gross / $1,800 diesel / $300 tolls',calcHint:'Select a truck above\nto see your numbers',ctaTag:'Ready to start?',ctaTitle:'Call us today',ctaSub:"We'll find the right truck and walk you through the numbers",footer:'© 2026 Tez Truck. All rights reserved.',adminPanel:'Admin Panel',adminPrompt:'Enter password',unlock:'Unlock',sAvail:'Free',sPend:'Reserved',sSold:'Taken',colPmt:'pmt/wk',dpLbl:'Down Payment',balLbl:'Balance',wkLbl:'Weekly Pmt',grossLbl:'Weekly Gross',diesel:'Diesel',tolls:'Tolls',bkLbl:'Breakdown',gross:'Gross Revenue',fee:'Company Fee (10%)',admin600:'Insurance/IFTA/ELD',trkPmt:'Truck Payment',netLbl:'Net / Week',mgmt:'Fleet Mgmt',addT:'Add Truck',editT:'Edit Truck',fName:'Name',fNamePh:'e.g. 2021 Kenworth T680',fDet:'Specs',fDetPh:'e.g. 500HP Paccar MX-13',fPrice:'Price ($)',fStatus:'Status',fPhotos:'Photos',save:'Save',saving:'Saving...',cancel:'Cancel',editBtn:'Edit',delBtn:'Delete',delCfm:'Delete this truck?',wrongPw:'Incorrect password.',fillAll:'Please fill in all fields.',savedOk:'Saved ✓',deletedOk:'Deleted ✓',loadErr:'Load error. Check Supabase config.'},
-  tg:{heroTag:'Барномаи Харидани Трак',heroTitle:'Соҳиби <em>трак шав.</em>',heroDesc:'Трак мегирӣ — ҳар ҳафта мепардозӣ — як сол трак моли туст.',fleetTitle:'Тракҳои Мавҷуда',calcNote:'* Бо $12,000 даромад, $1,800 дизел, $300 роҳ',calcHint:'Трак интихоб кун\nто ҳисоб кунем',ctaTag:'Шурӯъ карданӣ ҳастед?',ctaTitle:'Ба мо занг занед',ctaSub:'Тракро интихоб мекунем ва рақамҳоро баррасӣ мекунем',footer:'© 2026 Tez Truck. Ҳамаи ҳуқуқҳо ҳифз шудаанд.',adminPanel:'Панели Админ',adminPrompt:'Паролро ворид кунед',unlock:'Дохил шав',sAvail:'Озод',sPend:'Банд',sSold:'Харида шуд',colPmt:'пардохт/ҳафта',dpLbl:'Пардохти Аввала',balLbl:'Боқимонда',wkLbl:'Пардохт/ҳафта',grossLbl:'Даромади Ҳафтаина',diesel:'Дизел',tolls:'Пули Роҳ',bkLbl:'Ҳисоб',gross:'Даромади Умумӣ',fee:'Пули Ширкат (10%)',admin600:'Суғурта/IFTA/ELD',trkPmt:'Пардохт барои Трак',netLbl:'Даромади Соф / Ҳафта',mgmt:'Идоракунии Парк',addT:'Трак илова кун',editT:'Тағйир деҳ',fName:'Ном',fNamePh:'масалан 2021 Kenworth T680',fDet:'Хусусиятҳо',fDetPh:'масалан 500HP Paccar',fPrice:'Нарх ($)',fStatus:'Ҳолат',fPhotos:'Аксҳо',save:'Нигоҳ дор',saving:'Нигоҳ доштан...',cancel:'Бекор',editBtn:'Тағйир',delBtn:'Нест кун',delCfm:'Нест кунем?',wrongPw:'Парол нодуруст.',fillAll:'Ҳамаро пур кун.',savedOk:'Нигоҳ дошта шуд ✓',deletedOk:'Нест шуд ✓',loadErr:'Хато дар боркунӣ.'},
-  uz:{heroTag:'Trakni Sotib Olish Dasturi',heroTitle:"Trakni o'zingniki <em>qil.</em>",heroDesc:"Trakni ol — hafta sayin to'la — bir yilda traking bo'ladi.",fleetTitle:'Mavjud Traklar',calcNote:"* $12k daromad, $1,800 dizel, $300 yo'l asosida",calcHint:"Trakni tanlang\nhisoblaymiz",ctaTag:'Boshlashga tayyormisiz?',ctaTitle:"Qo'ng'iroq qiling",ctaSub:"To'g'ri trakni topamiz va raqamlarni tushuntiramiz",footer:'© 2026 Tez Truck. Barcha huquqlar himoyalangan.',adminPanel:'Admin Paneli',adminPrompt:'Parolni kiriting',unlock:'Kirish',sAvail:"Bo'sh",sPend:'Band',sSold:'Sotildi',colPmt:"to'lov/hafta",dpLbl:"Boshlang'ich To'lov",balLbl:'Qoldiq',wkLbl:"To'lov/hafta",grossLbl:'Haftalik Daromad',diesel:'Dizel',tolls:"Yo'l To'lovi",bkLbl:'Hisob',gross:'Umumiy Daromad',fee:"Kompaniya (10%)",admin600:"Sug'urta/IFTA/ELD",trkPmt:"Trak To'lovi",netLbl:'Sof Daromad / Hafta',mgmt:'Park Boshqaruv',addT:"Trak Qo'sh",editT:'Tahrirlash',fName:'Nomi',fNamePh:'masalan 2021 Kenworth T680',fDet:'Xususiyat',fDetPh:'masalan 500HP Paccar',fPrice:"Narx ($)",fStatus:'Holat',fPhotos:'Rasmlar',save:'Saqlash',saving:'Saqlanmoqda...',cancel:'Bekor',editBtn:'Tahrirlash',delBtn:"O'chirish",delCfm:"O'chiramizmi?",wrongPw:"Parol noto'g'ri.",fillAll:"Barcha maydonlarni to'ldiring.",savedOk:"Saqlandi ✓",deletedOk:"O'chirildi ✓",loadErr:"Yuklashda xato."}
+  ru:{heroTag:'Программа Выкупа Трака',heroTitle:'Стань владельцем <em>трака.</em>',heroDesc:'Берёшь трак — платишь еженедельно — через год он твой. Никаких банков.',fleetTitle:'Доступные Траки',calcNote:'* При $12,000 выручке, $1,800 дизель, $300 дороги',calcHint:'Выбери трак выше\nчтобы увидеть свои цифры',ctaTag:'Готовы начать?',ctaTitle:'Позвоните нам',ctaSub:'Подберём трак и разберём все цифры вместе',footer:'© 2026 Tez Truck. Все права защищены.',adminPanel:'Панель Администратора',adminPrompt:'Введите пароль',unlock:'Войти',sAvail:'Свободен',sPend:'Занят',sSold:'Выкуплен',colPmt:'платёж/нед',dpLbl:'Первый Взнос',balLbl:'Остаток',wkLbl:'Платёж/нед',grossLbl:'Гросс в неделю',diesel:'Дизель',tolls:'Платные Дороги',bkLbl:'Разбивка',gross:'Заработок',fee:'Комиссия (10%)',admin600:'Страховка/IFTA/ELD',trkPmt:'Выплата за Трак',netLbl:'Чистый доход / Неделя',mgmt:'Управление Парком',addT:'Добавить трак',editT:'Редактировать',fName:'Название',fNamePh:'напр. 2021 Kenworth T680',fDet:'Характеристики',fDetPh:'напр. 500HP Paccar MX-13',fPrice:'Цена ($)',fStatus:'Статус',fPhotos:'Фото',save:'Сохранить',saving:'Сохранение...',cancel:'Отмена',editBtn:'Изменить',delBtn:'Удалить',delCfm:'Удалить этот трак?',wrongPw:'Неверный пароль.',fillAll:'Заполните все поля.',savedOk:'Сохранено ✓',deletedOk:'Удалено ✓',loadErr:'Ошибка загрузки. Проверь настройки Supabase.'},
+  en:{heroTag:'Lease to Own Program',heroTitle:'Become a Truck <em>Owner.</em>',heroDesc:"Take the truck · pay weekly · it's yours in 12 months. No bank needed.",fleetTitle:'Available Fleet',calcNote:'* Based on $12k gross / $1,800 diesel / $300 tolls',calcHint:'Select a truck above\nto see your numbers',ctaTag:'Ready to start?',ctaTitle:'Call us today',ctaSub:"We'll find the right truck and walk you through the numbers",footer:'© 2026 Tez Truck. All rights reserved.',adminPanel:'Admin Panel',adminPrompt:'Enter password',unlock:'Unlock',sAvail:'Free',sPend:'Reserved',sSold:'Taken',colPmt:'pmt/wk',dpLbl:'Down Payment',balLbl:'Balance',wkLbl:'Weekly Pmt',grossLbl:'Weekly Gross',tolls:'Tolls',bkLbl:'Breakdown',gross:'Gross Revenue',fee:'Company Fee (10%)',admin600:'Insurance/IFTA/ELD',trkPmt:'Truck Payment',netLbl:'Net / Week',mgmt:'Fleet Mgmt',addT:'Add Truck',editT:'Edit Truck',fName:'Name',fNamePh:'e.g. 2021 Kenworth T680',fDet:'Specs',fDetPh:'e.g. 500HP Paccar MX-13',fPrice:'Price ($)',fStatus:'Status',fPhotos:'Photos',save:'Save',saving:'Saving...',cancel:'Cancel',editBtn:'Edit',delBtn:'Delete',delCfm:'Delete this truck?',wrongPw:'Incorrect password.',fillAll:'Please fill in all fields.',savedOk:'Saved ✓',deletedOk:'Deleted ✓',loadErr:'Load error. Check Supabase config.'},
+  tg:{heroTag:'Барномаи Харидани Трак',heroTitle:'Соҳиби <em>трак шав.</em>',heroDesc:'Трак мегирӣ — ҳар ҳафта мепардозӣ — як сол трак моли туст.',fleetTitle:'Тракҳои Мавҷуда',calcNote:'* Бо $12,000 даромад, $1,800 дизел, $300 роҳ',calcHint:'Трак интихоб кун\nто ҳисоб кунем',ctaTag:'Шурӯъ карданӣ ҳастед?',ctaTitle:'Ба мо занг занед',ctaSub:'Тракро интихоб мекунем ва рақамҳоро баррасӣ мекунем',footer:'© 2026 Tez Truck. Ҳамаи ҳуқуқҳо ҳифз шудаанд.',adminPanel:'Панели Админ',adminPrompt:'Паролро ворид кунед',unlock:'Дохил шав',sAvail:'Озод',sPend:'Банд',sSold:'Харида шуд',colPmt:'пардохт/ҳафта',dpLbl:'Пардохти Аввала',balLbl:'Боқимонда',wkLbl:'Пардохт/ҳафта',grossLbl:'Гросси Хафтаина',diesel:'Дизел',tolls:'Пули Роҳ',bkLbl:'Ҳисоб',gross:'Даромади Умумӣ',fee:'Пули Ширкат (10%)',admin600:'Суғурта/IFTA/ELD',trkPmt:'Пардохт барои Трак',netLbl:'Даромади Соф / Ҳафта',mgmt:'Идоракунии Парк',addT:'Трак илова кун',editT:'Тағйир деҳ',fName:'Ном',fNamePh:'масалан 2021 Kenworth T680',fDet:'Хусусиятҳо',fDetPh:'масалан 500HP Paccar',fPrice:'Нарх ($)',fStatus:'Ҳолат',fPhotos:'Аксҳо',save:'Нигоҳ дор',saving:'Нигоҳ доштан...',cancel:'Бекор',editBtn:'Тағйир',delBtn:'Нест кун',delCfm:'Нест кунем?',wrongPw:'Парол нодуруст.',fillAll:'Ҳамаро пур кун.',savedOk:'Нигоҳ дошта шуд ✓',deletedOk:'Нест шуд ✓',loadErr:'Хато дар боркунӣ.'},
+  uz:{heroTag:'Trakni Sotib Olish Dasturi',heroTitle:"Trakni o'zingniki <em>qil.</em>",heroDesc:"Trakni ol — hafta sayin to'la — bir yilda traking bo'ladi.",fleetTitle:'Mavjud Traklar',calcNote:"* $12k daromad, $1,800 dizel, $300 yo'l asosida",calcHint:"Trakni tanlang\nhisoblaymiz",ctaTag:'Boshlashga tayyormisiz?',ctaTitle:"Qo'ng'iroq qiling",ctaSub:"To'g'ri trakni topamiz va raqamlarni tushuntiramiz",footer:'© 2026 Tez Truck. Barcha huquqlar himoyalangan.',adminPanel:'Admin Paneli',adminPrompt:'Parolni kiriting',unlock:'Kirish',sAvail:"Bo'sh",sPend:'Band',sSold:'Sotildi',colPmt:"to'lov/hafta",dpLbl:"Boshlang'ich To'lov",balLbl:'Qoldiq',wkLbl:"To'lov/hafta",grossLbl:'Haftalik Gross',diesel:'Dizel',tolls:"Yo'l To'lovi",bkLbl:'Hisob',gross:'Umumiy Daromad',fee:"Kompaniya (10%)",admin600:"Sug'urta/IFTA/ELD",trkPmt:"Trak To'lovi",netLbl:'Sof Daromad / Hafta',mgmt:'Park Boshqaruv',addT:"Trak Qo'sh",editT:'Tahrirlash',fName:'Nomi',fNamePh:'masalan 2021 Kenworth T680',fDet:'Xususiyat',fDetPh:'masalan 500HP Paccar',fPrice:"Narx ($)",fStatus:'Holat',fPhotos:'Rasmlar',save:'Saqlash',saving:'Saqlanmoqda...',cancel:'Bekor',editBtn:'Tahrirlash',delBtn:"O'chirish",delCfm:"O'chiramizmi?",wrongPw:"Parol noto'g'ri.",fillAll:"Barcha maydonlarni to'ldiring.",savedOk:"Saqlandi ✓",deletedOk:"O'chirildi ✓",loadErr:"Yuklashda xato."}
 };
 let lang = 'ru';
 function t(k){ return T[lang][k] || T.ru[k] || k; }
@@ -347,7 +346,7 @@ function showErr(msg){ const b=document.getElementById('errBanner'); b.textConte
 
 // ── Render trucks ────────────────────────────────────
 const DG=12000,DD_MAX=15000,DDi=1800,DT=300;
-function qc(truck){ const dp=Math.min(DD_MAX,truck.price*.15); return{wk:(truck.price-dp)/52}; }
+function qc(truck){ const dp=10000; return{wk:(truck.price-dp)/52}; }
 function fmt(n){ return '$'+Math.round(n).toLocaleString(); }
 function stLbl(s){ return t({available:'sAvail',pending:'sPend',sold:'sSold'}[s]||s); }
 
@@ -364,7 +363,7 @@ function renderTrucks(){
     card.className='tcard'+(truck.status==='sold'?' sold':'')+(isSel?' sel':'');
     card.onclick=()=>pick(truck.id);
     card.innerHTML=`<div class="tcard-photo">${phHTML}<div class="tcard-st"><span class="stag st-${truck.status}">${stLbl(truck.status)}</span></div>${isSel?'<div class="tcard-sel-ring"></div><div class="tcard-check">&#x2713;</div>':''}</div>
-      <div class="tcard-body"><div class="tcard-name">${truck.name}</div><div class="tcard-det">${truck.detail}</div><div class="tcard-price">${fmt(truck.price)}</div><div class="tcard-wk">${fmt(wk)}/${t('colPmt').split('/')[1]||'wk'}</div></div>`;
+      <div class="tcard-body"><div class="tcard-name">${truck.name}</div><div class="tcard-det">${truck.detail}</div><div class="tcard-wk">${fmt(wk)}<span style="font-size:.65rem;font-weight:600;color:var(--su)">/${t('colPmt').split('/')[1]||'wk'}</span></div><div class="tcard-price">${fmt(truck.price)}</div></div>`;
     sc.appendChild(card);
   });
 }
@@ -379,7 +378,8 @@ function renderPreview(truck){
   } else { w.innerHTML='<div class="preview-ph">🚛</div>'; }
   document.getElementById('previewName').textContent=truck.name;
   document.getElementById('previewDet').textContent=truck.detail;
-  document.getElementById('previewPrice').textContent=fmt(truck.price);
+  const wkPmt=(truck.price-10000)/52;
+  document.getElementById('previewPrice').innerHTML=`${fmt(wkPmt)}<span style="font-size:.7rem;font-weight:600;color:var(--su)">/нед</span>`;
   document.getElementById('previewWrap').classList.add('vis');
 }
 function pNav(d){ const tr=trucks.find(x=>x.id===selId); if(!tr||!tr.photos.length)return; pidx=(pidx+d+tr.photos.length)%tr.photos.length; renderPreview(tr); }
@@ -400,17 +400,17 @@ function showCalcPh(){
 // ── Calculator ───────────────────────────────────────
 function renderCalc(truck){
   const w=document.getElementById('calcWrap');
-  const dpI=Math.min(DD_MAX,truck.price);
+  const dpDef=10000;
   function c(dp,gr,di,to){ const rem=truck.price-dp,wl=rem/52,f10=gr*.1; return{wl,f10,net:gr-f10-600-di-to-wl,rem}; }
-  const r0=c(dpI,DG,DDi,DT);
+  const r0=c(dpDef,DG,DDi,DT);
   w.innerHTML=`
-    <div class="calc-chip"><div class="calc-chip-name">${truck.name}</div><div class="calc-chip-price">${fmt(truck.price)}</div></div>
+    <div class="calc-chip"><div class="calc-chip-name">${truck.name}</div><div class="calc-chip-det">${truck.detail}</div></div>
     <div class="net-hero">
       <div class="net-hero-left"><div class="lbl">${t('netLbl')}</div><div class="val" id="rn">${fmt(r0.net)}</div></div>
       <div class="net-hero-right"><div class="lbl">${t('wkLbl')}</div><div class="val" id="rlh">${fmt(r0.wl)}</div></div>
     </div>
     <div class="calc-body">
-      <div class="cs"><div class="cl"><span class="cl-text">${t('dpLbl')}</span><span class="cl-val" id="dv">${fmt(dpI)}</span></div><input type="range" id="dp" min="5000" max="${truck.price}" step="500" value="${dpI}"><div class="ch"><span>$5,000</span><span>${fmt(truck.price)}</span></div></div>
+      <div class="cs"><div class="cl"><span class="cl-text">${t('dpLbl')}</span><span class="cl-val" id="dv">${fmt(dpDef)}</span></div><input type="range" id="dp" min="5000" max="${truck.price}" step="500" value="${dpDef}"><div class="ch"><span>$5,000</span><span>${fmt(truck.price)}</span></div></div>
       <div class="metrics"><div class="metric"><div class="metric-lbl">${t('balLbl')}</div><div class="metric-val" id="bv">${fmt(r0.rem)}</div></div><div class="metric"><div class="metric-lbl">${t('wkLbl')}</div><div class="metric-val" id="wv">${fmt(r0.wl)}</div></div></div>
       <hr class="hdivider">
       <div class="cs"><div class="cl"><span class="cl-text">${t('grossLbl')}</span><span class="cl-val" id="gv">${fmt(DG)}</span></div><input type="range" id="gr" min="9000" max="15000" step="100" value="${DG}"><div class="ch"><span>$9,000</span><span>$15,000</span></div></div>
