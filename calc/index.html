@@ -865,7 +865,9 @@ function load(){
 
 function resetAll(){
   if(!confirm('Сбросить все данные?'))return;
-  localStorage.removeItem('truckCalc_v1');
+  const auth=localStorage.getItem('tz_auth');
+  localStorage.clear();
+  if(auth) localStorage.setItem('tz_auth',auth);
   location.reload();
 }
 
