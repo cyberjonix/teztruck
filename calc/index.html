@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Truck Deal Calculator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f7f6;--bg3:#f0eeea;
+  --text:#1a1a1a;--text2:#6b6b6b;--text3:#9a9a9a;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.2);
+  --blue-bg:#e6f1fb;--blue:#0c447c;--blue-mid:#185fa5;
+  --amber-bg:#faeeda;--amber:#633806;--amber-mid:#854f0b;
+  --green-bg:#e1f5ee;--green:#085041;--green-mid:#0f6e56;
+  --pink-bg:#fbeaf0;--pink:#72243e;--pink-mid:#993556;
+  --purple-bg:#eeedfe;--purple:#3c3489;--purple-mid:#534ab7;
+  --red-bg:#fcebeb;--red:#791f1f;
+  --radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1e1e1e;--bg2:#2a2a2a;--bg3:#333;
+    --text:#f0f0f0;--text2:#aaa;--text3:#777;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --blue-bg:#0c2a4a;--blue:#85b7eb;--blue-mid:#b5d4f4;
+    --amber-bg:#3a2200;--amber:#fac775;--amber-mid:#ef9f27;
+    --green-bg:#0a2a20;--green:#9fe1cb;--green-mid:#5dcaa5;
+    --pink-bg:#2a0f1a;--pink:#f4c0d1;--pink-mid:#ed93b1;
+    --purple-bg:#1a1840;--purple:#cecbf6;--purple-mid:#afa9ec;
+    --red-bg:#2a0808;--red:#f7c1c1;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.topbar-title{font-size:15px;font-weight:600;letter-spacing:-0.01em}
+.topbar-sub{font-size:12px;color:var(--text2);margin-left:10px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.main{max-width:960px;margin:0 auto;padding:24px 16px 60px}
+.section{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px}
+.section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:16px}
+.field-row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--text2);font-weight:500}
+input[type=number],input[type=text],select{height:34px;padding:0 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:13px;width:130px;outline:none;transition:border-color .15s}
+input[type=number]:focus,input[type=text]:focus,select:focus{border-color:var(--blue-mid)}
+input[type=text].truck-name-input{width:180px;font-size:13px;font-weight:500}
+select{width:150px;cursor:pointer}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.stat{background:var(--bg2);border-radius:var(--radius);padding:11px 13px}
+.stat .lbl{font-size:11px;color:var(--text2);margin-bottom:4px}
+.stat .val{font-size:18px;font-weight:600}
+.v-blue{color:var(--blue-mid)} .v-amber{color:var(--amber-mid)} .v-green{color:var(--green-mid)}
+.v-pink{color:var(--pink-mid)} .v-purple{color:var(--purple-mid)} .v-red{color:var(--red)}
+.hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.truck-block{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
+.truck-bar{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.truck-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:640px){.truck-body{grid-template-columns:1fr}}
+.side{padding:16px}
+.side-me{border-right:1px solid var(--border)}
+@media(max-width:640px){.side-me{border-right:none;border-bottom:1px solid var(--border)}}
+.side-hd{display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot-blue{background:var(--blue-mid)} .dot-pink{background:var(--pink-mid)}
+.side-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em}
+.kv-list{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.kv-k{font-size:12px;color:var(--text2)}
+.kv-v{font-size:13px;font-weight:600;text-align:right}
+.kv-v.big{font-size:15px}
+.week-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.wchip{flex:1;min-width:100px;padding:9px 12px;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;gap:2px}
+.wchip-total{background:var(--pink-bg)}
+.wchip-int{background:var(--purple-bg)}
+.wchip-num{font-size:20px;font-weight:600}
+.wchip-total .wchip-num{color:var(--pink)}
+.wchip-int .wchip-num{color:var(--purple)}
+.wchip-lbl{font-size:11px;text-align:center}
+.wchip-total .wchip-lbl{color:var(--pink-mid)}
+.wchip-int .wchip-lbl{color:var(--purple-mid)}
+.apr-toggle{display:flex;gap:4px;margin-bottom:10px}
+.atbtn{font-size:12px;padding:4px 11px;cursor:pointer;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s}
+.atbtn:hover{background:var(--bg2)}
+.atbtn.on{background:var(--pink-bg);color:var(--pink);border-color:var(--pink-mid)}
+.auto-apr{font-size:12px;color:var(--text2);margin-top:4px}
+.auto-apr strong{color:var(--purple-mid)}
+.btn{height:32px;padding:0 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;font-size:13px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--bg2)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-primary:hover{opacity:.85}
+.btn-export{background:var(--green-bg);color:var(--green);border-color:var(--green-mid)}
+.btn-export:hover{opacity:.85}
+.btn-add{margin-top:4px}
+.btn-rm{height:26px;padding:0 8px;font-size:11px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+@media(max-width:640px){.summary-grid{grid-template-columns:1fr}}
+.summary-side{border-top:2px solid var(--border)}
+.summary-side-me{border-top-color:var(--blue-mid)}
+.summary-side-by{border-top-color:var(--pink-mid)}
+.summary-side-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding-top:9px;margin-bottom:10px}
+.summary-side-me .summary-side-title{color:var(--blue-mid)}
+.summary-side-by .summary-side-title{color:var(--pink-mid)}
+.tbl-outer{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+th{padding:8px 10px;font-size:11px;font-weight:600;border-bottom:1px solid var(--border);text-align:left;color:var(--text2)}
+th.me{color:var(--blue-mid);border-bottom-color:var(--blue-mid)}
+th.by{color:var(--pink-mid);border-bottom-color:var(--pink-mid)}
+th.pr{color:var(--green-mid);border-bottom-color:var(--green-mid)}
+td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+td.me{color:var(--blue-mid)} td.by{color:var(--pink-mid)} td.pr{color:var(--green-mid);font-weight:600} td.wk{color:var(--purple-mid);font-weight:600}
+tfoot td{font-weight:600;border-top:1px solid var(--border2);border-bottom:none;background:var(--bg2)}
+tfoot td.me{color:var(--blue-mid)} tfoot td.by{color:var(--pink-mid)} tfoot td.pr{color:var(--green-mid)} tfoot td.wk{color:var(--purple-mid)}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);padding:24px;width:min(520px,95vw);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+.modal-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.modal-field label{font-size:12px;color:var(--text2);font-weight:500}
+.modal-field input,.modal-field select{width:100%;max-width:280px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+.pay-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px}
+.pay-table th{background:var(--bg2);padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text2)}
+.pay-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
+.pay-table tr:last-child td{font-weight:600;background:var(--bg2)}
+.pay-table td.amt{text-align:right;font-weight:600;color:var(--purple-mid)}
+.pay-table td.int{text-align:right;color:var(--amber-mid)}
+.pay-table td.bal{text-align:right;color:var(--text2)}
+.pay-table td.date{color:var(--text2)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-blue{background:var(--blue-bg);color:var(--blue-mid)}
+.badge-green{background:var(--green-bg);color:var(--green-mid)}
+.saved-notice{font-size:11px;color:var(--green-mid);opacity:0;transition:opacity .4s}
+.saved-notice.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:4px">
+    <span class="topbar-title">Truck Deal Calculator</span>
+    <span class="topbar-sub">данные сохраняются локально</span>
+  </div>
+  <div class="topbar-actions">
+    <span class="saved-notice" id="savedNotice">Сохранено</span>
+    <button class="btn" onclick="resetAll()">Сбросить</button>
+  </div>
+</div>
+
+<div class="main">
+
+<div class="section">
+  <div class="section-title">Условия банка</div>
+  <div class="field-row">
+    <div class="field"><label>APR банка (%)</label><input type="number" id="bankApr" value="10.5" min="1" max="30" step="0.1" oninput="save();calc()"></div>
+    <div class="field"><label>Срок (мес)</label><input type="number" id="bankTerm" value="12" min="1" max="60" oninput="save();calc()"></div>
+    <div class="field"><label>Способ ввода</label>
+      <select id="bankMode" onchange="save();toggleBankMode()">
+        <option value="dp">Через DP</option>
+        <option value="loan">Сумма кредита</option>
+      </select>
+    </div>
+    <div class="field" id="dpField"><label>Мой DP ($)</label><input type="number" id="bankDP" value="15000" min="0" step="500" oninput="save();calc()"></div>
+    <div class="field" id="loanField" style="display:none"><label>Сумма кредита ($)</label><input type="number" id="bankLoanDirect" value="193000" step="1000" oninput="save();calc()"></div>
+  </div>
+  <div class="stat-grid" id="bankStats"></div>
+  <div style="margin-top:12px">
+    <button class="btn btn-export" onclick="openBankExport()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      График моих платежей банку
+    </button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Траки</div>
+  <div id="trucksList"></div>
+  <button class="btn btn-add" onclick="addTruck()">+ Добавить трак</button>
+</div>
+
+<div class="section">
+  <div class="section-title">Итог по всем сделкам</div>
+  <div class="summary-grid">
+    <div class="summary-side summary-side-me">
+      <div class="summary-side-title">Я — продавец</div>
+      <div class="stat-grid" id="myStats"></div>
+    </div>
+    <div class="summary-side summary-side-by">
+      <div class="summary-side-title">Покупатели</div>
+      <div class="stat-grid" id="buyerStats"></div>
+    </div>
+  </div>
+  <div class="hr"></div>
+  <div class="tbl-outer"><table id="sumTable"></table></div>
+</div>
+
+</div>
+
+<!-- Export modal (buyer) -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-title">График платежей</div>
+    <div class="modal-sub" id="exportModalSub">Еженедельное удержание из зарплаты</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="modal-field">
+        <label>Дата первого платежа</label>
+        <input type="date" id="exportStartDate" style="width:180px">
+      </div>
+      <div class="modal-field">
+        <label>День недели</label>
+        <select id="exportWeekday" style="width:150px" onchange="adjustDateToWeekday()">
+          <option value="1">Понедельник</option>
+          <option value="2">Вторник</option>
+          <option value="3">Среда</option>
+          <option value="4">Четверг</option>
+          <option value="5" selected>Пятница</option>
+          <option value="6">Суббота</option>
+          <option value="0">Воскресенье</option>
+        </select>
+      </div>
+    </div>
+    <div id="payScheduleOut"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeExport()">Закрыть</button>
+      <button class="btn btn-export" onclick="printSchedule()">Печать / PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bank export modal -->
+<div class="modal-overlay" id="bankExportModal">
+  <div class="modal">
+    <div class="modal-title">График моих платежей банку</div>
+    <div class="modal-sub">Ежемесячные платежи за все траки</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="modal-field">
+        <label>Дата первого платежа</label>
+        <input type="date" id="bankExportStartDate" style="width:180px">
+      </div>
+    </div>
+    <div id="bankPayScheduleOut"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeBankExport()">Закрыть</button>
+      <button class="btn btn-export" onclick="printBankSchedule()">Печать / PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let trucks=[
+  {name:'Трак 1',price:52000,markup:17000,buyerDP:5000,aprMode:'manual',buyerApr:18,targetInt:4000,buyerTerm:12},
+  {name:'Трак 2',price:52000,markup:17000,buyerDP:5000,aprMode:'manual',buyerApr:18,targetInt:4000,buyerTerm:12},
+  {name:'Трак 3',price:52000,markup:17000,buyerDP:5000,aprMode:'manual',buyerApr:18,targetInt:4000,buyerTerm:12},
+  {name:'Трак 4',price:52000,markup:17000,buyerDP:5000,aprMode:'manual',buyerApr:18,targetInt:4000,buyerTerm:12},
+];
+
+let exportTruckIndex=-1;
+
+function pmt(apr,n,pv){
+  if(pv<=0||n<=0)return 0;
+  const r=apr/100/12;
+  if(r===0)return pv/n;
+  return pv*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+}
+function solveApr(loan,term,targetInt){
+  if(loan<=0||term<=0)return 0;
+  const tp=(loan+targetInt)/term;
+  let lo=0.001,hi=300;
+  for(let i=0;i<200;i++){const m=(lo+hi)/2;pmt(m,term,loan)<tp?lo=m:hi=m;}
+  return(lo+hi)/2;
+}
+function $m(n){return'$'+Math.round(Math.abs(n)).toLocaleString('en-US');}
+function $p(n){return n.toFixed(2)+'%';}
+
+function bankLoan(){
+  const mode=document.getElementById('bankMode').value;
+  const total=trucks.reduce((s,t)=>s+t.price,0);
+  if(mode==='loan')return parseFloat(document.getElementById('bankLoanDirect').value)||0;
+  return Math.max(0,total-(parseFloat(document.getElementById('bankDP').value)||0));
+}
+function bankDP(){
+  const mode=document.getElementById('bankMode').value;
+  const total=trucks.reduce((s,t)=>s+t.price,0);
+  if(mode==='loan')return Math.max(0,total-(parseFloat(document.getElementById('bankLoanDirect').value)||0));
+  return parseFloat(document.getElementById('bankDP').value)||0;
+}
+function toggleBankMode(){
+  const m=document.getElementById('bankMode').value;
+  document.getElementById('dpField').style.display=m==='dp'?'':'none';
+  document.getElementById('loanField').style.display=m==='loan'?'':'none';
+  calc();
+}
+
+function truckCalc(t,bankInt,total){
+  const share=total>0?t.price/total:0;
+  const myInt=share*bankInt;
+  const sell=t.price+t.markup;
+  const loan=Math.max(0,sell-t.buyerDP);
+  let apr,bint;
+  if(t.aprMode==='target'){apr=solveApr(loan,t.buyerTerm,t.targetInt);bint=t.targetInt;}
+  else{apr=t.buyerApr;bint=pmt(apr,t.buyerTerm,loan)*t.buyerTerm-loan;}
+  const mo=pmt(apr,t.buyerTerm,loan);
+  const totalCredit=mo*t.buyerTerm;
+  const weeks=Math.round(t.buyerTerm*52/12);
+  const wkPay=weeks>0?totalCredit/weeks:0;
+  const wkInt=weeks>0?bint/weeks:0;
+  const totalPaid=totalCredit+t.buyerDP;
+  return{share,myInt,sell,loan,apr,mo,weeks,wkPay,wkInt,totalPaid,bint,net:t.markup+bint-myInt};
+}
+
+function stat(lbl,val,cls=''){return`<div class="stat"><div class="lbl">${lbl}</div><div class="val ${cls}">${val}</div></div>`;}
+
+function txt(el,val){if(el)el.textContent=val;}
+function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+function computeAll(){
+  const bApr=parseFloat(document.getElementById('bankApr').value)||10.5;
+  const bTerm=parseInt(document.getElementById('bankTerm').value)||12;
+  const bl=bankLoan(),bd=bankDP();
+  const total=trucks.reduce((s,t)=>s+t.price,0);
+  const bMo=pmt(bApr,bTerm,bl);
+  const bTotal=bMo*bTerm;
+  const bInt=bTotal-bl;
+  const calcs=trucks.map(t=>truckCalc(t,bInt,total));
+  return{bApr,bTerm,bl,bd,total,bMo,bTotal,bInt,calcs};
+}
+
+/* Full re-render — only called on structural changes */
+function fullRender(){
+  const d=computeAll();
+  renderBankStats(d);
+  renderTrucks(d);
+  renderSummary(d);
+}
+
+/* Partial update — only updates result text nodes, never touches inputs */
+function calc(){
+  const d=computeAll();
+  renderBankStats(d);
+  updateTruckResults(d);
+  renderSummary(d);
+  save();
+}
+
+function renderBankStats(d){
+  document.getElementById('bankStats').innerHTML=
+    stat('Стоимость траков',$m(d.total))+
+    stat('Мой DP',$m(d.bd),'v-blue')+
+    stat('Кредит банка',$m(d.bl),'v-blue')+
+    stat('Платёж / мес',$m(d.bMo),'v-blue')+
+    stat('Проценты банку',$m(d.bInt),'v-amber')+
+    stat('Всего отдам банку',$m(d.bTotal+d.bd),'v-amber');
+}
+
+function renderSummary(d){
+  const{bInt,bTotal,bd,total,calcs}=d;
+  const totMarkup=trucks.reduce((s,t)=>s+t.markup,0);
+  const totBInt=calcs.reduce((s,c)=>s+c.bint,0);
+  const totNet=totMarkup+totBInt-bInt;
+  const totBDP=trucks.reduce((s,t)=>s+t.buyerDP,0);
+  const totBLoan=calcs.reduce((s,c)=>s+c.loan,0);
+  const totBPaid=calcs.reduce((s,c)=>s+c.totalPaid,0);
+
+  document.getElementById('myStats').innerHTML=
+    stat('Потрачу всего',$m(bTotal+bd),'v-amber')+
+    stat('Получу от покупателей',$m(totBPaid),'v-blue')+
+    stat('Чистая прибыль',$m(totNet),'v-green')+
+    stat('ROI на мой DP',bd>0?(totNet/bd*100).toFixed(1)+'%':'—','v-green');
+
+  document.getElementById('buyerStats').innerHTML=
+    stat('Суммарный DP',$m(totBDP))+
+    stat('Суммарный кредит',$m(totBLoan))+
+    stat('Переплата по %',$m(totBInt),'v-amber')+
+    stat('Итого заплатят',$m(totBPaid),'v-blue');
+
+  const rows=trucks.map((t,i)=>{
+    const c=calcs[i];
+    return`<tr>
+      <td style="font-weight:600">${esc(t.name)}</td>
+      <td class="me">${$m(t.price)}</td><td class="me">${$m(c.myInt)}</td>
+      <td class="by">${$m(c.sell)}</td><td class="by">${$m(t.buyerDP)}</td><td class="by">${$m(c.loan)}</td>
+      <td class="by">${$m(c.mo)}/мес</td>
+      <td class="wk">${c.weeks} нед · ${$m(c.wkPay)}/нед</td>
+      <td class="wk">${$m(c.wkInt)}/нед</td>
+      <td class="by">${$p(c.apr)} · ${$m(c.bint)}</td>
+      <td class="pr">${$m(c.net)}</td>
+    </tr>`;
+  });
+  const avgW=calcs.length?Math.round(calcs.reduce((s,c)=>s+c.weeks,0)/calcs.length):0;
+  const totWkPay=calcs.reduce((s,c)=>s+c.wkPay,0);
+  const totWkInt=calcs.reduce((s,c)=>s+c.wkInt,0);
+  const totMo=calcs.reduce((s,c)=>s+c.mo,0);
+  document.getElementById('sumTable').innerHTML=`
+    <thead>
+      <tr><th></th><th class="me" colspan="2">Я — продавец</th><th class="by" colspan="7">Покупатель</th><th class="pr">Прибыль</th></tr>
+      <tr>
+        <th>Трак</th><th class="me">Куплено за</th><th class="me">% банку</th>
+        <th class="by">Цена продажи</th><th class="by">DP</th><th class="by">Кредит</th>
+        <th class="by">Платёж/мес</th><th class="wk">Нед · /нед</th><th class="wk">Только % /нед</th>
+        <th class="by">APR · переплата</th><th class="pr">Чистая</th>
+      </tr>
+    </thead>
+    <tbody>${rows.join('')}</tbody>
+    <tfoot><tr>
+      <td>Итого</td><td class="me">${$m(total)}</td><td class="me">${$m(bInt)}</td>
+      <td>—</td><td class="by">${$m(totBDP)}</td><td class="by">${$m(totBLoan)}</td>
+      <td class="by">${$m(totMo)}/мес</td>
+      <td class="wk">~${avgW} нед · ${$m(totWkPay)}/нед</td>
+      <td class="wk">${$m(totWkInt)}/нед</td>
+      <td class="by">${$m(totBInt)}</td>
+      <td class="pr">${$m(totNet)}</td>
+    </tr></tfoot>`;
+}
+
+/* Update only result spans inside each truck card — never touch inputs */
+function updateTruckResults(d){
+  const{bMo,calcs}=d;
+  trucks.forEach((t,i)=>{
+    const c=calcs[i];
+    const block=document.querySelector(`.truck-block[data-i="${i}"]`);
+    if(!block)return;
+    /* badges in topbar */
+    const badges=block.querySelectorAll('.badge');
+    if(badges[0])badges[0].textContent=$m(t.price);
+    if(badges[1])badges[1].textContent='Прибыль: '+$m(c.net);
+    /* me-side kv values */
+    const meKvs=block.querySelectorAll('.side-me .kv-v');
+    if(meKvs[0])meKvs[0].textContent=$m(t.price);
+    if(meKvs[1])meKvs[1].textContent=$m(c.share*bMo);
+    if(meKvs[2])meKvs[2].textContent=$m(c.myInt);
+    if(meKvs[3])meKvs[3].textContent=$m(c.totalPaid);
+    if(meKvs[4])meKvs[4].textContent=$m(c.net);
+    /* buyer-side kv values */
+    const byKvs=block.querySelectorAll('.side:not(.side-me) .kv-v');
+    if(byKvs[0])byKvs[0].textContent=$m(c.sell);
+    if(byKvs[1])byKvs[1].textContent=$m(c.loan);
+    if(byKvs[2])byKvs[2].textContent=$p(c.apr);
+    if(byKvs[3])byKvs[3].textContent=$m(c.mo);
+    if(byKvs[4])byKvs[4].textContent=$m(c.bint);
+    if(byKvs[5])byKvs[5].textContent=$m(c.totalPaid);
+    /* week chips */
+    const chips=block.querySelectorAll('.wchip-num');
+    if(chips[0])chips[0].textContent=c.weeks+' нед';
+    if(chips[1])chips[1].textContent=$m(c.wkInt);
+    const chipLbls=block.querySelectorAll('.wchip-lbl');
+    if(chipLbls[0])chipLbls[0].innerHTML=$m(c.wkPay)+' / нед<br>платёж с телом';
+    /* auto-apr hint */
+    const hint=block.querySelector('.auto-apr strong');
+    if(hint)hint.textContent=$p(c.apr);
+  });
+}
+
+function renderTrucks(d){
+  const{bMo,calcs}=d;
+  document.getElementById('trucksList').innerHTML=trucks.map((t,i)=>{
+    const c=calcs[i];
+    const isT=t.aprMode==='target';
+    return`<div class="truck-block" data-i="${i}">
+      <div class="truck-bar">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <input type="text" class="truck-name-input" value="${esc(t.name)}"
+            oninput="trucks[${i}].name=this.value;save();updateTruckResults(computeAll())"
+            title="Переименовать">
+          <span class="badge badge-blue">${$m(t.price)}</span>
+          <span class="badge badge-green">Прибыль: ${$m(c.net)}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-export" onclick="openExport(${i})">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4 6l4 4 4-4M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            График платежей
+          </button>
+          ${trucks.length>1?`<button class="btn btn-rm" onclick="removeTruck(${i})">Удалить</button>`:''}
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="side side-me">
+          <div class="side-hd"><span class="dot dot-blue"></span><span class="side-label">Я — продавец</span></div>
+          <div class="field-row">
+            <div class="field"><label>Цена трака ($)</label>
+              <input type="number" value="${t.price}" step="500"
+                oninput="trucks[${i}].price=parseFloat(this.value)||0;calc()"></div>
+            <div class="field"><label>Наценка markup ($)</label>
+              <input type="number" value="${t.markup}" step="500"
+                oninput="trucks[${i}].markup=parseFloat(this.value)||0;calc()"></div>
+          </div>
+          <div class="kv-list">
+            <div class="kv"><span class="kv-k">Куплено за</span><span class="kv-v v-blue">${$m(t.price)}</span></div>
+            <div class="kv"><span class="kv-k">Мой платёж / мес</span><span class="kv-v v-blue">${$m(c.share*bMo)}</span></div>
+            <div class="kv"><span class="kv-k">Мои % банку</span><span class="kv-v v-amber">${$m(c.myInt)}</span></div>
+            <div class="kv"><span class="kv-k">Получу от покупателя</span><span class="kv-v v-blue">${$m(c.totalPaid)}</span></div>
+            <div class="hr" style="margin:8px 0"></div>
+            <div class="kv"><span class="kv-k" style="font-weight:600">Чистая прибыль</span><span class="kv-v v-green big">${$m(c.net)}</span></div>
+          </div>
+        </div>
+        <div class="side">
+          <div class="side-hd"><span class="dot dot-pink"></span><span class="side-label">Покупатель</span></div>
+          <div class="apr-toggle">
+            <button class="atbtn ${!isT?'on':''}" onclick="trucks[${i}].aprMode='manual';save();fullRender()">Ввести APR</button>
+            <button class="atbtn ${isT?'on':''}" onclick="trucks[${i}].aprMode='target';save();fullRender()">Задать сумму %</button>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>DP покупателя ($)</label>
+              <input type="number" value="${t.buyerDP}" step="500"
+                oninput="trucks[${i}].buyerDP=parseFloat(this.value)||0;calc()"></div>
+            <div class="field"><label>Срок (мес)</label>
+              <input type="number" value="${t.buyerTerm}" min="1" max="60"
+                oninput="trucks[${i}].buyerTerm=parseInt(this.value)||1;calc()"></div>
+            ${!isT
+              ?`<div class="field"><label>APR покупателя (%)</label>
+                  <input type="number" value="${t.buyerApr}" step="0.5"
+                    oninput="trucks[${i}].buyerApr=parseFloat(this.value)||0;calc()"></div>`
+              :`<div class="field"><label>Хочу заработать на % ($)</label>
+                  <input type="number" value="${t.targetInt}" step="100"
+                    oninput="trucks[${i}].targetInt=parseFloat(this.value)||0;calc()">
+                  <div class="auto-apr">Авто APR: <strong>${$p(c.apr)}</strong></div></div>`
+            }
+          </div>
+          <div class="kv-list">
+            <div class="kv"><span class="kv-k">Цена для него</span><span class="kv-v v-pink">${$m(c.sell)}</span></div>
+            <div class="kv"><span class="kv-k">Его кредит</span><span class="kv-v v-pink">${$m(c.loan)}</span></div>
+            <div class="kv"><span class="kv-k">APR</span><span class="kv-v v-pink">${$p(c.apr)}</span></div>
+            <div class="kv"><span class="kv-k">Платёж / мес</span><span class="kv-v v-pink">${$m(c.mo)}</span></div>
+            <div class="kv"><span class="kv-k">Переплата всего</span><span class="kv-v v-amber">${$m(c.bint)}</span></div>
+            <div class="kv"><span class="kv-k">Итого заплатит</span><span class="kv-v v-purple big">${$m(c.totalPaid)}</span></div>
+          </div>
+          <div class="week-row">
+            <div class="wchip wchip-total">
+              <div class="wchip-num">${c.weeks} нед</div>
+              <div class="wchip-lbl">${$m(c.wkPay)} / нед<br>платёж с телом</div>
+            </div>
+            <div class="wchip wchip-int">
+              <div class="wchip-num">${$m(c.wkInt)}</div>
+              <div class="wchip-lbl">только %<br>в неделю</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+function addTruck(){
+  const n=trucks.length+1;
+  trucks.push({name:`Трак ${n}`,price:52000,markup:17000,buyerDP:5000,aprMode:'manual',buyerApr:18,targetInt:4000,buyerTerm:12});
+  save();fullRender();
+}
+function removeTruck(i){trucks.splice(i,1);save();fullRender();}
+
+function openExport(i){
+  exportTruckIndex=i;
+  const t=trucks[i];
+  document.getElementById('exportModalSub').textContent=`${t.name} — еженедельное удержание из зарплаты`;
+  const today=new Date();
+  const wd=parseInt(document.getElementById('exportWeekday').value);
+  const diff=(wd-today.getDay()+7)%7||7;
+  const next=new Date(today);
+  next.setDate(today.getDate()+diff);
+  document.getElementById('exportStartDate').value=next.toISOString().split('T')[0];
+  renderPaySchedule();
+  document.getElementById('exportModal').classList.add('open');
+}
+function closeExport(){document.getElementById('exportModal').classList.remove('open');}
+
+function adjustDateToWeekday(){
+  const wd=parseInt(document.getElementById('exportWeekday').value);
+  const cur=new Date(document.getElementById('exportStartDate').value+'T12:00:00');
+  if(isNaN(cur))return;
+  const diff=(wd-cur.getDay()+7)%7;
+  cur.setDate(cur.getDate()+diff);
+  document.getElementById('exportStartDate').value=cur.toISOString().split('T')[0];
+  renderPaySchedule();
+}
+
+function renderPaySchedule(){
+  const i=exportTruckIndex;
+  if(i<0)return;
+  const t=trucks[i];
+  const bApr=parseFloat(document.getElementById('bankApr').value)||10.5;
+  const bTerm=parseInt(document.getElementById('bankTerm').value)||12;
+  const bl=bankLoan();
+  const bInt=(pmt(bApr,bTerm,bl)*bTerm)-bl;
+  const total=trucks.reduce((s,t)=>s+t.price,0);
+  const c=truckCalc(t,bInt,total);
+
+  const startStr=document.getElementById('exportStartDate').value;
+  const startDate=new Date(startStr+'T12:00:00');
+  if(isNaN(startDate)){document.getElementById('payScheduleOut').innerHTML='<p style="color:var(--text2);font-size:13px;margin-top:10px">Выберите дату начала платежей</p>';return;}
+
+  const weeklyPmt=c.wkPay;
+  const weeks=c.weeks;
+  const loan=c.loan;
+  const aprWeekly=c.apr/100/52;
+
+  let balance=loan;
+  let rows='';
+  let curDate=new Date(startDate);
+  let totalInt=0,totalPrincipal=0;
+
+  for(let w=1;w<=weeks;w++){
+    let intPart,principalPart,payment;
+    if(aprWeekly>0){
+      intPart=balance*aprWeekly;
+      payment=w<weeks?weeklyPmt:balance+balance*aprWeekly;
+      principalPart=payment-intPart;
+    } else {
+      intPart=0;
+      principalPart=w<weeks?loan/weeks:balance;
+      payment=principalPart;
+    }
+    if(principalPart>balance)principalPart=balance;
+    balance=Math.max(0,balance-principalPart);
+    totalInt+=intPart;
+    totalPrincipal+=principalPart;
+
+    const dateStr=curDate.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+    rows+=`<tr>
+      <td style="color:var(--text2)">${w}</td>
+      <td class="date">${dateStr}</td>
+      <td class="amt">${$m(payment)}</td>
+      <td class="bal">${$m(balance)}</td>
+    </tr>`;
+    curDate.setDate(curDate.getDate()+7);
+  }
+
+  document.getElementById('payScheduleOut').innerHTML=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;margin-bottom:4px">
+      <div class="stat" style="flex:1;min-width:100px"><div class="lbl">Платёж/нед</div><div class="val v-purple">${$m(weeklyPmt)}</div></div>
+      <div class="stat" style="flex:1;min-width:100px"><div class="lbl">Недель</div><div class="val">${weeks}</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="pay-table">
+        <thead><tr>
+          <th>#</th><th>Дата</th><th style="text-align:right">Платёж</th>
+          <th style="text-align:right">Остаток</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr>
+          <td colspan="2">Итого</td>
+          <td class="amt">${$m(totalPrincipal+totalInt)}</td>
+          <td class="bal">$0</td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+}
+
+document.getElementById('exportStartDate').addEventListener('input',renderPaySchedule);
+
+function printSchedule(){
+  const t=trucks[exportTruckIndex];
+  const content=document.getElementById('payScheduleOut').innerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>График платежей — ${t.name}</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#111}
+  h1{font-size:16px;margin-bottom:4px}p{color:#666;font-size:12px;margin-bottom:16px}
+  .stat{display:inline-block;background:#f5f5f5;border-radius:6px;padding:8px 12px;margin:0 6px 10px 0}
+  .stat .lbl{font-size:10px;color:#888;margin-bottom:2px}.stat .val{font-size:15px;font-weight:600}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th{background:#f0f0f0;padding:6px 8px;text-align:left;font-size:11px;border-bottom:1px solid #ddd}
+  td{padding:6px 8px;border-bottom:1px solid #eee;font-size:11px}
+  tfoot td{font-weight:600;background:#f5f5f5;border-top:2px solid #ccc}
+  td:nth-child(3),td:nth-child(4){text-align:right}
+  th:nth-child(3),th:nth-child(4){text-align:right}
+  @media print{body{padding:10px}}</style>
+  </head><body>
+  <h1>График платежей — ${t.name}</h1>
+  <p>Еженедельное удержание из зарплаты · Дата старта: ${document.getElementById('exportStartDate').value}</p>
+  ${content}
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+
+function openBankExport(){
+  const today=new Date();
+  // Default to 1st of next month
+  const next=new Date(today.getFullYear(), today.getMonth()+1, 1);
+  document.getElementById('bankExportStartDate').value=next.toISOString().split('T')[0];
+  renderBankPaySchedule();
+  document.getElementById('bankExportModal').classList.add('open');
+}
+function closeBankExport(){document.getElementById('bankExportModal').classList.remove('open');}
+
+function adjustBankDateToWeekday(){} // no-op, kept for safety
+
+function renderBankPaySchedule(){
+  const bApr=parseFloat(document.getElementById('bankApr').value)||10.5;
+  const bTerm=parseInt(document.getElementById('bankTerm').value)||12;
+  const bl=bankLoan(),bd=bankDP();
+  const bMo=pmt(bApr,bTerm,bl);
+  const bTotal=bMo*bTerm;
+  const bInt=bTotal-bl;
+
+  const startStr=document.getElementById('bankExportStartDate').value;
+  const startDate=new Date(startStr+'T12:00:00');
+  if(isNaN(startDate.getTime())){
+    document.getElementById('bankPayScheduleOut').innerHTML='<p style="color:var(--text2);font-size:13px;margin-top:10px">Выберите дату первого платежа</p>';
+    return;
+  }
+
+  const aprMo=bApr/100/12;
+  let balance=bl;
+  let rows='';
+  let totalPaid=0, totalInt=0, totalPrincipal=0;
+  // yearly accumulators
+  let yrPaid=0, yrInt=0, yrPrincipal=0;
+  let curYear=startDate.getFullYear();
+
+  // build date by advancing month by month
+  let curDate=new Date(startDate);
+
+  for(let m=1;m<=bTerm;m++){
+    const intPart=balance*aprMo;
+    let payment=m<bTerm?bMo:balance+balance*aprMo;
+    let principalPart=payment-intPart;
+    if(principalPart>balance){principalPart=balance;payment=principalPart+intPart;}
+    balance=Math.max(0,balance-principalPart);
+
+    totalPaid+=payment; totalInt+=intPart; totalPrincipal+=principalPart;
+    yrPaid+=payment; yrInt+=intPart; yrPrincipal+=principalPart;
+
+    const dateStr=curDate.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+    rows+=`<tr>
+      <td style="color:var(--text2);text-align:center">${m}</td>
+      <td class="date">${dateStr}</td>
+      <td class="amt">${$m(payment)}</td>
+      <td class="int">${$m(intPart)}</td>
+      <td style="text-align:right;color:var(--text2)">${$m(principalPart)}</td>
+      <td class="bal">${$m(balance)}</td>
+    </tr>`;
+
+    // advance to next month
+    const nextDate=new Date(curDate);
+    nextDate.setMonth(nextDate.getMonth()+1);
+    const nextYear=nextDate.getFullYear();
+
+    // yearly subtotal — insert after last month of curYear or last month overall
+    if(nextYear!==curYear || m===bTerm){
+      rows+=`<tr style="background:var(--amber-bg)">
+        <td colspan="2" style="font-weight:600;font-size:11px;color:var(--amber-mid);padding:6px 10px">Итого ${curYear}</td>
+        <td class="amt" style="background:var(--amber-bg)">${$m(yrPaid)}</td>
+        <td class="int" style="background:var(--amber-bg)">${$m(yrInt)}</td>
+        <td style="text-align:right;color:var(--text2);background:var(--amber-bg)">${$m(yrPrincipal)}</td>
+        <td style="background:var(--amber-bg)"></td>
+      </tr>`;
+      yrPaid=0; yrInt=0; yrPrincipal=0;
+      curYear=nextYear;
+    }
+
+    curDate=nextDate;
+  }
+
+  document.getElementById('bankPayScheduleOut').innerHTML=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;margin-bottom:8px">
+      <div class="stat" style="flex:1;min-width:110px"><div class="lbl">Платёж / мес</div><div class="val v-blue">${$m(bMo)}</div></div>
+      <div class="stat" style="flex:1;min-width:110px"><div class="lbl">Месяцев</div><div class="val">${bTerm}</div></div>
+      <div class="stat" style="flex:1;min-width:110px"><div class="lbl">Проценты банку</div><div class="val v-amber">${$m(bInt)}</div></div>
+      <div class="stat" style="flex:1;min-width:110px"><div class="lbl">Всего выплат (без DP)</div><div class="val v-amber">${$m(totalPaid)}</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="pay-table">
+        <thead><tr>
+          <th style="text-align:center">#</th>
+          <th>Дата</th>
+          <th style="text-align:right">Платёж</th>
+          <th style="text-align:right">в т.ч. %</th>
+          <th style="text-align:right">Тело долга</th>
+          <th style="text-align:right">Остаток</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr>
+          <td colspan="2">Итого</td>
+          <td class="amt">${$m(totalPaid)}</td>
+          <td class="int">${$m(totalInt)}</td>
+          <td style="text-align:right">${$m(totalPrincipal)}</td>
+          <td class="bal">$0</td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+}
+
+function printBankSchedule(){
+  const content=document.getElementById('bankPayScheduleOut').innerHTML;
+  const bApr=parseFloat(document.getElementById('bankApr').value)||10.5;
+  const bTerm=parseInt(document.getElementById('bankTerm').value)||12;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>График платежей банку</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#111}
+  h1{font-size:16px;margin-bottom:4px}p{color:#666;font-size:12px;margin-bottom:16px}
+  .stat{display:inline-block;background:#f5f5f5;border-radius:6px;padding:8px 12px;margin:0 6px 10px 0}
+  .stat .lbl{font-size:10px;color:#888;margin-bottom:2px}.stat .val{font-size:15px;font-weight:600}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th{background:#f0f0f0;padding:6px 8px;text-align:left;font-size:11px;border-bottom:1px solid #ddd}
+  td{padding:6px 8px;border-bottom:1px solid #eee;font-size:11px}
+  td:nth-child(3),td:nth-child(4),td:nth-child(5),td:nth-child(6){text-align:right}
+  th:nth-child(3),th:nth-child(4),th:nth-child(5),th:nth-child(6){text-align:right}
+  tfoot td{font-weight:600;background:#f5f5f5;border-top:2px solid #ccc}
+  tr[data-yr]{background:#fff8ee}
+  .yr-row{background:#fff3e0;font-weight:600}
+  @media print{body{padding:10px}}</style>
+  </head><body>
+  <h1>График платежей банку</h1>
+  <p>APR ${bApr}% · Срок ${bTerm} мес · Первый платёж: ${document.getElementById('bankExportStartDate').value}</p>
+  ${content}
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>w.print(),400);
+}
+
+document.getElementById('bankExportModal').addEventListener('click',function(e){
+  if(e.target===this)closeBankExport();
+});
+document.getElementById('bankExportStartDate').addEventListener('input',renderBankPaySchedule);
+
+function save(){
+  try{
+    const state={
+      bankApr:document.getElementById('bankApr').value,
+      bankTerm:document.getElementById('bankTerm').value,
+      bankMode:document.getElementById('bankMode').value,
+      bankDP:document.getElementById('bankDP').value,
+      bankLoanDirect:document.getElementById('bankLoanDirect').value,
+      trucks:JSON.parse(JSON.stringify(trucks))
+    };
+    localStorage.setItem('truckCalc_v1',JSON.stringify(state));
+    const n=document.getElementById('savedNotice');
+    n.classList.add('show');
+    clearTimeout(n._t);
+    n._t=setTimeout(()=>n.classList.remove('show'),1800);
+  }catch(e){}
+}
+
+function load(){
+  try{
+    const raw=localStorage.getItem('truckCalc_v1');
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    if(s.bankApr)document.getElementById('bankApr').value=s.bankApr;
+    if(s.bankTerm)document.getElementById('bankTerm').value=s.bankTerm;
+    if(s.bankMode){document.getElementById('bankMode').value=s.bankMode;toggleBankMode();}
+    if(s.bankDP)document.getElementById('bankDP').value=s.bankDP;
+    if(s.bankLoanDirect)document.getElementById('bankLoanDirect').value=s.bankLoanDirect;
+    if(s.trucks&&s.trucks.length)trucks=s.trucks;
+  }catch(e){}
+}
+
+function resetAll(){
+  if(!confirm('Сбросить все данные?'))return;
+  localStorage.removeItem('truckCalc_v1');
+  location.reload();
+}
+
+document.getElementById('exportModal').addEventListener('click',function(e){
+  if(e.target===this)closeExport();
+});
+
+load();
+fullRender();
+</script>
+</body>
+</html>
