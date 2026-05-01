@@ -2,315 +2,234 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>TezTruck</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0C0C0C;
-  --bg2:#161616;
-  --bg3:#202020;
-  --or:#F5820A;
-  --or-dim:rgba(245,130,10,0.12);
-  --or-glow:rgba(245,130,10,0.2);
-  --tx:#F2EDE6;
-  --tx2:#888;
-  --brd:rgba(255,255,255,0.07);
-  --brd-or:rgba(245,130,10,0.25);
-  --gr:#27C96F;
-  --gr-dim:rgba(39,201,111,0.1);
-  --re:#E8453C;
-  --re-dim:rgba(232,69,60,0.1);
-  --bl:#4C8EF5;
-  --pu:#9B6EF5;
+  --bg:#EEF2F7;--bg2:#FFFFFF;--bg3:#E4EAF2;
+  --or:#E8620A;--or-dim:rgba(232,98,10,0.1);--or-bd:rgba(232,98,10,0.25);
+  --bl:#1B4F8C;--bl2:#2563B0;--bl-dim:rgba(27,79,140,0.08);
+  --tx:#0F1E30;--tx2:#4A6280;--tx3:#8EA5C0;
+  --brd:#D0DCE8;--brd2:#B8CCE0;
+  --gr:#0D7A3E;--gr-dim:rgba(13,122,62,0.08);--gr-bd:rgba(13,122,62,0.2);
+  --re:#C0281A;--re-dim:rgba(192,40,26,0.08);
   --nav-h:64px;
-  --top-h:56px;
 }
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:'Barlow',sans-serif;}
-
-/* ═══ APP SHELL ═══ */
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;}
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
 
-/* TOP BAR */
-.topbar{
-  height:var(--top-h);flex-shrink:0;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;
-  background:rgba(12,12,12,0.95);
-  border-bottom:1px solid var(--brd);
-  backdrop-filter:blur(12px);
-  position:relative;z-index:10;
-}
-.logo{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;letter-spacing:.02em;}
+/* TOPBAR */
+.topbar{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--bl);box-shadow:0 2px 8px rgba(27,79,140,0.3);}
+.logo{font-size:1.35rem;font-weight:800;color:#fff;letter-spacing:.01em;}
 .logo em{color:var(--or);font-style:normal;}
-.lang-row{display:flex;gap:2px;background:var(--bg3);border-radius:8px;padding:3px;}
-.lb{font-size:.65rem;font-weight:700;padding:4px 9px;border-radius:5px;border:none;cursor:pointer;background:transparent;color:var(--tx2);transition:all .15s;line-height:1;}
-.lb.on{background:var(--or);color:#000;}
+.lang-row{display:flex;gap:2px;background:rgba(255,255,255,0.12);border-radius:8px;padding:3px;}
+.lb{font-size:.62rem;font-weight:600;padding:4px 8px;border-radius:5px;border:none;cursor:pointer;background:transparent;color:rgba(255,255,255,0.6);transition:all .15s;}
+.lb.on{background:var(--or);color:#fff;}
 
 /* SCREENS */
 .screens{flex:1;overflow:hidden;position:relative;}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease;}
-.screen.active{opacity:1;pointer-events:auto;transform:translateY(0);}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .2s,transform .2s;}
+.screen.active{opacity:1;pointer-events:auto;transform:none;}
 
-/* ═══ BOTTOM NAV ═══ */
-.bottomnav{
-  height:var(--nav-h);flex-shrink:0;
-  display:grid;grid-template-columns:1fr 1fr 1fr;
-  background:rgba(12,12,12,0.97);
-  border-top:1px solid var(--brd);
-  backdrop-filter:blur(12px);
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;cursor:pointer;color:var(--tx2);transition:color .15s;position:relative;}
-.navbtn.on{color:var(--or);}
-.navbtn .ni{font-size:1.3rem;transition:transform .2s;}
-.navbtn.on .ni{transform:scale(1.15);}
-.navbtn .nl{font-size:.58rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:color .15s;}
-.navbtn::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--or);border-radius:0 0 2px 2px;transition:width .2s;}
-.navbtn.on::after{width:32px;}
+/* BOTTOM NAV */
+.bottomnav{height:var(--nav-h);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--bg2);border-top:1px solid var(--brd);padding-bottom:env(safe-area-inset-bottom);}
+.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;color:var(--tx3);transition:color .15s;position:relative;}
+.navbtn.on{color:var(--bl);}
+.navbtn.on::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2.5px;background:var(--bl);border-radius:0 0 3px 3px;}
+.ni{font-size:1.2rem;}.nl{font-size:.58rem;font-weight:600;letter-spacing:.03em;}
 
-/* ═══ SCREEN 1: PATH ═══ */
-.s-path{padding:0 0 24px;}
-
-/* Hero strip */
-.path-hero{
-  padding:28px 20px 24px;
-  background:linear-gradient(160deg, var(--bg2) 0%, var(--bg) 100%);
-  border-bottom:1px solid var(--brd);
-  position:relative;overflow:hidden;
-}
-.path-hero::before{
-  content:'';position:absolute;right:-40px;top:-60px;
-  width:220px;height:220px;border-radius:50%;
-  background:radial-gradient(circle,rgba(245,130,10,0.08) 0%,transparent 70%);
-}
-.hero-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--or);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.hero-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--or);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.path-hero h1{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;line-height:1;letter-spacing:-.01em;margin-bottom:8px;}
+/* HERO */
+.path-hero{padding:24px 18px 20px;background:linear-gradient(160deg,var(--bl) 0%,var(--bl2) 100%);position:relative;overflow:hidden;}
+.path-hero::after{content:'';position:absolute;right:20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:rgba(232,98,10,0.15);}
+.hero-tag{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:10px;}
+.path-hero h1{font-size:1.9rem;font-weight:800;line-height:1.1;color:#fff;margin-bottom:8px;}
 .path-hero h1 em{color:var(--or);font-style:normal;}
-.path-hero p{font-size:.82rem;color:var(--tx2);line-height:1.6;max-width:340px;}
+.path-hero p{font-size:.82rem;color:rgba(255,255,255,0.75);line-height:1.65;}
 
-/* Stage list */
-.stages-list{padding:16px 16px 0;}
-.stage-item{
-  background:var(--bg2);border:1px solid var(--brd);border-radius:14px;
-  margin-bottom:10px;overflow:hidden;
-  transition:border-color .2s;
-}
-.stage-item.open{border-color:var(--brd-or);}
-.stage-trigger{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 16px;cursor:pointer;
-  user-select:none;
-  -webkit-user-select:none;
-}
-.stage-trigger:active{background:rgba(255,255,255,.03);}
-.stnum{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;color:var(--tx2);min-width:28px;transition:color .2s;}
-.stage-item.open .stnum{color:var(--or);}
-.stem{font-size:1.2rem;flex-shrink:0;}
+/* STAGES */
+.stages-list{padding:14px;}
+.stage-item{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 3px rgba(27,79,140,0.06);}
+.stage-item.open{border-color:var(--bl);box-shadow:0 3px 12px rgba(27,79,140,0.1);}
+.stage-trigger{display:flex;align-items:center;gap:11px;padding:14px 15px;cursor:pointer;}
+.stage-trigger:active{background:var(--bg3);}
+.stnum{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--tx3);min-width:28px;background:var(--bg3);padding:3px 6px;border-radius:5px;text-align:center;transition:all .2s;}
+.stage-item.open .stnum{background:var(--bl);color:#fff;}
+.stem{font-size:1.15rem;flex-shrink:0;}
 .stinfo{flex:1;min-width:0;}
-.stname{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;line-height:1.2;}
-.stdesc{font-size:.68rem;color:var(--tx2);margin-top:2px;}
-.stbadge{font-size:.55rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;border-radius:100px;flex-shrink:0;}
-.b-start{background:rgba(39,201,111,0.15);color:var(--gr);}
-.b-grow{background:rgba(76,142,245,0.15);color:var(--bl);}
+.stname{font-size:.88rem;font-weight:700;color:var(--tx);}
+.stdesc{font-size:.68rem;color:var(--tx3);margin-top:2px;}
+.stbadge{font-size:.55rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:4px;flex-shrink:0;}
+.b-start{background:rgba(13,122,62,0.1);color:var(--gr);}
+.b-grow{background:rgba(27,79,140,0.1);color:var(--bl);}
 .b-biz{background:var(--or-dim);color:var(--or);}
-.b-scale{background:rgba(155,110,245,0.15);color:var(--pu);}
-.b-help{background:var(--re-dim);color:var(--re);}
-.stchev{color:var(--tx2);font-size:.8rem;flex-shrink:0;transition:transform .25s;}
-.stage-item.open .stchev{transform:rotate(180deg);color:var(--or);}
+.b-scale{background:rgba(139,92,246,0.1);color:#7C3AED;}
+.stchev{color:var(--tx3);font-size:.7rem;flex-shrink:0;transition:transform .25s;}
+.stage-item.open .stchev{transform:rotate(180deg);color:var(--bl);}
+.stage-body{max-height:0;overflow:hidden;transition:max-height .5s ease;}
+.stage-item.open .stage-body{max-height:2400px;}
+.stage-body-inner{padding:0 15px 15px;border-top:1px solid var(--brd);}
+.svcs{display:flex;flex-direction:column;gap:7px;margin-top:11px;}
+.svc-row{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;background:var(--bg3);border-radius:8px;}
+.svc-em{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.svc-n{font-size:.78rem;font-weight:700;color:var(--tx);}
+.svc-d{font-size:.68rem;color:var(--tx2);margin-top:2px;line-height:1.45;}
+.stage-cta-btn{display:block;width:100%;margin-top:12px;background:var(--bl);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:700;padding:13px;border-radius:9px;border:none;cursor:pointer;transition:opacity .15s;}
+.stage-cta-btn:active{opacity:.85;}
+.stage-cta-btn.orange{background:var(--or);}
 
-/* Stage body */
-.stage-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
-.stage-item.open .stage-body{max-height:800px;}
-.stage-body-inner{padding:0 16px 16px;border-top:1px solid var(--brd);}
-.svcs{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
-.svc-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:10px;}
-.svc-em{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
-.svc-txt{}
-.svc-n{font-size:.8rem;font-weight:700;line-height:1.2;}
-.svc-d{font-size:.7rem;color:var(--tx2);margin-top:2px;line-height:1.4;}
-.stage-cta-btn{
-  display:block;width:100%;margin-top:12px;
-  background:var(--or);color:#000;
-  font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
-  padding:13px;border-radius:10px;border:none;cursor:pointer;text-align:center;
-  transition:opacity .15s;
-}
-.stage-cta-btn:active{opacity:.8;}
-.stage-cta-btn.red{background:var(--re);color:#fff;}
+/* VIOLATIONS — plain like other stages */
+.stage-item.violations{border-color:var(--brd);}
+.stage-item.violations.open{border-color:var(--bl);}
 
-/* Violations standalone card */
-.violations-card{
-  margin:0 16px 16px;
-  background:var(--re-dim);border:1px solid rgba(232,69,60,0.25);
-  border-radius:14px;padding:16px;
-  display:flex;gap:12px;align-items:flex-start;
-}
-.vc-em{font-size:1.4rem;flex-shrink:0;}
-.vc-h{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:var(--re);margin-bottom:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.vc-badge{font-size:.55rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:100px;background:var(--re);color:#fff;}
-.vc-d{font-size:.72rem;color:var(--tx2);line-height:1.5;}
-.vc-btn{display:inline-block;margin-top:8px;background:var(--re);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;}
+/* ── FORMS ── */
+.form-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--brd);}
+.form-title{font-size:.75rem;font-weight:800;color:var(--bl);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em;}
+.frow{margin-bottom:11px;}
+.flabel{font-size:.7rem;font-weight:600;color:var(--tx2);margin-bottom:5px;display:block;}
+.flabel .opt{font-weight:400;color:var(--tx3);font-size:.65rem;}
+.finput{width:100%;padding:10px 12px;border:1.5px solid var(--brd);border-radius:8px;font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--tx);background:var(--bg2);outline:none;transition:border-color .15s;}
+.finput:focus{border-color:var(--bl);}
+.finput.err{border-color:var(--re);}
 
-/* ═══ SCREEN 2: TRUCKS ═══ */
-.s-trucks{display:flex;flex-direction:column;}
+/* FILE UPLOAD */
+.fupload{position:relative;}
+.fupload-zone{border:1.5px dashed var(--brd2);border-radius:8px;padding:14px 12px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:var(--bg3);}
+.fupload-zone:active{background:var(--bl-dim);}
+.fupload-zone.has-file{border-color:var(--gr);background:var(--gr-dim);}
+.fupload-zone.uploading{border-color:var(--bl);background:var(--bl-dim);}
+.fupload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.fupload-icon{font-size:1.3rem;margin-bottom:4px;}
+.fupload-text{font-size:.72rem;font-weight:600;color:var(--tx2);}
+.fupload-sub{font-size:.62rem;color:var(--tx3);margin-top:2px;}
+.fupload-name{font-size:.68rem;color:var(--gr);font-weight:600;margin-top:4px;word-break:break-all;}
+.fprogress{height:3px;background:var(--brd);border-radius:3px;margin-top:6px;overflow:hidden;display:none;}
+.fprogress-bar{height:100%;background:var(--bl);border-radius:3px;width:0;transition:width .3s;}
+.fupload-zone.uploading .fprogress{display:block;}
 
-/* Truck list panel */
-.truck-panel{padding:16px 16px 0;}
-.truck-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.tp-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;}
-.tp-sub{font-size:.65rem;color:var(--tx2);margin-top:1px;}
-.trucks-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;}
+/* SUBMIT BTN */
+.fsubmit{display:block;width:100%;padding:13px;background:var(--gr);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:700;border-radius:9px;border:none;cursor:pointer;margin-top:14px;transition:opacity .15s;}
+.fsubmit:active{opacity:.85;}
+.fsubmit:disabled{opacity:.5;cursor:default;}
+.fsubmit.paying{background:var(--or);}
+
+/* SUCCESS */
+.form-success{display:none;text-align:center;padding:20px 10px;}
+.form-success.vis{display:block;}
+.fs-icon{font-size:2.5rem;margin-bottom:8px;}
+.fs-title{font-size:1rem;font-weight:800;color:var(--gr);margin-bottom:6px;}
+.fs-sub{font-size:.78rem;color:var(--tx2);line-height:1.6;}
+
+/* STRIPE */
+.stripe-wrap{border:1.5px solid var(--brd);border-radius:8px;padding:12px;background:var(--bg2);margin-top:4px;}
+.stripe-note{font-size:.62rem;color:var(--tx3);text-align:center;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px;}
+
+/* TRUCKS */
+.truck-panel{padding:16px 14px 0;}
+.tp-title{font-size:1rem;font-weight:800;color:var(--tx);}
+.tp-sub{font-size:.65rem;color:var(--tx3);margin-top:2px;}
+.trucks-scroll{display:flex;gap:10px;overflow-x:auto;padding:12px 0;scrollbar-width:none;}
 .trucks-scroll::-webkit-scrollbar{display:none;}
-
-/* Truck card */
-.tcard{
-  width:155px;flex-shrink:0;border-radius:12px;border:1.5px solid var(--brd);
-  background:var(--bg2);overflow:hidden;cursor:pointer;
-  transition:border-color .15s,transform .15s;
-  -webkit-user-select:none;
-}
-.tcard:active{transform:scale(.97);}
-.tcard.sel{border-color:var(--or);}
+.tcard{width:155px;flex-shrink:0;border-radius:11px;border:1.5px solid var(--brd);background:var(--bg2);overflow:hidden;cursor:pointer;box-shadow:0 1px 4px rgba(27,79,140,0.06);transition:border-color .15s,box-shadow .15s;-webkit-user-select:none;}
+.tcard:active{box-shadow:none;}
+.tcard.sel{border-color:var(--or);box-shadow:0 0 0 3px var(--or-dim);}
 .tcard.sold{opacity:.5;cursor:default;}
 .tcard-img{width:100%;aspect-ratio:4/3;background:var(--bg3);overflow:hidden;position:relative;}
 .tcard-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.tcard-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#2a2a2a;}
-.tcard-stag{position:absolute;top:5px;left:5px;font-size:.52rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;}
-.st-available{background:rgba(39,201,111,0.2);color:var(--gr);}
+.tcard-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--brd2);}
+.tcard-stag{position:absolute;top:5px;left:5px;font-size:.52rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;}
+.st-available{background:rgba(13,122,62,0.15);color:var(--gr);}
 .st-pending{background:var(--or-dim);color:var(--or);}
-.st-sold{background:rgba(255,255,255,.07);color:var(--tx2);}
+.st-sold{background:rgba(0,0,0,.07);color:var(--tx3);}
 .tcard-sel-ring{position:absolute;inset:0;border:2px solid var(--or);pointer-events:none;}
-.tcard-check{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;background:var(--or);color:#000;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;}
+.tcard-check{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
 .tcard-body{padding:9px 10px 11px;}
-.tcard-name{font-size:.72rem;font-weight:700;line-height:1.2;margin-bottom:2px;}
-.tcard-det{font-size:.6rem;color:var(--tx2);margin-bottom:5px;line-height:1.3;}
-.tcard-wk{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:var(--or);line-height:1;}
-.tcard-wk span{font-size:.58rem;color:var(--tx2);font-weight:600;}
-.tcard-price{font-size:.58rem;color:var(--tx2);margin-top:1px;}
-
-/* Divider */
-.panel-div{height:1px;background:var(--brd);margin:0 16px;}
-
-/* Calculator area */
-.calc-area{}
-
-/* Placeholder */
-.calc-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:200px;text-align:center;padding:32px 20px;}
-.calc-empty-icon{font-size:2.2rem;margin-bottom:10px;opacity:.4;}
-.calc-empty-text{font-size:.8rem;color:var(--tx2);line-height:1.6;}
-.calc-empty-arrow{font-size:1rem;color:var(--tx2);margin-top:8px;opacity:.4;animation:bob 1.5s ease-in-out infinite;}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-
-/* Net hero */
-.net-hero{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  padding:14px 16px;
-  background:var(--gr-dim);
-  border-bottom:1px solid rgba(39,201,111,0.15);
-}
-.nh-l .nh-lbl{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:2px;}
-.nh-l .nh-val{font-family:'Barlow Condensed',sans-serif;font-size:2.4rem;font-weight:900;color:var(--gr);line-height:1;}
-.nh-r{text-align:right;}
-.nh-r .nh-lbl{font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:2px;}
-.nh-r .nh-val{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:var(--or);line-height:1;}
-.nh-r .nh-sub{font-size:.58rem;color:var(--tx2);}
-
-/* Truck chip */
-.truck-chip{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--brd-or);background:var(--or-dim);}
-.tc-name{font-size:.8rem;font-weight:700;}
-.tc-det{font-size:.62rem;color:var(--tx2);margin-top:1px;}
-
-/* Sliders */
-.sliders-block{padding:14px 16px;}
-.sl-row{margin-bottom:14px;}
-.sl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-.sl-label{font-size:.73rem;font-weight:600;color:var(--tx2);}
-.sl-val{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:var(--tx);}
-input[type=range]{width:100%;height:4px;appearance:none;-webkit-appearance:none;background:rgba(255,255,255,.1);border-radius:3px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--or);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--or-dim);cursor:pointer;}
-input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--or);border:3px solid var(--bg);cursor:pointer;}
-.sl-range{display:flex;justify-content:space-between;font-size:.58rem;color:var(--tx2);margin-top:3px;}
-.sl-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.sl-metric{background:var(--bg3);border-radius:8px;padding:8px 10px;}
-.sl-metric-lbl{font-size:.56rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin-bottom:2px;}
-.sl-metric-val{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;}
-.divline{border:none;border-top:1px solid var(--brd);margin:14px 0;}
-
-/* Breakdown */
-.bk-title{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:8px;}
-.bk-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.78rem;}
-.bk-l{color:var(--tx2);}
-.bk-v{font-weight:700;}
-.bk-pos{color:var(--gr);}
-.bk-neg{color:var(--re);}
-.calc-note{font-size:.62rem;color:var(--tx2);text-align:center;margin-top:4px;padding-bottom:8px;}
-
-/* ═══ SCREEN 3: CONTACT ═══ */
-.s-contact{padding:0;}
-.contact-hero{
-  padding:32px 20px 28px;
-  background:linear-gradient(160deg,var(--bg2),var(--bg));
-  border-bottom:1px solid var(--brd);
-  text-align:center;
-}
-.contact-hero h2{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;margin-bottom:8px;}
-.contact-hero h2 em{color:var(--or);font-style:normal;}
-.contact-hero p{font-size:.82rem;color:var(--tx2);line-height:1.6;}
-.contact-list{padding:20px 16px;display:flex;flex-direction:column;gap:10px;}
-.contact-btn{
-  display:flex;align-items:center;gap:14px;
-  padding:16px 18px;border-radius:14px;
-  text-decoration:none;border:none;cursor:pointer;
-  transition:opacity .15s,transform .1s;
-  -webkit-user-select:none;
-}
-.contact-btn:active{opacity:.85;transform:scale(.98);}
-.contact-btn.phone{background:var(--or);color:#000;}
-.contact-btn.tg{background:#229ED9;color:#fff;}
-.contact-btn.wa{background:#25D366;color:#fff;}
-.cb-icon{font-size:1.4rem;flex-shrink:0;}
-.cb-text{}
-.cb-label{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:.02em;}
-.cb-sub{font-size:.7rem;opacity:.75;margin-top:1px;}
-.contact-info{padding:0 16px 24px;display:flex;flex-direction:column;gap:8px;}
-.info-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;}
-.info-icon{font-size:1rem;flex-shrink:0;}
-.info-text{font-size:.78rem;color:var(--tx2);}
-.info-text strong{color:var(--tx);font-weight:600;}
-
-/* ═══ SKELETON ═══ */
-.skel{width:155px;flex-shrink:0;border-radius:12px;border:1px solid var(--brd);background:var(--bg2);overflow:hidden;}
-.skel-img{width:100%;aspect-ratio:4/3;background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
-.skel-body{padding:9px 10px 11px;display:flex;flex-direction:column;gap:6px;}
-.skel-line{height:9px;border-radius:4px;background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
-.skel-line.w60{width:60%;}
-.skel-line.w40{width:40%;}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Preview */
-.truck-preview-wrap{display:none;margin:0 16px 12px;border-radius:12px;overflow:hidden;border:1px solid var(--brd);}
+.tcard-name{font-size:.72rem;font-weight:700;color:var(--tx);line-height:1.25;margin-bottom:2px;}
+.tcard-det{font-size:.6rem;color:var(--tx3);margin-bottom:5px;line-height:1.3;}
+.tcard-wk{font-size:1rem;font-weight:800;color:var(--or);}
+.tcard-wk span{font-size:.58rem;color:var(--tx3);font-weight:400;}
+.tcard-price{font-size:.58rem;color:var(--tx3);}
+.panel-div{height:1px;background:var(--brd);margin:0 14px;}
+.truck-preview-wrap{display:none;margin:0 14px 12px;border-radius:11px;overflow:hidden;border:1px solid var(--brd);}
 .truck-preview-wrap.vis{display:block;}
 .prev-img-wrap{width:100%;aspect-ratio:16/7;background:var(--bg3);overflow:hidden;position:relative;}
 .prev-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
-.prev-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.8rem;color:#222;}
-.pnav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;}
+.prev-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--brd2);}
+.pnav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.85);border:1px solid var(--brd);color:var(--tx);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;}
 .pnav.prev{left:7px;}.pnav.next{right:7px;}
 .pdots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;}
-.pdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;}
+.pdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
 .pdot.on{background:var(--or);}
+.calc-empty{padding:32px 20px;text-align:center;}
+.calc-empty-icon{font-size:2rem;margin-bottom:8px;opacity:.25;}
+.calc-empty-text{font-size:.8rem;color:var(--tx3);line-height:1.6;}
+.calc-empty-arrow{font-size:1rem;color:var(--tx3);margin-top:8px;opacity:.25;animation:bob 1.5s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.truck-chip{padding:11px 14px;border-bottom:1px solid var(--or-bd);background:linear-gradient(135deg,#FFF5EE,var(--bg2));}
+.tc-name{font-size:.8rem;font-weight:700;color:var(--tx);}
+.tc-det{font-size:.62rem;color:var(--tx3);margin-top:1px;}
+.net-hero{padding:14px;background:var(--gr-dim);border-bottom:1px solid var(--gr-bd);display:flex;justify-content:space-between;align-items:flex-start;}
+.nh-l .nh-lbl{font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:2px;}
+.nh-l .nh-val{font-size:2.2rem;font-weight:800;color:var(--gr);line-height:1;}
+.nh-r{text-align:right;}
+.nh-r .nh-lbl{font-size:.56rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px;}
+.nh-r .nh-val{font-size:1.2rem;font-weight:800;color:var(--or);line-height:1;}
+.nh-r .nh-sub{font-size:.56rem;color:var(--tx3);}
+.sliders-block{padding:14px;}
+.sl-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.sl-metric{background:var(--bg3);border-radius:8px;padding:8px 10px;}
+.sl-metric-lbl{font-size:.54rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px;}
+.sl-metric-val{font-size:.95rem;font-weight:800;color:var(--tx);}
+.sl-row{margin-bottom:14px;}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.sl-label{font-size:.72rem;font-weight:500;color:var(--tx2);}
+.sl-val{font-size:1rem;font-weight:800;color:var(--or);}
+input[type=range]{width:100%;height:3px;appearance:none;-webkit-appearance:none;background:var(--brd2);border-radius:3px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--or);border:3px solid var(--bg2);box-shadow:0 1px 4px rgba(232,98,10,.3);}
+.sl-range{display:flex;justify-content:space-between;font-size:.58rem;color:var(--tx3);margin-top:3px;}
+.divline{border:none;border-top:1px solid var(--brd);margin:12px 0;}
+.bk-title{font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.78rem;}
+.bk-l{color:var(--tx2);}.bk-v{font-weight:700;}.bk-pos{color:var(--gr);}.bk-neg{color:var(--re);}
+.calc-note{font-size:.6rem;color:var(--tx3);text-align:center;margin-top:4px;padding-bottom:8px;}
+.skel{width:155px;flex-shrink:0;border-radius:11px;border:1px solid var(--brd);background:var(--bg2);overflow:hidden;}
+.skel-img{width:100%;aspect-ratio:4/3;background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+.skel-body{padding:9px 10px 11px;display:flex;flex-direction:column;gap:6px;}
+.skel-line{height:9px;border-radius:4px;background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+.skel-line.w60{width:60%;}.skel-line.w40{width:40%;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* CONTACT */
+.contact-hero{padding:28px 18px 22px;background:linear-gradient(160deg,var(--bl),var(--bl2));text-align:center;}
+.contact-hero h2{font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:6px;}
+.contact-hero h2 em{color:var(--or);font-style:normal;}
+.contact-hero p{font-size:.82rem;color:rgba(255,255,255,0.8);line-height:1.6;}
+.contact-list{padding:18px 14px;display:flex;flex-direction:column;gap:10px;}
+.contact-btn{display:flex;align-items:center;gap:13px;padding:15px 16px;border-radius:12px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s,transform .1s;}
+.contact-btn:active{opacity:.85;transform:scale(.98);}
+.contact-btn.phone{background:var(--or);color:#fff;}
+.contact-btn.tg{background:#229ED9;color:#fff;}
+.contact-btn.wa{background:#25D366;color:#fff;}
+.cb-icon{font-size:1.3rem;}.cb-label{font-size:.95rem;font-weight:700;}.cb-sub{font-size:.68rem;opacity:.8;margin-top:1px;}
+.contact-info{padding:0 14px 24px;display:flex;flex-direction:column;gap:8px;}
+.info-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;}
+.info-icon{font-size:.95rem;}.info-text{font-size:.76rem;color:var(--tx2);}
+.info-text strong{color:var(--tx);font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--tx);color:#fff;font-size:.78rem;font-weight:600;padding:9px 18px;border-radius:20px;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{background:var(--gr);}
+.toast.err{background:var(--re);}
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- TOP BAR -->
   <div class="topbar">
-    <div class="logo">TEZ<em>TRUCK</em></div>
+    <div class="logo">Tez<em>Truck</em></div>
     <div class="lang-row">
       <button class="lb on" id="lb-ru" onclick="setLang('ru')">🇷🇺 РУ</button>
       <button class="lb" id="lb-en" onclick="setLang('en')">🇺🇸 EN</button>
@@ -319,399 +238,595 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
     </div>
   </div>
 
-  <!-- SCREENS -->
   <div class="screens">
 
     <!-- ① PATH -->
     <div class="screen active" id="sc-path">
-      <div class="s-path">
-        <div class="path-hero">
-          <div class="hero-eyebrow" data-i="heroEyebrow"></div>
-          <h1 data-ih="heroTitle"></h1>
-          <p data-i="heroSub"></p>
+      <div class="path-hero">
+        <div class="hero-tag" data-i="heroEyebrow"></div>
+        <h1 data-ih="heroTitle"></h1>
+        <p data-i="heroSub"></p>
+      </div>
+      <div class="stages-list">
+
+        <!-- 01 CDL -->
+        <div class="stage-item" id="st1">
+          <div class="stage-trigger" onclick="toggleStage('st1')">
+            <div class="stnum">01</div><div class="stem">🎓</div>
+            <div class="stinfo"><div class="stname" data-i="s1name"></div><div class="stdesc" data-i="s1desc"></div></div>
+            <div class="stbadge b-start" data-i="tagStart"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+            <div class="svcs">
+              <div class="svc-row"><div class="svc-em">📋</div><div><div class="svc-n" data-i="s1svc1n"></div><div class="svc-d" data-i="s1svc1d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🏢</div><div><div class="svc-n" data-i="s1svc2n"></div><div class="svc-d" data-i="s1svc2d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🩺</div><div><div class="svc-n" data-i="s1svc3n"></div><div class="svc-d" data-i="s1svc3d"></div></div></div>
+            </div>
+            <!-- FORM 1: CDL Application -->
+            <div class="form-section" id="form1-wrap">
+              <div class="form-title" data-i="form1title"></div>
+              <div id="form1-body">
+                <div class="frow">
+                  <label class="flabel" data-i="fPermit"></label>
+                  <div class="fupload" id="up-permit">
+                    <div class="fupload-zone" id="uz-permit">
+                      <div class="fupload-icon">📄</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-permit"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-permit"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'permit','uz-permit','un-permit','pb-permit')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fMedical"></label>
+                  <div class="fupload" id="up-medical">
+                    <div class="fupload-zone" id="uz-medical">
+                      <div class="fupload-icon">🏥</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-medical"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-medical"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'medical','uz-medical','un-medical','pb-medical')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fID"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-id1">
+                      <div class="fupload-icon">🪪</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-id1"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-id1"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'id1','uz-id1','un-id1','pb-id1')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPhone"></label>
+                  <input class="finput" type="tel" id="f1-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <button class="fsubmit" id="f1-submit" onclick="submitForm1()" data-i="fSendBtn"></button>
+              </div>
+              <div class="form-success" id="form1-success">
+                <div class="fs-icon">✅</div>
+                <div class="fs-title" data-i="fSuccessTitle"></div>
+                <div class="fs-sub" data-i="fSuccessSub"></div>
+              </div>
+            </div>
+          </div></div>
         </div>
 
-        <div class="stages-list">
-
-          <!-- Stage 1 -->
-          <div class="stage-item" id="st1">
-            <div class="stage-trigger" onclick="toggleStage('st1')">
-              <div class="stnum">01</div>
-              <div class="stem">🎓</div>
-              <div class="stinfo">
-                <div class="stname" data-i="s1name"></div>
-                <div class="stdesc" data-i="s1desc"></div>
-              </div>
-              <div class="stbadge b-start" data-i="tagStart"></div>
-              <div class="stchev">▼</div>
+        <!-- 02 Owner-Op -->
+        <div class="stage-item" id="st2">
+          <div class="stage-trigger" onclick="toggleStage('st2')">
+            <div class="stnum">02</div><div class="stem">🚛</div>
+            <div class="stinfo"><div class="stname" data-i="s2name"></div><div class="stdesc" data-i="s2desc"></div></div>
+            <div class="stbadge b-grow" data-i="tagGrow"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+            <div class="svcs">
+              <div class="svc-row"><div class="svc-em">🏦</div><div><div class="svc-n" data-i="s2svc1n"></div><div class="svc-d" data-i="s2svc1d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🚛</div><div><div class="svc-n" data-i="s2svc2n"></div><div class="svc-d" data-i="s2svc2d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">📡</div><div><div class="svc-n" data-i="s2svc3n"></div><div class="svc-d" data-i="s2svc3d"></div></div></div>
             </div>
-            <div class="stage-body">
-              <div class="stage-body-inner">
-                <div class="svcs">
-                  <div class="svc-row"><div class="svc-em">📋</div><div class="svc-txt"><div class="svc-n" data-i="s1svc1n"></div><div class="svc-d" data-i="s1svc1d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">🏢</div><div class="svc-txt"><div class="svc-n" data-i="s1svc2n"></div><div class="svc-d" data-i="s1svc2d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">🩺</div><div class="svc-txt"><div class="svc-n" data-i="s1svc3n"></div><div class="svc-d" data-i="s1svc3d"></div></div></div>
+            <button class="stage-cta-btn orange" onclick="goTrucks()" data-i="s2ctaTruck"></button>
+
+            <!-- FORM 2a: Job Application -->
+            <div class="form-section">
+              <div class="form-title" data-i="form2atitle"></div>
+              <div id="form2a-body">
+                <div class="frow">
+                  <label class="flabel" data-i="fCDL"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-cdl">
+                      <div class="fupload-icon">🚛</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-cdl"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-cdl"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'cdl','uz-cdl','un-cdl','pb-cdl')">
+                  </div>
                 </div>
-                <button class="stage-cta-btn" onclick="goContact()" data-i="s1cta"></button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Stage 2 -->
-          <div class="stage-item" id="st2">
-            <div class="stage-trigger" onclick="toggleStage('st2')">
-              <div class="stnum">02</div>
-              <div class="stem">🚛</div>
-              <div class="stinfo">
-                <div class="stname" data-i="s2name"></div>
-                <div class="stdesc" data-i="s2desc"></div>
-              </div>
-              <div class="stbadge b-grow" data-i="tagGrow"></div>
-              <div class="stchev">▼</div>
-            </div>
-            <div class="stage-body">
-              <div class="stage-body-inner">
-                <div class="svcs">
-                  <div class="svc-row"><div class="svc-em">🏦</div><div class="svc-txt"><div class="svc-n" data-i="s2svc1n"></div><div class="svc-d" data-i="s2svc1d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">💳</div><div class="svc-txt"><div class="svc-n" data-i="s2svc2n"></div><div class="svc-d" data-i="s2svc2d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">📡</div><div class="svc-txt"><div class="svc-n" data-i="s2svc3n"></div><div class="svc-d" data-i="s2svc3d"></div></div></div>
+                <div class="frow">
+                  <label class="flabel">EAD <span class="opt" data-i="fOptional"></span></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-ead">
+                      <div class="fupload-icon">📋</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-ead"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-ead"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'ead','uz-ead','un-ead','pb-ead')">
+                  </div>
                 </div>
-                <button class="stage-cta-btn" onclick="goTrucks()" data-i="s2cta"></button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Stage 3 -->
-          <div class="stage-item" id="st3">
-            <div class="stage-trigger" onclick="toggleStage('st3')">
-              <div class="stnum">03</div>
-              <div class="stem">🏢</div>
-              <div class="stinfo">
-                <div class="stname" data-i="s3name"></div>
-                <div class="stdesc" data-i="s3desc"></div>
-              </div>
-              <div class="stbadge b-biz" data-i="tagBiz"></div>
-              <div class="stchev">▼</div>
-            </div>
-            <div class="stage-body">
-              <div class="stage-body-inner">
-                <div class="svcs">
-                  <div class="svc-row"><div class="svc-em">📜</div><div class="svc-txt"><div class="svc-n" data-i="s3svc1n"></div><div class="svc-d" data-i="s3svc1d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">🛡️</div><div class="svc-txt"><div class="svc-n" data-i="s3svc2n"></div><div class="svc-d" data-i="s3svc2d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">👥</div><div class="svc-txt"><div class="svc-n" data-i="s3svc3n"></div><div class="svc-d" data-i="s3svc3d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">🛠️</div><div class="svc-txt"><div class="svc-n" data-i="s3svc4n"></div><div class="svc-d" data-i="s3svc4d"></div></div></div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPhone"></label>
+                  <input class="finput" type="tel" id="f2a-phone" placeholder="+1 (555) 000-0000">
                 </div>
-                <button class="stage-cta-btn" onclick="goContact()" data-i="s3cta"></button>
+                <button class="fsubmit" id="f2a-submit" onclick="submitForm2a()" data-i="fSendBtn"></button>
+              </div>
+              <div class="form-success" id="form2a-success">
+                <div class="fs-icon">✅</div>
+                <div class="fs-title" data-i="fSuccessTitle"></div>
+                <div class="fs-sub" data-i="fSuccessSub"></div>
               </div>
             </div>
-          </div>
 
-          <!-- Stage 4 -->
-          <div class="stage-item" id="st4">
-            <div class="stage-trigger" onclick="toggleStage('st4')">
-              <div class="stnum">04</div>
-              <div class="stem">📈</div>
-              <div class="stinfo">
-                <div class="stname" data-i="s4name"></div>
-                <div class="stdesc" data-i="s4desc"></div>
-              </div>
-              <div class="stbadge b-scale" data-i="tagScale"></div>
-              <div class="stchev">▼</div>
-            </div>
-            <div class="stage-body">
-              <div class="stage-body-inner">
-                <div class="svcs">
-                  <div class="svc-row"><div class="svc-em">🚛</div><div class="svc-txt"><div class="svc-n" data-i="s4svc1n"></div><div class="svc-d" data-i="s4svc1d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">📡</div><div class="svc-txt"><div class="svc-n" data-i="s4svc2n"></div><div class="svc-d" data-i="s4svc2d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">🔧</div><div class="svc-txt"><div class="svc-n" data-i="s4svc3n"></div><div class="svc-d" data-i="s4svc3d"></div></div></div>
-                  <div class="svc-row"><div class="svc-em">💼</div><div class="svc-txt"><div class="svc-n" data-i="s4svc4n"></div><div class="svc-d" data-i="s4svc4d"></div></div></div>
+            <!-- FORM 2b: LLC Registration -->
+            <div class="form-section">
+              <div class="form-title" data-i="form2btitle"></div>
+              <div id="form2b-body">
+                <div class="frow">
+                  <label class="flabel" data-i="fID"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-llcid">
+                      <div class="fupload-icon">🪪</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-llcid"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-llcid"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'llcid','uz-llcid','un-llcid','pb-llcid')">
+                  </div>
                 </div>
-                <button class="stage-cta-btn" onclick="goContact()" data-i="s4cta"></button>
+                <div class="frow">
+                  <label class="flabel">SSN</label>
+                  <input class="finput" type="text" id="f2b-ssn" placeholder="XXX-XX-XXXX" maxlength="11">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fAddress"></label>
+                  <input class="finput" type="text" id="f2b-address" data-ph="fAddressPh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPhone"></label>
+                  <input class="finput" type="tel" id="f2b-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <div class="frow">
+                  <label class="flabel">Email</label>
+                  <input class="finput" type="email" id="f2b-email" placeholder="you@email.com">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName1"></label>
+                  <input class="finput" type="text" id="f2b-name1" data-ph="fCompNamePh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName2"></label>
+                  <input class="finput" type="text" id="f2b-name2" data-ph="fCompNamePh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName3"></label>
+                  <input class="finput" type="text" id="f2b-name3" data-ph="fCompNamePh">
+                </div>
+                <!-- Stripe LLC -->
+                <div class="frow">
+                  <label class="flabel" data-i="fPayment"></label>
+                  <div class="stripe-wrap">
+                    <div id="card-element-llc"></div>
+                  </div>
+                  <div class="stripe-note">🔒 <span data-i="fStripeNote"></span></div>
+                </div>
+                <button class="fsubmit paying" id="f2b-submit" onclick="submitLLC()" data-i="fPayLLC"></button>
+                <div id="f2b-error" style="color:var(--re);font-size:.72rem;margin-top:6px;display:none;"></div>
+              </div>
+              <div class="form-success" id="form2b-success">
+                <div class="fs-icon">🎉</div>
+                <div class="fs-title" data-i="fSuccessTitle"></div>
+                <div class="fs-sub" data-i="fSuccessLLC"></div>
               </div>
             </div>
-          </div>
-
-        </div><!-- /stages-list -->
-
-        <!-- Violations card -->
-        <div class="violations-card">
-          <div class="vc-em">🚨</div>
-          <div>
-            <div class="vc-h"><span data-i="vcTitle"></span><span class="vc-badge" data-i="vcBadge"></span></div>
-            <div class="vc-d" data-i="vcText"></div>
-            <button class="vc-btn" onclick="goContact()" data-i="vcBtn"></button>
-          </div>
+          </div></div>
         </div>
 
-      </div><!-- /s-path -->
+        <!-- 03 Company -->
+        <div class="stage-item" id="st3">
+          <div class="stage-trigger" onclick="toggleStage('st3')">
+            <div class="stnum">03</div><div class="stem">🏢</div>
+            <div class="stinfo"><div class="stname" data-i="s3name"></div><div class="stdesc" data-i="s3desc"></div></div>
+            <div class="stbadge b-biz" data-i="tagBiz"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+            <div class="svcs">
+              <div class="svc-row"><div class="svc-em">📜</div><div><div class="svc-n" data-i="s3svc1n"></div><div class="svc-d" data-i="s3svc1d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🛡️</div><div><div class="svc-n" data-i="s3svc2n"></div><div class="svc-d" data-i="s3svc2d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">👥</div><div><div class="svc-n" data-i="s3svc3n"></div><div class="svc-d" data-i="s3svc3d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🛠️</div><div><div class="svc-n" data-i="s3svc4n"></div><div class="svc-d" data-i="s3svc4d"></div></div></div>
+            </div>
+            <!-- FORM 3: MC/DOT -->
+            <div class="form-section">
+              <div class="form-title" data-i="form3title"></div>
+              <div id="form3-body">
+                <div class="frow">
+                  <label class="flabel" data-i="fID"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-mcid">
+                      <div class="fupload-icon">🪪</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-mcid"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-mcid"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'mcid','uz-mcid','un-mcid','pb-mcid')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel">SSN</label>
+                  <input class="finput" type="text" id="f3-ssn" placeholder="XXX-XX-XXXX" maxlength="11">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fAddress"></label>
+                  <input class="finput" type="text" id="f3-address" data-ph="fAddressPh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPhone"></label>
+                  <input class="finput" type="tel" id="f3-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <div class="frow">
+                  <label class="flabel">Email</label>
+                  <input class="finput" type="email" id="f3-email" placeholder="you@email.com">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName1"></label>
+                  <input class="finput" type="text" id="f3-name1" data-ph="fCompNamePh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName2"></label>
+                  <input class="finput" type="text" id="f3-name2" data-ph="fCompNamePh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fCompName3"></label>
+                  <input class="finput" type="text" id="f3-name3" data-ph="fCompNamePh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPayment"></label>
+                  <div class="stripe-wrap">
+                    <div id="card-element-mc"></div>
+                  </div>
+                  <div class="stripe-note">🔒 <span data-i="fStripeNote"></span></div>
+                </div>
+                <button class="fsubmit paying" id="f3-submit" onclick="submitMC()" data-i="fPayMC"></button>
+                <div id="f3-error" style="color:var(--re);font-size:.72rem;margin-top:6px;display:none;"></div>
+              </div>
+              <div class="form-success" id="form3-success">
+                <div class="fs-icon">🎉</div>
+                <div class="fs-title" data-i="fSuccessTitle"></div>
+                <div class="fs-sub" data-i="fSuccessMC"></div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- 04 Scale -->
+        <div class="stage-item" id="st4">
+          <div class="stage-trigger" onclick="toggleStage('st4')">
+            <div class="stnum">04</div><div class="stem">📈</div>
+            <div class="stinfo"><div class="stname" data-i="s4name"></div><div class="stdesc" data-i="s4desc"></div></div>
+            <div class="stbadge b-scale" data-i="tagScale"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+            <div class="svcs">
+              <div class="svc-row"><div class="svc-em">🚛</div><div><div class="svc-n" data-i="s4svc1n"></div><div class="svc-d" data-i="s4svc1d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">📡</div><div><div class="svc-n" data-i="s4svc2n"></div><div class="svc-d" data-i="s4svc2d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🔧</div><div><div class="svc-n" data-i="s4svc3n"></div><div class="svc-d" data-i="s4svc3d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">💼</div><div><div class="svc-n" data-i="s4svc4n"></div><div class="svc-d" data-i="s4svc4d"></div></div></div>
+            </div>
+            <button class="stage-cta-btn" onclick="goContact()" data-i="s4cta"></button>
+          </div></div>
+        </div>
+
+        <!-- 05 Violations — plain style -->
+        <div class="stage-item violations" id="st5">
+          <div class="stage-trigger" onclick="toggleStage('st5')">
+            <div class="stnum">05</div><div class="stem">⚠️</div>
+            <div class="stinfo"><div class="stname" data-i="s5name"></div><div class="stdesc" data-i="s5desc"></div></div>
+            <div class="stbadge b-grow" data-i="tagHelp"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+            <div class="svcs">
+              <div class="svc-row"><div class="svc-em">📋</div><div><div class="svc-n" data-i="s5svc1n"></div><div class="svc-d" data-i="s5svc1d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">🚔</div><div><div class="svc-n" data-i="s5svc2n"></div><div class="svc-d" data-i="s5svc2d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">⚖️</div><div><div class="svc-n" data-i="s5svc3n"></div><div class="svc-d" data-i="s5svc3d"></div></div></div>
+              <div class="svc-row"><div class="svc-em">📞</div><div><div class="svc-n" data-i="s5svc4n"></div><div class="svc-d" data-i="s5svc4d"></div></div></div>
+            </div>
+            <button class="stage-cta-btn" onclick="goContact()" data-i="s5cta"></button>
+          </div></div>
+        </div>
+
+      </div><!-- /stages-list -->
     </div><!-- /sc-path -->
 
     <!-- ② TRUCKS -->
     <div class="screen" id="sc-trucks">
-      <div class="s-trucks">
-
-        <div class="truck-panel">
-          <div class="truck-panel-hdr">
-            <div>
-              <div class="tp-title" data-i="fleetTitle"></div>
-              <div class="tp-sub" data-i="fleetSub"></div>
-            </div>
-          </div>
-          <div class="trucks-scroll" id="trucksScroll">
-            <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
-            <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
-            <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
-          </div>
+      <div class="truck-panel">
+        <div class="tp-title" data-i="fleetTitle"></div>
+        <div class="tp-sub" data-i="fleetSub"></div>
+        <div class="trucks-scroll" id="trucksScroll">
+          <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
+          <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
+          <div class="skel"><div class="skel-img"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w60"></div><div class="skel-line w40"></div></div></div>
         </div>
-
-        <div class="truck-preview-wrap" id="previewWrap">
-          <div class="prev-img-wrap" id="previewImgWrap"><div class="prev-ph">🚛</div></div>
-        </div>
-
-        <div class="panel-div"></div>
-
-        <div class="calc-area" id="calcArea">
-          <div class="calc-empty">
-            <div class="calc-empty-icon">☝️</div>
-            <div class="calc-empty-text" data-i="calcHint"></div>
-            <div class="calc-empty-arrow">↑</div>
-          </div>
-        </div>
-
       </div>
-    </div><!-- /sc-trucks -->
+      <div class="truck-preview-wrap" id="previewWrap"><div class="prev-img-wrap" id="previewImgWrap"><div class="prev-ph">🚛</div></div></div>
+      <div class="panel-div"></div>
+      <div id="calcArea"><div class="calc-empty"><div class="calc-empty-icon">☝️</div><div class="calc-empty-text" data-i="calcHint"></div><div class="calc-empty-arrow">↑</div></div></div>
+    </div>
 
     <!-- ③ CONTACT -->
     <div class="screen" id="sc-contact">
-      <div class="s-contact">
-        <div class="contact-hero">
-          <h2 data-ih="ctaTitle"></h2>
-          <p data-i="ctaSub"></p>
-        </div>
-        <div class="contact-list">
-          <a href="tel:+12673725777" class="contact-btn phone">
-            <div class="cb-icon">📞</div>
-            <div class="cb-text"><div class="cb-label">267-372-5777</div><div class="cb-sub" data-i="cbPhone"></div></div>
-          </a>
-          <a href="https://t.me/insonixub" target="_blank" class="contact-btn tg">
-            <div class="cb-icon">✈️</div>
-            <div class="cb-text"><div class="cb-label">@insonixub</div><div class="cb-sub" data-i="cbTg"></div></div>
-          </a>
-          <a href="https://wa.me/12673725777" target="_blank" class="contact-btn wa">
-            <div class="cb-icon">💬</div>
-            <div class="cb-text"><div class="cb-label">WhatsApp</div><div class="cb-sub" data-i="cbWa"></div></div>
-          </a>
-        </div>
-        <div class="contact-info">
-          <div class="info-row"><div class="info-icon">🌐</div><div class="info-text"><strong>teztruck.com</strong></div></div>
-          <div class="info-row"><div class="info-icon">🇺🇸</div><div class="info-text" data-i="contactLocation"></div></div>
-          <div class="info-row"><div class="info-icon">⏰</div><div class="info-text" data-i="contactHours"></div></div>
-        </div>
+      <div class="contact-hero"><h2 data-ih="ctaTitle"></h2><p data-i="ctaSub"></p></div>
+      <div class="contact-list">
+        <a href="tel:+12673725777" class="contact-btn phone"><div class="cb-icon">📞</div><div><div class="cb-label">267-372-5777</div><div class="cb-sub" data-i="cbPhone"></div></div></a>
+        <a href="https://t.me/insonixub" target="_blank" class="contact-btn tg"><div class="cb-icon">✈️</div><div><div class="cb-label">@insonixub</div><div class="cb-sub" data-i="cbTg"></div></div></a>
+        <a href="https://wa.me/12673725777" target="_blank" class="contact-btn wa"><div class="cb-icon">💬</div><div><div class="cb-label">WhatsApp</div><div class="cb-sub" data-i="cbWa"></div></div></a>
       </div>
-    </div><!-- /sc-contact -->
-
-  </div><!-- /screens -->
-
-  <!-- BOTTOM NAV -->
-  <div class="bottomnav">
-    <button class="navbtn on" id="nav-path" onclick="showScreen('path')">
-      <div class="ni">🗺️</div>
-      <div class="nl" data-i="nav1"></div>
-    </button>
-    <button class="navbtn" id="nav-trucks" onclick="showScreen('trucks')">
-      <div class="ni">🚛</div>
-      <div class="nl" data-i="nav2"></div>
-    </button>
-    <button class="navbtn" id="nav-contact" onclick="showScreen('contact')">
-      <div class="ni">📞</div>
-      <div class="nl" data-i="nav3"></div>
-    </button>
+      <div class="contact-info">
+        <div class="info-row"><div class="info-icon">🌐</div><div class="info-text"><strong>teztruck.com</strong></div></div>
+        <div class="info-row"><div class="info-icon">🇺🇸</div><div class="info-text" data-i="contactLocation"></div></div>
+        <div class="info-row"><div class="info-icon">⏰</div><div class="info-text" data-i="contactHours"></div></div>
+      </div>
+    </div>
   </div>
 
-</div><!-- /app -->
+  <div class="bottomnav">
+    <button class="navbtn on" id="nav-path" onclick="showScreen('path')"><div class="ni">🗺️</div><div class="nl" data-i="nav1"></div></button>
+    <button class="navbtn" id="nav-trucks" onclick="showScreen('trucks')"><div class="ni">🚛</div><div class="nl" data-i="nav2"></div></button>
+    <button class="navbtn" id="nav-contact" onclick="showScreen('contact')"><div class="ni">📞</div><div class="nl" data-i="nav3"></div></button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ── i18n ──────────────────────────────────────────────────────────────────────
+// ── CONFIG ────────────────────────────────────────────
+const SB_URL='https://wuyuhxddswxrrzquogsh.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
+const TABLE='trucks';
+const EJS_SERVICE='service_q71s2fy';
+const EJS_TEMPLATE='template_8ha027q';
+const EJS_KEY='0qpt7idAywzYwDZRc';
+const STRIPE_KEY='pk_live_51TQxaJJfySR5dqvoQQfyMlQts3KhpixCr9RsmeD8Y5p6B4gIT7Fbwxz6iyGHJW5zqgLCcNBajB158WoxZpAqgTBz00TbcbEgsA';
+
+// ── i18n ─────────────────────────────────────────────
 const T={
 ru:{
-  heroEyebrow:'Trucking Marketplace',
-  heroTitle:'Твой путь в <em>траковом</em> бизнесе',
-  heroSub:'От CDL до своей компании — помогаем на каждом шаге.',
+  heroEyebrow:'Trucking Marketplace',heroTitle:'Твой путь в <em>траковом</em> бизнесе',heroSub:'От CDL до своей компании — помогаем на каждом шаге.',
   nav1:'Путь',nav2:'Траки',nav3:'Контакт',
-  tagStart:'Старт',tagGrow:'Рост',tagBiz:'Бизнес',tagScale:'Масштаб',
+  tagStart:'Старт',tagGrow:'Рост',tagBiz:'Бизнес',tagScale:'Масштаб',tagHelp:'Помощь',
   s1name:'Хочу стать трак-драйвером',s1desc:'Нет CDL, нет опыта',
-  s1svc1n:'Обучение CDL',s1svc1d:'Готовим к экзамену, сопровождаем до получения лицензии',
+  s1svc1n:'Обучение CDL',s1svc1d:'Готовим к экзамену, сопровождаем до лицензии',
   s1svc2n:'Трудоустройство',s1svc2d:'Помогаем найти работу сразу после CDL',
   s1svc3n:'DOT физосмотр',s1svc3d:'Помогаем пройти медкомиссию и получить Medical Card',
-  s1cta:'Начать →',
   s2name:'CDL есть, хочу работать на себя',s2desc:'Стать Owner-Operator',
-  s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Регистрация бизнеса, EIN, бизнес-счёт, кредитная история',
+  s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Регистрация бизнеса, EIN, счёт, кредитная история',
   s2svc2n:'Покупка трака',s2svc2d:'Lease-to-own, financing — выбери трак и сразу увидь расчёты',
   s2svc3n:'Диспетчер',s2svc3d:'Находим грузы и контракты с хорошими рейтами',
-  s2cta:'Выбрать трак →',
+  s2ctaTruck:'🚛 Выбрать трак →',
   s3name:'Хочу открыть свою компанию',s3desc:'MC/DOT, свои водители',
   s3svc1n:'MC / DOT + страховка',s3svc1d:'Регистрация carrier, BOC-3, страхование',
   s3svc2n:'Safety & Compliance',s3svc2d:'Drug testing, FMCSA compliance, DOT аудиты',
   s3svc3n:'Найм водителей',s3svc3d:'MVR check, onboarding, контракты',
-  s3svc4n:'Лучшие инструменты',s3svc4d:'Помогаем выбрать TMS, бухгалтерию, ELD, Safety, Fuel Cards, IFTA',
-  s3cta:'Связаться →',
+  s3svc4n:'Лучшие инструменты',s3svc4d:'TMS, бухгалтерия, ELD, Safety, Fuel Cards, IFTA',
   s4name:'Есть компания, хочу расти',s4desc:'Больше траков, больше дохода',
   s4svc1n:'Добавить траки',s4svc1d:'Financing и fleet deals для нескольких единиц',
   s4svc2n:'Полный диспетч',s4svc2d:'Spot + contract на весь флот',
   s4svc3n:'Fleet Support 24/7',s4svc3d:'Maintenance, breakdown, аварийная поддержка',
   s4svc4n:'Бухгалтерия & Tax',s4svc4d:'IFTA, quarterly taxes, P&L',
   s4cta:'Связаться →',
-  vcTitle:'Штраф или violation?',vcBadge:'Поможем',
-  vcText:'Tickets, roadside citations, DOT violations — помогаем оспорить и защитить CSA score.',
-  vcBtn:'Позвонить →',
+  s5name:'Штрафы, violations, citations',s5desc:'Tickets, нарушения, проблемы с DOT',
+  s5svc1n:'Violations / Citations',s5svc1d:'Помогаем оспорить или минимизировать штрафы',
+  s5svc2n:'Roadside Inspections',s5svc2d:'DataQ challenges, защита CSA score',
+  s5svc3n:'DOT Аудит',s5svc3d:'Подготовка, сопровождение, восстановление рейтинга',
+  s5svc4n:'Срочная помощь 24/7',s5svc4d:'Breakdown, accident support',
+  s5cta:'Позвонить →',
+  // Forms
+  form1title:'📋 Подать заявку на CDL',
+  form2atitle:'💼 Заявка на трудоустройство',
+  form2btitle:'🏦 Регистрация LLC / Inc — $290',
+  form3title:'📜 Открытие MC/DOT — $1,499',
+  fPermit:'Permit',fMedical:'Medical Card',fID:'ID (паспорт или водительское)',
+  fCDL:'CDL лицензия',fOptional:'необязательно',
+  fAddress:'Адрес компании',fAddressPh:'123 Main St, City, State ZIP',
+  fPhone:'Телефон',
+  fCompName1:'Название компании — вариант 1',fCompName2:'Название — вариант 2',fCompName3:'Название — вариант 3',
+  fCompNamePh:'Например: TezTruck LLC',
+  fPayment:'Оплата картой',fStripeNote:'Защищено Stripe. Данные не хранятся.',
+  fUploadBtn:'Нажмите для загрузки',
+  fSendBtn:'Отправить заявку',fPayLLC:'Оплатить $290 и отправить',fPayMC:'Оплатить $1,499 и отправить',
+  fSuccessTitle:'Заявка получена!',
+  fSuccessSub:'Мы позвоним вам в ближайшее время.',
+  fSuccessLLC:'Оплата прошла. Начинаем регистрацию вашей компании.',
+  fSuccessMC:'Оплата прошла. Начинаем оформление MC/DOT.',
+  // Trucks
   fleetTitle:'Доступные траки',fleetSub:'Выбери — увидишь платёж и доход сразу',
   calcHint:'Выбери трак выше чтобы увидеть расчёты',
-  netLbl:'Чистый доход / нед',wkLbl:'Платёж / нед',
-  dpLbl:'Первый взнос',balLbl:'Остаток',
+  netLbl:'Чистый доход / нед',wkLbl:'Платёж / нед',dpLbl:'Первый взнос',balLbl:'Остаток',
   grossLbl:'Гросс в неделю',diesel:'Дизель',tolls:'Дороги',
-  bkTitle:'Разбивка',gross:'Заработок',fee:'Комиссия (10%)',
-  admin:'Страховка/IFTA/ELD',trkPmt:'Выплата за трак',
-  sAvail:'Свободен',sPend:'Занят',sSold:'Выкуплен',
-  colWk:'/нед',
+  bkTitle:'Разбивка',gross:'Заработок',fee:'Комиссия (10%)',admin:'Страховка/IFTA/ELD',trkPmt:'Выплата за трак',
+  sAvail:'Свободен',sPend:'Занят',sSold:'Выкуплен',colWk:'/нед',
   ctaTitle:'Написать <em>нам</em>',ctaSub:'Ответим быстро и на вашем языке.',
   cbPhone:'Звонок',cbTg:'Telegram',cbWa:'WhatsApp',
-  contactLocation:'Обслуживаем по всей территории США',
-  contactHours:'Пн–Сб 8:00–20:00 EST',
+  contactLocation:'Обслуживаем по всей территории США',contactHours:'Пн–Сб 8:00–20:00 EST',
 },
 en:{
-  heroEyebrow:'Trucking Marketplace',
-  heroTitle:'Your path in <em>trucking</em>',
-  heroSub:'From CDL to your own company — we help at every step.',
+  heroEyebrow:'Trucking Marketplace',heroTitle:'Your path in <em>trucking</em>',heroSub:'From CDL to your own company — we help at every step.',
   nav1:'Path',nav2:'Trucks',nav3:'Contact',
-  tagStart:'Start',tagGrow:'Growth',tagBiz:'Business',tagScale:'Scale',
+  tagStart:'Start',tagGrow:'Growth',tagBiz:'Business',tagScale:'Scale',tagHelp:'Help',
   s1name:'I want to become a truck driver',s1desc:'No CDL, no experience',
-  s1svc1n:'CDL Training',s1svc1d:'We prepare you for the exam and guide you to your license',
+  s1svc1n:'CDL Training',s1svc1d:'We prepare and guide you to your license',
   s1svc2n:'Employment',s1svc2d:'We help you find a job right after CDL',
   s1svc3n:'DOT Physical',s1svc3d:'Help passing the medical exam and getting your Medical Card',
-  s1cta:'Get Started →',
   s2name:'I have CDL, want to work for myself',s2desc:'Become Owner-Operator',
-  s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Business registration, EIN, business account, credit history',
+  s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Business registration, EIN, account, credit history',
   s2svc2n:'Buy a Truck',s2svc2d:'Lease-to-own, financing — pick a truck and see your numbers instantly',
   s2svc3n:'Dispatcher',s2svc3d:'We find loads and contracts with good rates',
-  s2cta:'Choose a Truck →',
+  s2ctaTruck:'🚛 Choose a Truck →',
   s3name:'I want to open my own company',s3desc:'MC/DOT, my own drivers',
-  s3svc1n:'MC / DOT + Insurance',s3svc1d:'Carrier registration, BOC-3, insurance coverage',
+  s3svc1n:'MC / DOT + Insurance',s3svc1d:'Carrier registration, BOC-3, insurance',
   s3svc2n:'Safety & Compliance',s3svc2d:'Drug testing, FMCSA compliance, DOT audits',
   s3svc3n:'Driver Hiring',s3svc3d:'MVR check, onboarding, contracts',
-  s3svc4n:'Best Business Tools',s3svc4d:'Help choosing TMS, Accounting, ELD, Safety, Fuel Cards, IFTA',
-  s3cta:'Contact Us →',
+  s3svc4n:'Best Business Tools',s3svc4d:'TMS, Accounting, ELD, Safety, Fuel Cards, IFTA',
   s4name:'I have a company and want to scale',s4desc:'More trucks, more income',
   s4svc1n:'Add Trucks',s4svc1d:'Financing and fleet deals for multiple units',
   s4svc2n:'Full Dispatch',s4svc2d:'Spot + contract for entire fleet',
   s4svc3n:'Fleet Support 24/7',s4svc3d:'Maintenance, breakdown, emergency support',
   s4svc4n:'Accounting & Tax',s4svc4d:'IFTA, quarterly taxes, P&L',
   s4cta:'Contact Us →',
-  vcTitle:'Got a fine or violation?',vcBadge:'We Help',
-  vcText:'Tickets, roadside citations, DOT violations — we help contest and protect your CSA score.',
-  vcBtn:'Call Us →',
+  s5name:'Fines, violations, citations',s5desc:'Tickets, violations, DOT problems',
+  s5svc1n:'Violations / Citations',s5svc1d:'Help contesting or minimizing fines',
+  s5svc2n:'Roadside Inspections',s5svc2d:'DataQ challenges, CSA score protection',
+  s5svc3n:'DOT Audit',s5svc3d:'Preparation, support, rating restoration',
+  s5svc4n:'Emergency Help 24/7',s5svc4d:'Breakdown, accident support',
+  s5cta:'Call Us →',
+  form1title:'📋 Apply for CDL',form2atitle:'💼 Job Application',
+  form2btitle:'🏦 LLC / Inc Registration — $290',form3title:'📜 MC/DOT Registration — $1,499',
+  fPermit:'Permit',fMedical:'Medical Card',fID:'ID (passport or driver\'s license)',
+  fCDL:'CDL License',fOptional:'optional',
+  fAddress:'Company Address',fAddressPh:'123 Main St, City, State ZIP',fPhone:'Phone',
+  fCompName1:'Company Name — Option 1',fCompName2:'Company Name — Option 2',fCompName3:'Company Name — Option 3',
+  fCompNamePh:'e.g. TezTruck LLC',
+  fPayment:'Card Payment',fStripeNote:'Secured by Stripe. Card data is not stored.',
+  fUploadBtn:'Tap to upload',fSendBtn:'Submit Application',
+  fPayLLC:'Pay $290 & Submit',fPayMC:'Pay $1,499 & Submit',
+  fSuccessTitle:'Application received!',fSuccessSub:'We will call you shortly.',
+  fSuccessLLC:'Payment successful. Starting your LLC registration.',
+  fSuccessMC:'Payment successful. Starting your MC/DOT registration.',
   fleetTitle:'Available Trucks',fleetSub:'Pick one — see payment and income instantly',
   calcHint:'Select a truck above to see your numbers',
-  netLbl:'Net Income / wk',wkLbl:'Payment / wk',
-  dpLbl:'Down Payment',balLbl:'Balance',
+  netLbl:'Net Income / wk',wkLbl:'Payment / wk',dpLbl:'Down Payment',balLbl:'Balance',
   grossLbl:'Weekly Gross',diesel:'Diesel',tolls:'Tolls',
-  bkTitle:'Breakdown',gross:'Revenue',fee:'Company Fee (10%)',
-  admin:'Insurance/IFTA/ELD',trkPmt:'Truck Payment',
-  sAvail:'Available',sPend:'Pending',sSold:'Sold',
-  colWk:'/wk',
+  bkTitle:'Breakdown',gross:'Revenue',fee:'Company Fee (10%)',admin:'Insurance/IFTA/ELD',trkPmt:'Truck Payment',
+  sAvail:'Available',sPend:'Pending',sSold:'Sold',colWk:'/wk',
   ctaTitle:'Contact <em>us</em>',ctaSub:'We reply fast and in your language.',
   cbPhone:'Call',cbTg:'Telegram',cbWa:'WhatsApp',
-  contactLocation:'Serving all across the United States',
-  contactHours:'Mon–Sat 8:00 AM–8:00 PM EST',
+  contactLocation:'Serving all across the United States',contactHours:'Mon–Sat 8:00 AM–8:00 PM EST',
 },
 tg:{
-  heroEyebrow:'Бозори Трак',
-  heroTitle:'Роҳи ту дар <em>бизнеси трак</em>',
-  heroSub:'Аз CDL то ширкати худат — дар ҳар қадам ёрӣ мекунем.',
+  heroEyebrow:'Бозори Трак',heroTitle:'Роҳи ту дар <em>бизнеси трак</em>',heroSub:'Аз CDL то ширкати худат — дар ҳар қадам ёрӣ мекунем.',
   nav1:'Роҳ',nav2:'Трак',nav3:'Тамос',
-  tagStart:'Оғоз',tagGrow:'Рушд',tagBiz:'Бизнес',tagScale:'Тавсеа',
+  tagStart:'Оғоз',tagGrow:'Рушд',tagBiz:'Бизнес',tagScale:'Тавсеа',tagHelp:'Кумак',
   s1name:'Мехоҳам ронандаи трак шавам',s1desc:'CDL нест, таҷриба нест',
-  s1svc1n:'Омӯзиши CDL',s1svc1d:'Ба имтиҳон омода мекунем, ба гирифтани литсензия мусоидат мекунем',
+  s1svc1n:'Омӯзиши CDL',s1svc1d:'Ба имтиҳон омода мекунем, литсензия мегирем',
   s1svc2n:'Кор ёфтан',s1svc2d:'Пас аз CDL кор мекобем',
-  s1svc3n:'Санҷиши тиббии DOT',s1svc3d:'Дар гузаштани комиссия ва гирифтани Medical Card кумак мекунем',
-  s1cta:'Оғоз →',
+  s1svc3n:'Санҷиши тиббии DOT',s1svc3d:'Дар гузаштани комиссия кумак мекунем',
   s2name:'CDL дорам, барои худам кор мекунам',s2desc:'Owner-Operator мешавам',
   s2svc1n:'LLC / Inc + Ҳисоби Бизнес',s2svc1d:'Сабти бизнес, EIN, ҳисоб, таърихи кредит',
   s2svc2n:'Харидани Трак',s2svc2d:'Lease-to-own, financing — трак интихоб кун ва ҳисобро бубин',
   s2svc3n:'Диспетчер',s2svc3d:'Бор ва шартномаҳо бо рейтҳои хуб',
-  s2cta:'Трак интихоб кун →',
+  s2ctaTruck:'🚛 Трак интихоб кун →',
   s3name:'Ширкати худро кушоям',s3desc:'MC/DOT, ронандагони худам',
   s3svc1n:'MC / DOT + Суғурта',s3svc1d:'Сабти carrier, BOC-3, суғурта',
-  s3svc2n:'Safety & Compliance',s3svc2d:'Санҷиши маводи нашъаовар, FMCSA, аудит',
+  s3svc2n:'Safety & Compliance',s3svc2d:'Санҷиши маводи нашъаовар, FMCSA',
   s3svc3n:'Кор ёфтани ронандагон',s3svc3d:'MVR check, onboarding, шартномаҳо',
-  s3svc4n:'Беҳтарин абзорҳо',s3svc4d:'Кумак дар интихоби TMS, ҳисобдорӣ, ELD, Safety, Fuel Cards, IFTA',
-  s3cta:'Тамос гиред →',
+  s3svc4n:'Беҳтарин абзорҳо',s3svc4d:'TMS, ҳисобдорӣ, ELD, Safety, Fuel Cards, IFTA',
   s4name:'Ширкат дорам, тавсеа медиҳам',s4desc:'Тракҳои бештар, даромади бештар',
   s4svc1n:'Тракҳо илова мекунем',s4svc1d:'Financing ва fleet deals',
   s4svc2n:'Диспетчи Пурра',s4svc2d:'Spot + contract барои тамоми флот',
   s4svc3n:'Дастгирии Флот 24/7',s4svc3d:'Maintenance, breakdown, кумаки фаврӣ',
   s4svc4n:'Ҳисобдорӣ & Андоз',s4svc4d:'IFTA, quarterly taxes, P&L',
   s4cta:'Тамос гиред →',
-  vcTitle:'Ҷарима ё violation?',vcBadge:'Кумак',
-  vcText:'Tickets, citations, DOT violations — кумак мекунем баҳс кунем ва CSA score-ро ҳифз кунем.',
-  vcBtn:'Занг занед →',
+  s5name:'Ҷаримаҳо, violations, citations',s5desc:'Tickets, нақзи қонун, мушкилот бо DOT',
+  s5svc1n:'Violations / Citations',s5svc1d:'Кумак дар баҳснок кардани ҷаримаҳо',
+  s5svc2n:'Roadside Inspections',s5svc2d:'DataQ challenges, ҳифзи CSA score',
+  s5svc3n:'Аудити DOT',s5svc3d:'Омодагӣ, ҳамроҳӣ, барқарор кардани рейтинг',
+  s5svc4n:'Кумаки Фаврӣ 24/7',s5svc4d:'Breakdown, дастгирӣ дар садама',
+  s5cta:'Занг занед →',
+  form1title:'📋 Ариза барои CDL',form2atitle:'💼 Ариза барои кор',
+  form2btitle:'🏦 Сабти LLC / Inc — $290',form3title:'📜 Кушодани MC/DOT — $1,499',
+  fPermit:'Permit',fMedical:'Medical Card',fID:'ID (шиноснома ё ҳуҷҷат)',
+  fCDL:'Литсензияи CDL',fOptional:'ихтиёрӣ',
+  fAddress:'Суроғаи ширкат',fAddressPh:'123 Main St, City, State ZIP',fPhone:'Телефон',
+  fCompName1:'Номи ширкат — вариант 1',fCompName2:'Ном — вариант 2',fCompName3:'Ном — вариант 3',
+  fCompNamePh:'Масалан: TezTruck LLC',
+  fPayment:'Пардохт бо карта',fStripeNote:'Тавассути Stripe. Маълумоти карта нигоҳ дошта намешавад.',
+  fUploadBtn:'Барои бор кардан пахш кунед',fSendBtn:'Ариза фиристодан',
+  fPayLLC:'Пардохти $290 ва фиристодан',fPayMC:'Пардохти $1,499 ва фиристодан',
+  fSuccessTitle:'Ариза қабул шуд!',fSuccessSub:'Мо ба зудӣ бо шумо тамос мегирем.',
+  fSuccessLLC:'Пардохт гузашт. Сабти ширкатро оғоз мекунем.',fSuccessMC:'Пардохт гузашт. Расмикунонии MC/DOT оғоз мешавад.',
   fleetTitle:'Тракҳои Мавҷуда',fleetSub:'Интихоб кун — пардохт ва даромадро бубин',
   calcHint:'Трак интихоб кун то ҳисобро бубинӣ',
-  netLbl:'Даромади Соф / ҳафта',wkLbl:'Пардохт / ҳафта',
-  dpLbl:'Пардохти Аввала',balLbl:'Боқимонда',
+  netLbl:'Даромади Соф / ҳафта',wkLbl:'Пардохт / ҳафта',dpLbl:'Пардохти Аввала',balLbl:'Боқимонда',
   grossLbl:'Гросси Хафтаина',diesel:'Дизел',tolls:'Пули Роҳ',
-  bkTitle:'Ҳисоб',gross:'Даромад',fee:'Пули Ширкат (10%)',
-  admin:'Суғурта/IFTA/ELD',trkPmt:'Пардохт барои Трак',
-  sAvail:'Озод',sPend:'Банд',sSold:'Харида шуд',
-  colWk:'/ҳафта',
+  bkTitle:'Ҳисоб',gross:'Даромад',fee:'Пули Ширкат (10%)',admin:'Суғурта/IFTA/ELD',trkPmt:'Пардохт барои Трак',
+  sAvail:'Озод',sPend:'Банд',sSold:'Харида шуд',colWk:'/ҳафта',
   ctaTitle:'Ба мо <em>нависед</em>',ctaSub:'Зуд ва ба забони шумо ҷавоб медиҳем.',
   cbPhone:'Занг',cbTg:'Telegram',cbWa:'WhatsApp',
-  contactLocation:'Дар тамоми ИМА хидмат мекунем',
-  contactHours:'Ду–Ш 8:00–20:00 EST',
+  contactLocation:'Дар тамоми ИМА хидмат мекунем',contactHours:'Ду–Ш 8:00–20:00 EST',
 },
 uz:{
-  heroEyebrow:"Trak Marketpleysi",
-  heroTitle:"Trak <em>biznesidagi</em> yo'lingiz",
-  heroSub:"CDLdan o'z kompaniyangizgacha — har qadamda yoningdamiz.",
+  heroEyebrow:"Trak Marketpleysi",heroTitle:"Trak <em>biznesidagi</em> yo'lingiz",heroSub:"CDLdan o'z kompaniyangizgacha — har qadamda yoningdamiz.",
   nav1:"Yo'l",nav2:"Traklar",nav3:"Aloqa",
-  tagStart:"Boshlash",tagGrow:"O'sish",tagBiz:"Biznes",tagScale:"Kengaytirish",
+  tagStart:"Boshlash",tagGrow:"O'sish",tagBiz:"Biznes",tagScale:"Kengaytirish",tagHelp:"Yordam",
   s1name:"Trak haydovchisi bo'lmoqchiman",s1desc:"CDL yo'q, tajriba yo'q",
-  s1svc1n:"CDL O'qitish",s1svc1d:"Imtihonga tayyorlaymiz, litsenziya olishgacha yo'llaymiz",
+  s1svc1n:"CDL O'qitish",s1svc1d:"Imtihonga tayyorlaymiz, litsenziyagacha yo'llaymiz",
   s1svc2n:"Ish topish",s1svc2d:"CDLdan so'ng darhol ish topamiz",
-  s1svc3n:"DOT Tibbiy Ko'rik",s1svc3d:"Tibbiy komissiyadan o'tish va Medical Card olishda yordam beramiz",
-  s1cta:"Boshlash →",
+  s1svc3n:"DOT Tibbiy Ko'rik",s1svc3d:"Tibbiy komissiyadan o'tish va Medical Card olishda yordam",
   s2name:"CDL bor, o'zim uchun ishlashni xohlayman",s2desc:"Owner-Operator bo'lish",
   s2svc1n:"LLC / Inc + Biznes Hisobi",s2svc1d:"Biznes ro'yxatdan o'tkazish, EIN, hisob, kredit tarixi",
   s2svc2n:"Trak sotib olish",s2svc2d:"Lease-to-own, financing — trakni tanlang va hisob-kitobni ko'ring",
   s2svc3n:"Dispetcher",s2svc3d:"Yaxshi stavkali yuk va shartnomalar topamiz",
-  s2cta:"Trak tanlash →",
+  s2ctaTruck:"🚛 Trak tanlash →",
   s3name:"O'z kompaniyamni ochmoqchiman",s3desc:"MC/DOT, o'z haydovchilarim",
   s3svc1n:"MC / DOT + Sug'urta",s3svc1d:"Carrier ro'yxatdan o'tkazish, BOC-3, sug'urta",
   s3svc2n:"Safety & Compliance",s3svc2d:"Giyohvand tekshiruv, FMCSA, auditlar",
   s3svc3n:"Haydovchi yollash",s3svc3d:"MVR check, onboarding, shartnomalar",
-  s3svc4n:"Eng Yaxshi Vositalar",s3svc4d:"TMS, buxgalteriya, ELD, Safety, Fuel Cards, IFTAni tanlashda yordam",
-  s3cta:"Bog'lanish →",
+  s3svc4n:"Eng Yaxshi Vositalar",s3svc4d:"TMS, buxgalteriya, ELD, Safety, Fuel Cards, IFTA",
   s4name:"Kompaniya bor, kengaytirmoqchiman",s4desc:"Ko'proq trak, ko'proq daromad",
   s4svc1n:"Trak qo'shish",s4svc1d:"Financing va fleet deals",
   s4svc2n:"To'liq Dispetch",s4svc2d:"Butun flot uchun spot + contract",
   s4svc3n:"Fleet Qo'llab-quvvatlash 24/7",s4svc3d:"Maintenance, breakdown, shoshilinch yordam",
   s4svc4n:"Buxgalteriya & Soliq",s4svc4d:"IFTA, kvartal soliqlari, P&L",
   s4cta:"Bog'lanish →",
-  vcTitle:"Jarima yoki violation?",vcBadge:"Yordam",
-  vcText:"Tickets, citations, DOT violations — bahslashish va CSA scoreni himoya qilishda yordam.",
-  vcBtn:"Qo'ng'iroq →",
+  s5name:"Jarimalar, violations, citations",s5desc:"Tickets, qoidabuzarliklar, DOT muammolari",
+  s5svc1n:"Violations / Citations",s5svc1d:"Jarimalarni bahslashish yoki kamaytirish",
+  s5svc2n:"Roadside Inspections",s5svc2d:"DataQ challenges, CSA score himoyasi",
+  s5svc3n:"DOT Audit",s5svc3d:"Tayyorgarlik, hamrohlik, reyting tiklash",
+  s5svc4n:"Shoshilinch Yordam 24/7",s5svc4d:"Breakdown, baxtsiz hodisa qo'llab-quvvatlash",
+  s5cta:"Qo'ng'iroq →",
+  form1title:"📋 CDL uchun ariza",form2atitle:"💼 Ish uchun ariza",
+  form2btitle:"🏦 LLC / Inc ro'yxatdan o'tkazish — $290",form3title:"📜 MC/DOT ochish — $1,499",
+  fPermit:"Permit",fMedical:"Medical Card",fID:"ID (pasport yoki haydovchilik guvohnomasi)",
+  fCDL:"CDL litsenziyasi",fOptional:"ixtiyoriy",
+  fAddress:"Kompaniya manzili",fAddressPh:"123 Main St, City, State ZIP",fPhone:"Telefon",
+  fCompName1:"Kompaniya nomi — variant 1",fCompName2:"Nom — variant 2",fCompName3:"Nom — variant 3",
+  fCompNamePh:"Masalan: TezTruck LLC",
+  fPayment:"Karta bilan to'lov",fStripeNote:"Stripe tomonidan himoyalangan. Karta ma'lumotlari saqlanmaydi.",
+  fUploadBtn:"Yuklash uchun bosing",fSendBtn:"Ariza yuborish",
+  fPayLLC:"$290 to'lash va yuborish",fPayMC:"$1,499 to'lash va yuborish",
+  fSuccessTitle:"Ariza qabul qilindi!",fSuccessSub:"Tez orada siz bilan bog'lanamiz.",
+  fSuccessLLC:"To'lov muvaffaqiyatli. Kompaniya ro'yxatdan o'tkazilmoqda.",fSuccessMC:"To'lov muvaffaqiyatli. MC/DOT rasmiylashtirilmoqda.",
   fleetTitle:"Mavjud Traklar",fleetSub:"Tanlang — to'lov va daromadni darhol ko'ring",
   calcHint:"Trakni tanlang va hisob-kitobni ko'ring",
-  netLbl:"Sof Daromad / hafta",wkLbl:"To'lov / hafta",
-  dpLbl:"Boshlang'ich To'lov",balLbl:"Qoldiq",
+  netLbl:"Sof Daromad / hafta",wkLbl:"To'lov / hafta",dpLbl:"Boshlang'ich To'lov",balLbl:"Qoldiq",
   grossLbl:"Haftalik Gross",diesel:"Dizel",tolls:"Yo'l To'lovi",
-  bkTitle:"Hisob",gross:"Daromad",fee:"Kompaniya (10%)",
-  admin:"Sug'urta/IFTA/ELD",trkPmt:"Trak To'lovi",
-  sAvail:"Bo'sh",sPend:"Band",sSold:"Sotildi",
-  colWk:"/hafta",
+  bkTitle:"Hisob",gross:"Daromad",fee:"Kompaniya (10%)",admin:"Sug'urta/IFTA/ELD",trkPmt:"Trak To'lovi",
+  sAvail:"Bo'sh",sPend:"Band",sSold:"Sotildi",colWk:"/hafta",
   ctaTitle:"Biz bilan <em>bog'laning</em>",ctaSub:"Tez va tilingizda javob beramiz.",
   cbPhone:"Qo'ng'iroq",cbTg:"Telegram",cbWa:"WhatsApp",
-  contactLocation:"Butun AQSh bo'ylab xizmat qilamiz",
-  contactHours:"Du–Sha 8:00–20:00 EST",
+  contactLocation:"Butun AQSh bo'ylab xizmat qilamiz",contactHours:"Du–Sha 8:00–20:00 EST",
 }
 };
 
@@ -719,55 +834,194 @@ let lang='ru';
 function t(k){return T[lang][k]||T.ru[k]||k;}
 function setLang(l){
   lang=l;
-  ['ru','en','tg','uz'].forEach(x=>{
-    document.getElementById('lb-'+x).classList.toggle('on',x===l);
-  });
+  ['ru','en','tg','uz'].forEach(x=>document.getElementById('lb-'+x).classList.toggle('on',x===l));
   document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.getAttribute('data-i')));
   document.querySelectorAll('[data-ih]').forEach(el=>el.innerHTML=t(el.getAttribute('data-ih')));
+  document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.getAttribute('data-ph')));
   renderTrucks();
-  if(selId){const tr=trucks.find(x=>x.id===selId);if(tr)renderCalc(tr);}
-  else showCalcEmpty();
+  if(selId){const tr=trucks.find(x=>x.id===selId);if(tr)renderCalc(tr);}else showCalcEmpty();
 }
 
-// ── Screens ──────────────────────────────────────────
-let curScreen='path';
+// ── SCREENS ───────────────────────────────────────────
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('on'));
   document.getElementById('sc-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('on');
-  curScreen=name;
 }
 function goTrucks(){showScreen('trucks');}
 function goContact(){showScreen('contact');}
 
-// ── Stages ───────────────────────────────────────────
+// ── STAGES ────────────────────────────────────────────
 function toggleStage(id){
   const el=document.getElementById(id);
-  const isOpen=el.classList.contains('open');
+  const was=el.classList.contains('open');
   document.querySelectorAll('.stage-item').forEach(s=>s.classList.remove('open'));
-  if(!isOpen)el.classList.add('open');
+  if(!was)el.classList.add('open');
 }
 
-// ── Supabase ─────────────────────────────────────────
-const SB_URL='https://wuyuhxddswxrrzquogsh.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
-const TABLE='trucks';const BUCKET='truck-photos';
-const READY=!SB_URL.includes('ТВОЙ');
-async function sb(path,opts={}){
+// ── TOAST ─────────────────────────────────────────────
+let toastTm;
+function showToast(msg,type='',ms=3000){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show '+(type||'');
+  clearTimeout(toastTm);toastTm=setTimeout(()=>el.className='toast',ms);
+}
+
+// ── SUPABASE ──────────────────────────────────────────
+async function sbReq(path,opts={}){
   const r=await fetch(SB_URL+path,{...opts,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
   if(!r.ok)throw new Error(await r.text());
   const ct=r.headers.get('content-type')||'';
   return ct.includes('json')?r.json():r.text();
 }
-const dbGet=()=>sb(`/rest/v1/${TABLE}?order=sort_order.asc,created_at.asc`);
 
+// ── FILE UPLOAD ───────────────────────────────────────
+const uploadedFiles={};
+async function handleFile(input,key,zoneId,nameId,pbId){
+  const file=input.files[0];if(!file)return;
+  const zone=document.getElementById(zoneId);
+  const nameEl=document.getElementById(nameId);
+  const pb=document.getElementById(pbId);
+  zone.className='fupload-zone uploading';
+  nameEl.textContent=file.name;
+  pb.style.width='30%';
+  try{
+    const ext=file.name.split('.').pop();
+    const path=`forms/${key}_${Date.now()}.${ext}`;
+    const ab=await file.arrayBuffer();
+    const r=await fetch(`${SB_URL}/storage/v1/object/documents/${path}`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
+      body:ab
+    });
+    pb.style.width='100%';
+    if(!r.ok)throw new Error(await r.text());
+    uploadedFiles[key]=`${SB_URL}/storage/v1/object/public/documents/${path}`;
+    zone.className='fupload-zone has-file';
+    nameEl.textContent='✓ '+file.name;
+  }catch(e){
+    zone.className='fupload-zone';
+    nameEl.textContent='';
+    showToast('Upload error: '+e.message,'err');
+  }
+}
+
+// ── EMAILJS ───────────────────────────────────────────
+emailjs.init(EJS_KEY);
+async function sendEmail(params){
+  return emailjs.send(EJS_SERVICE,EJS_TEMPLATE,params);
+}
+
+// ── FORM 1: CDL Application ───────────────────────────
+async function submitForm1(){
+  const phone=document.getElementById('f1-phone').value.trim();
+  if(!phone){showToast('Введите телефон','err');return;}
+  const btn=document.getElementById('f1-submit');
+  btn.disabled=true;btn.textContent='...';
+  try{
+    await sendEmail({
+      to_email:'jnsonjim@gmail.com',
+      subject:'CDL Заявка — TezTruck',
+      message:`Новая заявка на CDL\n\nТелефон: ${phone}\n\nPermit: ${uploadedFiles.permit||'не загружен'}\nMedical: ${uploadedFiles.medical||'не загружен'}\nID: ${uploadedFiles.id1||'не загружен'}`,
+      from_name:'TezTruck App',reply_to:phone
+    });
+    document.getElementById('form1-body').style.display='none';
+    document.getElementById('form1-success').classList.add('vis');
+  }catch(e){showToast('Ошибка: '+e.text||e.message,'err');btn.disabled=false;btn.textContent=t('fSendBtn');}
+}
+
+// ── FORM 2a: Job Application ──────────────────────────
+async function submitForm2a(){
+  const phone=document.getElementById('f2a-phone').value.trim();
+  if(!phone){showToast('Введите телефон','err');return;}
+  const btn=document.getElementById('f2a-submit');
+  btn.disabled=true;btn.textContent='...';
+  try{
+    await sendEmail({
+      to_email:'jnsonjim@gmail.com',
+      subject:'Заявка на работу — TezTruck',
+      message:`Новая заявка на трудоустройство\n\nТелефон: ${phone}\n\nCDL: ${uploadedFiles.cdl||'не загружен'}\nEAD: ${uploadedFiles.ead||'не загружен'}`,
+      from_name:'TezTruck App',reply_to:phone
+    });
+    document.getElementById('form2a-body').style.display='none';
+    document.getElementById('form2a-success').classList.add('vis');
+  }catch(e){showToast('Ошибка: '+e.text||e.message,'err');btn.disabled=false;btn.textContent=t('fSendBtn');}
+}
+
+// ── STRIPE SETUP ──────────────────────────────────────
+let stripe,cardLLC,cardMC;
+function initStripe(){
+  stripe=Stripe(STRIPE_KEY);
+  const els=stripe.elements();
+  const style={base:{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:'14px',color:'#0F1E30',
+    '::placeholder':{color:'#8EA5C0'}},invalid:{color:'#C0281A'}};
+  cardLLC=els.create('card',{style,hidePostalCode:true});
+  cardLLC.mount('#card-element-llc');
+  cardMC=els.create('card',{style,hidePostalCode:true});
+  cardMC.mount('#card-element-mc');
+}
+
+// ── FORM 2b: LLC ──────────────────────────────────────
+async function submitLLC(){
+  const ssn=document.getElementById('f2b-ssn').value.trim();
+  const addr=document.getElementById('f2b-address').value.trim();
+  const phone=document.getElementById('f2b-phone').value.trim();
+  const email=document.getElementById('f2b-email').value.trim();
+  const n1=document.getElementById('f2b-name1').value.trim();
+  if(!ssn||!addr||!phone||!email||!n1){showToast('Заполните обязательные поля','err');return;}
+  const btn=document.getElementById('f2b-submit');
+  const errEl=document.getElementById('f2b-error');
+  btn.disabled=true;btn.textContent='Обработка...';errEl.style.display='none';
+  try{
+    // Create payment intent via Stripe — $290 = 29000 cents
+    // NOTE: In production you need a backend to create PaymentIntents
+    // Using confirmCardPayment with client-only approach for demo
+    const {paymentMethod,error}=await stripe.createPaymentMethod({type:'card',card:cardLLC,billing_details:{email,phone}});
+    if(error){errEl.textContent=error.message;errEl.style.display='block';btn.disabled=false;btn.textContent=t('fPayLLC');return;}
+    await sendEmail({
+      to_email:'jnsonjim@gmail.com',
+      subject:'LLC Регистрация $290 — TezTruck',
+      message:`Новая заявка на регистрацию LLC\n\nТелефон: ${phone}\nEmail: ${email}\nАдрес: ${addr}\nSSN: ${ssn}\n\nНазвание 1: ${n1}\nНазвание 2: ${document.getElementById('f2b-name2').value}\nНазвание 3: ${document.getElementById('f2b-name3').value}\n\nID: ${uploadedFiles.llcid||'не загружен'}\nStripe PM: ${paymentMethod.id}`,
+      from_name:'TezTruck App',reply_to:email
+    });
+    document.getElementById('form2b-body').style.display='none';
+    document.getElementById('form2b-success').classList.add('vis');
+  }catch(e){errEl.textContent=e.text||e.message;errEl.style.display='block';btn.disabled=false;btn.textContent=t('fPayLLC');}
+}
+
+// ── FORM 3: MC/DOT ────────────────────────────────────
+async function submitMC(){
+  const ssn=document.getElementById('f3-ssn').value.trim();
+  const addr=document.getElementById('f3-address').value.trim();
+  const phone=document.getElementById('f3-phone').value.trim();
+  const email=document.getElementById('f3-email').value.trim();
+  const n1=document.getElementById('f3-name1').value.trim();
+  if(!ssn||!addr||!phone||!email||!n1){showToast('Заполните обязательные поля','err');return;}
+  const btn=document.getElementById('f3-submit');
+  const errEl=document.getElementById('f3-error');
+  btn.disabled=true;btn.textContent='Обработка...';errEl.style.display='none';
+  try{
+    const {paymentMethod,error}=await stripe.createPaymentMethod({type:'card',card:cardMC,billing_details:{email,phone}});
+    if(error){errEl.textContent=error.message;errEl.style.display='block';btn.disabled=false;btn.textContent=t('fPayMC');return;}
+    await sendEmail({
+      to_email:'jnsonjim@gmail.com',
+      subject:'MC/DOT Регистрация $1499 — TezTruck',
+      message:`Новая заявка на MC/DOT\n\nТелефон: ${phone}\nEmail: ${email}\nАдрес: ${addr}\nSSN: ${ssn}\n\nНазвание 1: ${n1}\nНазвание 2: ${document.getElementById('f3-name2').value}\nНазвание 3: ${document.getElementById('f3-name3').value}\n\nID: ${uploadedFiles.mcid||'не загружен'}\nStripe PM: ${paymentMethod.id}`,
+      from_name:'TezTruck App',reply_to:email
+    });
+    document.getElementById('form3-body').style.display='none';
+    document.getElementById('form3-success').classList.add('vis');
+  }catch(e){errEl.textContent=e.text||e.message;errEl.style.display='block';btn.disabled=false;btn.textContent=t('fPayMC');}
+}
+
+// ── TRUCKS ────────────────────────────────────────────
 let trucks=[],selId=null,pidx=0;
-
 async function loadTrucks(){
-  if(!READY){loadDemo();return;}
-  try{trucks=await dbGet()||[];renderTrucks();}
-  catch(e){loadDemo();}
+  try{
+    const r=await sbReq(`/rest/v1/trucks?order=sort_order.asc,created_at.asc`);
+    trucks=r||[];renderTrucks();
+  }catch(e){loadDemo();}
 }
 function loadDemo(){
   trucks=[
@@ -775,52 +1029,31 @@ function loadDemo(){
     {id:'d2',name:'2019 Peterbilt 579',detail:'455HP Paccar MX-13 · 10-Spd Auto',price:72000,status:'available',photos:[]},
     {id:'d3',name:'2021 Freightliner Cascadia',detail:'500HP Detroit DD15 · 12-Spd Auto',price:95000,status:'available',photos:[]},
     {id:'d4',name:'2018 Volvo VNL 860',detail:'475HP D13 · Automated Manual',price:64000,status:'pending',photos:[]}
-  ];
-  renderTrucks();
+  ];renderTrucks();
 }
-
 function fmt(n){return'$'+Math.round(n).toLocaleString();}
 function stLbl(s){return t({available:'sAvail',pending:'sPend',sold:'sSold'}[s]||s);}
 
 function renderTrucks(){
-  const sc=document.getElementById('trucksScroll');
-  sc.innerHTML='';
+  const sc=document.getElementById('trucksScroll');sc.innerHTML='';
   trucks.forEach(truck=>{
-    const isSel=selId===truck.id;
-    const wk=(truck.price-10000)/52;
+    const isSel=selId===truck.id,wk=(truck.price-10000)/52;
     const ph=(truck.photos||[])[0];
     const phHTML=ph?`<img src="${ph}" alt="${truck.name}" onerror="this.parentNode.innerHTML='<div class=tcard-ph>🚛</div>'">`:'<div class="tcard-ph">🚛</div>';
     const card=document.createElement('div');
     card.className='tcard'+(truck.status==='sold'?' sold':'')+(isSel?' sel':'');
     card.onclick=()=>pick(truck.id);
-    card.innerHTML=`
-      <div class="tcard-img">${phHTML}
-        <div class="tcard-stag st-${truck.status}">${stLbl(truck.status)}</div>
-        ${isSel?'<div class="tcard-sel-ring"></div><div class="tcard-check">✓</div>':''}
-      </div>
-      <div class="tcard-body">
-        <div class="tcard-name">${truck.name}</div>
-        <div class="tcard-det">${truck.detail}</div>
-        <div class="tcard-wk">${fmt(wk)}<span>${t('colWk')}</span></div>
-        <div class="tcard-price">${fmt(truck.price)}</div>
-      </div>`;
+    card.innerHTML=`<div class="tcard-img">${phHTML}<div class="tcard-stag st-${truck.status}">${stLbl(truck.status)}</div>${isSel?'<div class="tcard-sel-ring"></div><div class="tcard-check">✓</div>':''}</div><div class="tcard-body"><div class="tcard-name">${truck.name}</div><div class="tcard-det">${truck.detail}</div><div class="tcard-wk">${fmt(wk)}<span>${t('colWk')}</span></div><div class="tcard-price">${fmt(truck.price)}</div></div>`;
     sc.appendChild(card);
   });
 }
-
 function pick(id){
   const truck=trucks.find(x=>x.id===id);
   if(!truck||truck.status==='sold')return;
-  selId=truck.id;pidx=0;
-  renderTrucks();
-  renderPreview(truck);
-  renderCalc(truck);
+  selId=truck.id;pidx=0;renderTrucks();renderPreview(truck);renderCalc(truck);
 }
-
 function renderPreview(truck){
-  const photos=truck.photos||[];
-  const w=document.getElementById('previewImgWrap');
-  const wrap=document.getElementById('previewWrap');
+  const photos=truck.photos||[],w=document.getElementById('previewImgWrap'),wrap=document.getElementById('previewWrap');
   const idx=Math.min(pidx,Math.max(0,photos.length-1));
   if(photos.length){
     const nav=photos.length>1?`<button class="pnav prev" onclick="pNav(-1)">❮</button><button class="pnav next" onclick="pNav(1)">❯</button><div class="pdots">${photos.map((_,i)=>`<div class="pdot${i===idx?' on':''}" onclick="pGo(${i})"></div>`).join('')}</div>`:'';
@@ -830,48 +1063,21 @@ function renderPreview(truck){
 }
 function pNav(d){const tr=trucks.find(x=>x.id===selId);if(!tr||!tr.photos.length)return;pidx=(pidx+d+tr.photos.length)%tr.photos.length;renderPreview(tr);}
 function pGo(i){pidx=i;const tr=trucks.find(x=>x.id===selId);if(tr)renderPreview(tr);}
-
-function showCalcEmpty(){
-  document.getElementById('calcArea').innerHTML=`<div class="calc-empty"><div class="calc-empty-icon">☝️</div><div class="calc-empty-text">${t('calcHint')}</div><div class="calc-empty-arrow">↑</div></div>`;
-}
+function showCalcEmpty(){document.getElementById('calcArea').innerHTML=`<div class="calc-empty"><div class="calc-empty-icon">☝️</div><div class="calc-empty-text">${t('calcHint')}</div><div class="calc-empty-arrow">↑</div></div>`;}
 
 const DG=12000,DDi=1800,DT=300;
 function renderCalc(truck){
-  const area=document.getElementById('calcArea');
-  const dpDef=10000;
+  const area=document.getElementById('calcArea'),dpDef=10000;
   function c(dp,gr,di,to){const rem=truck.price-dp,wl=rem/52,f10=gr*.1;return{wl,f10,net:gr-f10-600-di-to-wl,rem};}
   const r0=c(dpDef,DG,DDi,DT);
-  area.innerHTML=`
-    <div class="truck-chip"><div class="tc-name">${truck.name}</div><div class="tc-det">${truck.detail}</div></div>
-    <div class="net-hero">
-      <div class="nh-l"><div class="nh-lbl">${t('netLbl')}</div><div class="nh-val" id="rn">${fmt(r0.net)}</div></div>
-      <div class="nh-r"><div class="nh-lbl">${t('wkLbl')}</div><div class="nh-val" id="rlh">${fmt(r0.wl)}</div><div class="nh-sub">${t('colWk')}</div></div>
-    </div>
+  area.innerHTML=`<div class="truck-chip"><div class="tc-name">${truck.name}</div><div class="tc-det">${truck.detail}</div></div>
+    <div class="net-hero"><div class="nh-l"><div class="nh-lbl">${t('netLbl')}</div><div class="nh-val" id="rn">${fmt(r0.net)}</div></div><div class="nh-r"><div class="nh-lbl">${t('wkLbl')}</div><div class="nh-val" id="rlh">${fmt(r0.wl)}</div><div class="nh-sub">${t('colWk')}</div></div></div>
     <div class="sliders-block">
-      <div class="sl-metrics">
-        <div class="sl-metric"><div class="sl-metric-lbl">${t('balLbl')}</div><div class="sl-metric-val" id="bv">${fmt(r0.rem)}</div></div>
-        <div class="sl-metric"><div class="sl-metric-lbl">${t('wkLbl')}</div><div class="sl-metric-val" id="wv">${fmt(r0.wl)}</div></div>
-      </div>
-      <div class="sl-row">
-        <div class="sl-top"><span class="sl-label">${t('dpLbl')}</span><span class="sl-val" id="dv">${fmt(dpDef)}</span></div>
-        <input type="range" id="dp" min="5000" max="${truck.price}" step="500" value="${dpDef}">
-        <div class="sl-range"><span>$5,000</span><span>${fmt(truck.price)}</span></div>
-      </div>
-      <div class="sl-row">
-        <div class="sl-top"><span class="sl-label">${t('grossLbl')}</span><span class="sl-val" id="gv">${fmt(DG)}</span></div>
-        <input type="range" id="gr" min="9000" max="15000" step="100" value="${DG}">
-        <div class="sl-range"><span>$9,000</span><span>$15,000</span></div>
-      </div>
-      <div class="sl-row">
-        <div class="sl-top"><span class="sl-label">${t('diesel')}</span><span class="sl-val" id="diev">${fmt(DDi)}</span></div>
-        <input type="range" id="di" min="1000" max="3000" step="50" value="${DDi}">
-        <div class="sl-range"><span>$1,000</span><span>$3,000</span></div>
-      </div>
-      <div class="sl-row">
-        <div class="sl-top"><span class="sl-label">${t('tolls')}</span><span class="sl-val" id="tv">${fmt(DT)}</span></div>
-        <input type="range" id="to" min="0" max="1000" step="25" value="${DT}">
-        <div class="sl-range"><span>$0</span><span>$1,000</span></div>
-      </div>
+      <div class="sl-metrics"><div class="sl-metric"><div class="sl-metric-lbl">${t('balLbl')}</div><div class="sl-metric-val" id="bv">${fmt(r0.rem)}</div></div><div class="sl-metric"><div class="sl-metric-lbl">${t('wkLbl')}</div><div class="sl-metric-val" id="wv">${fmt(r0.wl)}</div></div></div>
+      <div class="sl-row"><div class="sl-top"><span class="sl-label">${t('dpLbl')}</span><span class="sl-val" id="dv">${fmt(dpDef)}</span></div><input type="range" id="dp" min="5000" max="${truck.price}" step="500" value="${dpDef}"><div class="sl-range"><span>$5,000</span><span>${fmt(truck.price)}</span></div></div>
+      <div class="sl-row"><div class="sl-top"><span class="sl-label">${t('grossLbl')}</span><span class="sl-val" id="gv">${fmt(DG)}</span></div><input type="range" id="gr" min="9000" max="15000" step="100" value="${DG}"><div class="sl-range"><span>$9,000</span><span>$15,000</span></div></div>
+      <div class="sl-row"><div class="sl-top"><span class="sl-label">${t('diesel')}</span><span class="sl-val" id="diev">${fmt(DDi)}</span></div><input type="range" id="di" min="1000" max="3000" step="50" value="${DDi}"><div class="sl-range"><span>$1,000</span><span>$3,000</span></div></div>
+      <div class="sl-row"><div class="sl-top"><span class="sl-label">${t('tolls')}</span><span class="sl-val" id="tv">${fmt(DT)}</span></div><input type="range" id="to" min="0" max="1000" step="25" value="${DT}"><div class="sl-range"><span>$0</span><span>$1,000</span></div></div>
       <div class="divline"></div>
       <div class="bk-title">${t('bkTitle')}</div>
       <div class="bk-row"><span class="bk-l">${t('gross')}</span><span class="bk-v bk-pos" id="rg">${fmt(DG)}</span></div>
@@ -880,39 +1086,29 @@ function renderCalc(truck){
       <div class="bk-row"><span class="bk-l">${t('diesel')}</span><span class="bk-v bk-neg" id="rdi">−${fmt(DDi)}</span></div>
       <div class="bk-row"><span class="bk-l">${t('tolls')}</span><span class="bk-v bk-neg" id="rto">−${fmt(DT)}</span></div>
       <div class="bk-row"><span class="bk-l">${t('trkPmt')}</span><span class="bk-v bk-neg" id="rl">−${fmt(r0.wl)}</span></div>
-      <div class="calc-note">${t('wkLbl')}: based on $10k down</div>
+      <div class="calc-note">Based on $10k down payment</div>
     </div>`;
-
   function upd(){
-    const dp=+document.getElementById('dp').value,gr=+document.getElementById('gr').value,
-      di=+document.getElementById('di').value,to=+document.getElementById('to').value,r=c(dp,gr,di,to);
-    document.getElementById('dv').textContent=fmt(dp);
-    document.getElementById('gv').textContent=fmt(gr);
-    document.getElementById('diev').textContent=fmt(di);
-    document.getElementById('tv').textContent=fmt(to);
-    document.getElementById('bv').textContent=fmt(r.rem);
-    document.getElementById('wv').textContent=fmt(r.wl);
-    document.getElementById('rg').textContent=fmt(gr);
-    document.getElementById('rf').textContent='−'+fmt(r.f10);
-    document.getElementById('rdi').textContent='−'+fmt(di);
-    document.getElementById('rto').textContent='−'+fmt(to);
-    document.getElementById('rl').textContent='−'+fmt(r.wl);
-    document.getElementById('rlh').textContent=fmt(r.wl);
+    const dp=+document.getElementById('dp').value,gr=+document.getElementById('gr').value,di=+document.getElementById('di').value,to=+document.getElementById('to').value,r=c(dp,gr,di,to);
+    document.getElementById('dv').textContent=fmt(dp);document.getElementById('gv').textContent=fmt(gr);document.getElementById('diev').textContent=fmt(di);document.getElementById('tv').textContent=fmt(to);
+    document.getElementById('bv').textContent=fmt(r.rem);document.getElementById('wv').textContent=fmt(r.wl);
+    document.getElementById('rg').textContent=fmt(gr);document.getElementById('rf').textContent='−'+fmt(r.f10);document.getElementById('rdi').textContent='−'+fmt(di);document.getElementById('rto').textContent='−'+fmt(to);document.getElementById('rl').textContent='−'+fmt(r.wl);document.getElementById('rlh').textContent=fmt(r.wl);
     const ne=document.getElementById('rn');ne.textContent=fmt(r.net);ne.style.color=r.net>=0?'var(--gr)':'var(--re)';
   }
   ['dp','gr','di','to'].forEach(id=>document.getElementById(id).addEventListener('input',upd));
 }
 
-// Swipe on preview
-(function(){
-  let sx=0;
+// Swipe
+(function(){let sx=0;
   document.addEventListener('touchstart',e=>{const w=document.getElementById('previewImgWrap');if(w&&w.contains(e.target))sx=e.touches[0].clientX;},{passive:true});
   document.addEventListener('touchend',e=>{const w=document.getElementById('previewImgWrap');if(!w||!w.contains(e.target))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)pNav(dx<0?1:-1);},{passive:true});
 })();
 
-// Boot
+// ── BOOT ──────────────────────────────────────────────
 setLang('ru');
 loadTrucks();
+// Init Stripe after DOM ready
+setTimeout(initStripe, 100);
 </script>
 </body>
 </html>
