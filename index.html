@@ -69,6 +69,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Plus Jak
 .b-grow{background:rgba(27,79,140,0.1);color:var(--bl);}
 .b-biz{background:var(--or-dim);color:var(--or);}
 .b-scale{background:rgba(139,92,246,0.1);color:#7C3AED;}
+.b-driver{background:rgba(16,185,129,0.1);color:#059669;}
 .stchev{color:var(--tx3);font-size:.8rem;flex-shrink:0;transition:transform .25s;margin-left:4px;}
 .stage-item.open .stchev{transform:rotate(180deg);color:var(--bl);}
 .stage-body{max-height:0;overflow:hidden;transition:max-height .45s ease;}
@@ -318,6 +319,69 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
           </div></div>
         </div>
 
+
+        <!-- DRIVER stage -->
+        <div class="stage-item" id="st-driver">
+          <div class="stage-trigger" onclick="toggleStage('st-driver')">
+            <div class="stnum"></div><div class="stem">🚦</div>
+            <div class="stinfo"><div class="stname" data-i="sdname"></div><div class="stdesc" data-i="sddesc"></div></div>
+            <div class="stbadge b-driver" data-i="tagDriver"></div><div class="stchev">▼</div>
+          </div>
+          <div class="stage-body"><div class="stage-body-inner">
+
+            <!-- FORM: Driver Application -->
+            <div class="form-section">
+              <div class="form-title" data-i="formDtitle"></div>
+              <div id="formD-body">
+                <div class="frow">
+                  <label class="flabel" data-i="fCDL"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-dcdl">
+                      <div class="fupload-icon">🚛</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-dcdl"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-dcdl"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'dcdl','uz-dcdl','un-dcdl','pb-dcdl')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fMedicalExam"></label>
+                  <div class="fupload">
+                    <div class="fupload-zone" id="uz-did">
+                      <div class="fupload-icon">🏥</div>
+                      <div class="fupload-text" data-i="fUploadBtn"></div>
+                      <div class="fupload-sub">PDF, JPG, PNG</div>
+                      <div class="fupload-name" id="un-did"></div>
+                      <div class="fprogress"><div class="fprogress-bar" id="pb-did"></div></div>
+                    </div>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFile(this,'did','uz-did','un-did','pb-did')">
+                  </div>
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fDriverExp"></label>
+                  <input class="finput" type="text" id="fd-exp" data-ph="fDriverExpPh">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fPhone"></label>
+                  <input class="finput" type="tel" id="fd-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <div class="frow">
+                  <label class="flabel" data-i="fSSN4"></label>
+                  <input class="finput" type="text" id="fd-ssn4" placeholder="XXXX" maxlength="4" inputmode="numeric">
+                </div>
+                <button class="fsubmit" id="fd-submit" onclick="submitDriver()" data-i="fDriverSubmit"></button>
+              </div>
+              <div class="form-success" id="formD-success">
+                <div class="fs-icon">✅</div>
+                <div class="fs-title" data-i="fSuccessTitle"></div>
+                <div class="fs-sub" data-i="fSuccessDriver"></div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
         <!-- 02 Owner-Op -->
         <div class="stage-item" id="st2">
           <div class="stage-trigger" onclick="toggleStage('st2')">
@@ -440,6 +504,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
             </div>
           </div></div>
         </div>
+
 
         <!-- 03 Company -->
         <div class="stage-item" id="st3">
@@ -613,10 +678,21 @@ const T={
 ru:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Твой путь в <em>траковом</em> бизнесе',heroSub:'От CDL до своей компании — помогаем на каждом шаге.',
   nav1:'Путь',nav2:'Траки',nav3:'Контакт',
-  tagStart:'Старт',tagGrow:'Рост',tagBiz:'Бизнес',tagScale:'Масштаб',tagHelp:'Помощь',
+  tagStart:'Старт',tagGrow:'Рост',tagDriver:'Драйвер',tagBiz:'Бизнес',tagScale:'Масштаб',tagHelp:'Помощь',
+  sdname:'Я CDL-драйвер — хочу выгодные условия и хороший гросс',sddesc:'Ищу компанию с честными ставками и стабильной работой',
+  sdsvc1n:'Высокий гросс',sdsvc1d:'Работаем с брокерами напрямую — без лишних посредников, ставки выше рынка',
+  sdsvc2n:'Прозрачный контракт',sdsvc2d:'Чёткие условия: гросс, комиссия, расписание — всё на бумаге до первого рейса',
+  sdsvc3n:'Поддержка на дороге',sdsvc3d:'Safety, ELD, breakdown — команда на связи 24/7, не бросаем в дороге',
+  sdsvc4n:'Удобные маршруты',sdsvc4d:'Подбираем рейсы с учётом твоих предпочтений — home time, регионы, тип груза',
+  formDtitle:'📝 Хочу работать — оставь заявку',
+  fSSN4:'Последние 4 цифры SSN',
+  fMedicalExam:'Загрузи Medical Examination',
+  fDriverExp:'Опыт вождения',fDriverExpPh:'например: 3 года, OTR, flatbed',
+  fDriverSubmit:'📲 Отправь документы — мы позвоним сегодня!',
+  fSuccessDriver:'Мы свяжемся с вами и подберём подходящие условия.',
   s1name:'Хочу получить CDL и работать на траке',s1desc:'',
   s1svc1n:'Получение CDL',s1svc1d:'Организуем обучение в CDL школе',
-  s1svc2n:'Трудоустройство',s1svc2d:'Помогаем найти работу сразу после CDL',
+  s1svc2n:'Трудоустройство',s1svc2d:'Гарантированно устроим в траковую компанию с лучшими условиями',
   s1svc3n:'DOT физосмотр',s1svc3d:'Помогаем пройти медкомиссию и получить Medical Card',
   s2name:'CDL есть, хочу работать на себя',s2desc:'Стать Owner-Operator',
   s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Регистрация бизнеса, EIN, счёт, кредитная история',
@@ -646,7 +722,7 @@ ru:{
   form2btitle:'🏦 Регистрация LLC / Inc — $290',
   form3title:'📜 Открытие MC/DOT — $1,499',
   fPermit:'Permit',fMedical:'Medical Card',fID:'ID (паспорт или водительское)',
-  fCDL:'CDL лицензия',fOptional:'необязательно',
+  fCDL:'Загрузи свой CDL',fOptional:'необязательно',
   fAddress:'Адрес компании',fAddressPh:'123 Main St, City, State ZIP',
   fPhone:'Телефон',
   fCompName1:'Название компании — вариант 1',fCompName2:'Название — вариант 2',fCompName3:'Название — вариант 3',
@@ -672,10 +748,21 @@ ru:{
 en:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Your path in <em>trucking</em>',heroSub:'From CDL to your own company — we help at every step.',
   nav1:'Path',nav2:'Trucks',nav3:'Contact',
-  tagStart:'Start',tagGrow:'Growth',tagBiz:'Business',tagScale:'Scale',tagHelp:'Help',
+  tagStart:'Start',tagGrow:'Growth',tagDriver:'Driver',tagBiz:'Business',tagScale:'Scale',tagHelp:'Help',
+  sdname:'I am a CDL driver — looking for great pay and high gross',sddesc:'Seeking a company with fair rates and steady miles',
+  sdsvc1n:'High Gross',sdsvc1d:'We work directly with brokers — fewer middlemen, above-market rates',
+  sdsvc2n:'Transparent Contract',sdsvc2d:'Clear terms: gross, commission, schedule — all in writing before your first load',
+  sdsvc3n:'Road Support',sdsvc3d:'Safety, ELD, breakdown — our team is available 24/7, we never leave you stranded',
+  sdsvc4n:'Preferred Routes',sdsvc4d:'We match loads to your preferences — home time, regions, freight type',
+  formDtitle:'📝 Want to work — send your application',
+  fSSN4:'Last 4 digits of SSN',
+  fMedicalExam:'Upload Medical Examination',
+  fDriverExp:'Driving Experience',fDriverExpPh:'e.g. 3 years, OTR, flatbed',
+  fDriverSubmit:"📲 Send documents — we'll call you today!",
+  fSuccessDriver:'We will reach out and find the best terms for you.',
   s1name:'I want to get CDL and drive a truck',s1desc:'',
   s1svc1n:'Getting CDL',s1svc1d:'We arrange training at a CDL school',
-  s1svc2n:'Employment',s1svc2d:'We help you find a job right after CDL',
+  s1svc2n:'Employment',s1svc2d:'We guarantee placement at a top trucking company with the best terms',
   s1svc3n:'DOT Physical',s1svc3d:'Help passing the medical exam and getting your Medical Card',
   s2name:'I have CDL, want to work for myself',s2desc:'Become Owner-Operator',
   s2svc1n:'LLC / Inc + Business Account',s2svc1d:'Business registration, EIN, account, credit history',
@@ -702,7 +789,7 @@ en:{
   form1title:'📋 Send Documents to CDL School',form2atitle:'💼 Job Application',
   form2btitle:'🏦 LLC / Inc Registration — $290',form3title:'📜 MC/DOT Registration — $1,499',
   fPermit:'Permit',fMedical:'Medical Card',fID:'ID (passport or driver\'s license)',
-  fCDL:'CDL License',fOptional:'optional',
+  fCDL:'Upload your CDL',fOptional:'optional',
   fAddress:'Company Address',fAddressPh:'123 Main St, City, State ZIP',fPhone:'Phone',
   fCompName1:'Company Name — Option 1',fCompName2:'Company Name — Option 2',fCompName3:'Company Name — Option 3',
   fCompNamePh:'e.g. TezTruck LLC',
@@ -725,10 +812,21 @@ en:{
 tg:{
   heroEyebrow:'Бозори Трак',heroTitle:'Роҳи ту дар <em>бизнеси трак</em>',heroSub:'Аз CDL то ширкати худат — дар ҳар қадам ёрӣ мекунем.',
   nav1:'Роҳ',nav2:'Трак',nav3:'Тамос',
-  tagStart:'Оғоз',tagGrow:'Рушд',tagBiz:'Бизнес',tagScale:'Тавсеа',tagHelp:'Кумак',
+  tagStart:'Оғоз',tagGrow:'Рушд',tagDriver:'Ронанда',tagBiz:'Бизнес',tagScale:'Тавсеа',tagHelp:'Кумак',
+  sdname:'Ман ронандаи CDL — шароити хуб ва гросси баланд мехоҳам',sddesc:'Ширкатеро меҷӯям ки рейтҳои одилона ва кори устувор дорад',
+  sdsvc1n:'Гросси Баланд',sdsvc1d:'Бо брокерҳо мустақим кор мекунем — бе воситагарон, рейтҳо аз бозор баланд',
+  sdsvc2n:'Шартномаи Шаффоф',sdsvc2d:'Шартҳои равшан: гросс, комиссия, ҷадвал — ҳама дар коғаз то аввалин рейс',
+  sdsvc3n:'Дастгирии Дар Роҳ',sdsvc3d:'Safety, ELD, breakdown — дастаи мо 24/7 дар тамос аст',
+  sdsvc4n:'Масирҳои Мувофиқ',sdsvc4d:'Рейсҳоро бо назардошти афзалиятҳои шумо интихоб мекунем',
+  formDtitle:'📝 Кор мехоҳам — ариза гузоред',
+  fSSN4:'4 рақами охири SSN',
+  fMedicalExam:'Medical Examination бор кун',
+  fDriverExp:'Таҷрибаи ронандагӣ',fDriverExpPh:'масалан: 3 сол, OTR, flatbed',
+  fDriverSubmit:'📲 Ҳуҷҷатҳоро фиристед — имрӯз занг мезанем!',
+  fSuccessDriver:'Мо бо шумо тамос мегирем ва шароити мувофиқро меёбем.',
   s1name:'Мехоҳам CDL гирам ва дар трак кор кунам',s1desc:'',
   s1svc1n:'Гирифтани CDL',s1svc1d:'Таълимро дар мактаби CDL ташкил мекунем',
-  s1svc2n:'Кор ёфтан',s1svc2d:'Пас аз CDL кор мекобем',
+  s1svc2n:'Кор ёфтан',s1svc2d:'Ба ширкати беҳтарин трак бо шароити олӣ кор мегирем',
   s1svc3n:'Санҷиши тиббии DOT',s1svc3d:'Дар гузаштани комиссия кумак мекунем',
   s2name:'CDL дорам, барои худам кор мекунам',s2desc:'Owner-Operator мешавам',
   s2svc1n:'LLC / Inc + Ҳисоби Бизнес',s2svc1d:'Сабти бизнес, EIN, ҳисоб, таърихи кредит',
@@ -755,7 +853,7 @@ tg:{
   form1title:'📋 Ҳуҷҷатҳоро ба мактаби CDL фиристед',form2atitle:'💼 Ариза барои кор',
   form2btitle:'🏦 Сабти LLC / Inc — $290',form3title:'📜 Кушодани MC/DOT — $1,499',
   fPermit:'Permit',fMedical:'Medical Card',fID:'ID (шиноснома ё ҳуҷҷат)',
-  fCDL:'Литсензияи CDL',fOptional:'ихтиёрӣ',
+  fCDL:'CDL-ро бор кун',fOptional:'ихтиёрӣ',
   fAddress:'Суроғаи ширкат',fAddressPh:'123 Main St, City, State ZIP',fPhone:'Телефон',
   fCompName1:'Номи ширкат — вариант 1',fCompName2:'Ном — вариант 2',fCompName3:'Ном — вариант 3',
   fCompNamePh:'Масалан: TezTruck LLC',
@@ -777,10 +875,21 @@ tg:{
 uz:{
   heroEyebrow:"Trak Marketpleysi",heroTitle:"Trak <em>biznesidagi</em> yo'lingiz",heroSub:"CDLdan o'z kompaniyangizgacha — har qadamda yoningdamiz.",
   nav1:"Yo'l",nav2:"Traklar",nav3:"Aloqa",
-  tagStart:"Boshlash",tagGrow:"O'sish",tagBiz:"Biznes",tagScale:"Kengaytirish",tagHelp:"Yordam",
+  tagStart:"Boshlash",tagGrow:"O'sish",tagDriver:"Haydovchi",tagBiz:"Biznes",tagScale:"Kengaytirish",tagHelp:"Yordam",
+    sdname:"Men CDL haydovchiman — yaxshi shart va yuqori gross xohlayman",sddesc:"Adolatli stavkali va barqaror ishli kompaniya izlayapman",
+  sdsvc1n:"Yuqori Gross",sdsvc1d:"Brokerlar bilan to'g'ridan-to'g'ri ishlaymiz — vositachilarsiz, bozordan yuqori stavkalar",
+  sdsvc2n:"Shaffof Shartnoma",sdsvc2d:"Aniq shartlar: gross, komissiya, jadval — birinchi yukdan oldin yozma ravishda",
+  sdsvc3n:"Yo'ldagi Qo'llab-quvvatlash",sdsvc3d:"Safety, ELD, breakdown — jamoamiz 24/7 aloqada, yo'lda tashlab ketmaymiz",
+  sdsvc4n:"Qulay Marshrutlar",sdsvc4d:"Yuklarni sizning afzalliklaringizga qarab tanlaymiz — uy vaqti, mintaqalar, yuk turi",
+  formDtitle:"📝 Ishlamoqchiman — ariza qoldiring",
+  fSSN4:"SSNning oxirgi 4 raqami",
+  fMedicalExam:"Medical Examination yuklang",
+  fDriverExp:"Haydovchilik tajribasi",fDriverExpPh:"masalan: 3 yil, OTR, flatbed",
+  fDriverSubmit:"📲 Hujjatlarni yuboring — bugun qo'ng'iroq qilamiz!",
+  fSuccessDriver:"Siz bilan bog'lanamiz va eng yaxshi shartlarni topamiz.",
   s1name:"CDL olmoqchi va trakda ishlashni xohlayman",s1desc:"",
   s1svc1n:"CDL olish",s1svc1d:"CDL maktabida o'qishni tashkil qilamiz",
-  s1svc2n:"Ish topish",s1svc2d:"CDLdan so'ng darhol ish topamiz",
+  s1svc2n:"Ish topish",s1svc2d:"Eng yaxshi shartlar bilan yetakchi trak kompaniyasiga joylashtiramiz",
   s1svc3n:"DOT Tibbiy Ko'rik",s1svc3d:"Tibbiy komissiyadan o'tish va Medical Card olishda yordam",
   s2name:"CDL bor, o'zim uchun ishlashni xohlayman",s2desc:"Owner-Operator bo'lish",
   s2svc1n:"LLC / Inc + Biznes Hisobi",s2svc1d:"Biznes ro'yxatdan o'tkazish, EIN, hisob, kredit tarixi",
@@ -807,7 +916,7 @@ uz:{
   form1title:"📋 CDL maktabiga hujjat yuborish",form2atitle:"💼 Ish uchun ariza",
   form2btitle:"🏦 LLC / Inc ro'yxatdan o'tkazish — $290",form3title:"📜 MC/DOT ochish — $1,499",
   fPermit:"Permit",fMedical:"Medical Card",fID:"ID (pasport yoki haydovchilik guvohnomasi)",
-  fCDL:"CDL litsenziyasi",fOptional:"ixtiyoriy",
+  fCDL:"CDL sertifikatini yuklang",fOptional:"ixtiyoriy",
   fAddress:"Kompaniya manzili",fAddressPh:"123 Main St, City, State ZIP",fPhone:"Telefon",
   fCompName1:"Kompaniya nomi — variant 1",fCompName2:"Nom — variant 2",fCompName3:"Nom — variant 3",
   fCompNamePh:"Masalan: TezTruck LLC",
@@ -829,7 +938,7 @@ uz:{
 };
 
 let lang='ru';
-function t(k){return T[lang][k]||T.ru[k]||k;}
+function t(k){const v=T[lang]&&T[lang][k]!==undefined?T[lang][k]:T.ru[k];return v!==undefined?v:k;}
 function setLang(l){
   lang=l;
   ['ru','en','tg','uz'].forEach(x=>document.getElementById('lb-'+x).classList.toggle('on',x===l));
@@ -1011,6 +1120,26 @@ async function submitMC(){
     document.getElementById('form3-body').style.display='none';
     document.getElementById('form3-success').classList.add('vis');
   }catch(e){errEl.textContent=e.text||e.message;errEl.style.display='block';btn.disabled=false;btn.textContent=t('fPayMC');}
+}
+
+
+// ── FORM D: Driver Application ────────────────────────
+async function submitDriver(){
+  const phone=document.getElementById('fd-phone').value.trim();
+  const exp=document.getElementById('fd-exp').value.trim();
+  if(!phone){showToast('Введите телефон','err');return;}
+  const btn=document.getElementById('fd-submit');
+  btn.disabled=true;btn.textContent='...';
+  try{
+    await sendEmail({
+      to_email:'jnsonjim@gmail.com',
+      subject:'Заявка Драйвера — TezTruck',
+      message:`Новая заявка от драйвера\n\nТелефон: ${phone}\nSSN (последние 4): ${document.getElementById('fd-ssn4').value||'не указан'}\nОпыт: ${exp||'не указан'}\n\nCDL: ${uploadedFiles.dcdl||'не загружен'}\nMedical: ${uploadedFiles.did||'не загружен'}`,
+      from_name:'TezTruck App',reply_to:phone
+    });
+    document.getElementById('formD-body').style.display='none';
+    document.getElementById('formD-success').classList.add('vis');
+  }catch(e){showToast('Ошибка: '+(e.text||e.message),'err');btn.disabled=false;btn.textContent=t('fSendBtn');}
 }
 
 // ── TRUCKS ────────────────────────────────────────────
