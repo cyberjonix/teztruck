@@ -38,7 +38,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Plus Jak
 .screen.active{opacity:1;pointer-events:auto;transform:none;}
 
 /* BOTTOM NAV */
-.bottomnav{height:var(--nav-h);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--bg2);border-top:1px solid var(--brd);padding-bottom:env(safe-area-inset-bottom);}
+.bottomnav{height:var(--nav-h);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--bg2);border-top:1px solid var(--brd);padding-bottom:env(safe-area-inset-bottom);}
 .navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;cursor:pointer;color:var(--tx3);transition:color .15s;position:relative;}
 .navbtn.on{color:var(--bl);}
 .navbtn.on::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--bl);border-radius:0 0 3px 3px;}
@@ -223,6 +223,54 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.ok{background:var(--gr);}
 .toast.err{background:var(--re);}
+
+/* VENDOR CATS */
+.vcat{flex-shrink:0;padding:6px 13px;border-radius:100px;border:1.5px solid var(--brd);font-size:.74rem;font-weight:700;color:var(--tx2);background:var(--bg2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.vcat.on{background:var(--bl);border-color:var(--bl);color:#fff;}
+#vendorCats::-webkit-scrollbar{display:none;}
+/* VENDOR CARD */
+.vcard{background:var(--bg2);border:1.5px solid var(--brd);border-radius:var(--r);padding:13px;box-shadow:0 1px 4px rgba(27,79,140,0.06);}
+.vcard-top{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px;}
+.vcard-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;}
+.vcard-name{font-size:.93rem;font-weight:700;color:var(--tx);line-height:1.25;}
+.vcard-cat{font-size:.67rem;font-weight:600;color:var(--tx3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+.vcard-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.vbadge{font-size:.61rem;font-weight:700;padding:2px 7px;border-radius:100px;}
+.vb-verified{background:var(--gr-dim);color:var(--gr);}
+.vb-featured{background:var(--or-dim);color:var(--or);}
+.vb-new{background:var(--bl-dim);color:var(--bl2);}
+.vcard-rating{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.star-full{color:#F5A623;font-size:.93rem;}
+.star-empty{color:var(--brd2);font-size:.93rem;}
+.rating-num{font-size:.86rem;font-weight:700;color:var(--tx);}
+.rating-cnt{font-size:.73rem;color:var(--tx3);}
+.vcard-desc{font-size:.79rem;color:var(--tx2);line-height:1.55;margin-bottom:9px;}
+.vcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px;}
+.vtag{font-size:.67rem;font-weight:600;padding:3px 9px;border-radius:100px;background:var(--bg3);color:var(--tx2);}
+.vcard-footer{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid var(--brd);}
+.vcard-price{font-size:.8rem;color:var(--tx2);}
+.vcard-price strong{color:var(--tx);font-weight:700;}
+.vcard-btn{font-size:.77rem;font-weight:700;padding:7px 13px;border-radius:8px;background:var(--bl);color:#fff;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.vcard-btn.orange{background:var(--or);}
+/* REVIEWS */
+.reviews-section{margin-top:10px;padding-top:9px;border-top:1px solid var(--bg3);}
+.rev-title{font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.review{background:var(--bg3);border-radius:10px;padding:9px 11px;margin-bottom:6px;}
+.rev-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.rev-author{font-size:.79rem;font-weight:700;color:var(--tx);}
+.rev-date{font-size:.68rem;color:var(--tx3);}
+.rev-stars{font-size:.8rem;color:#F5A623;margin-bottom:4px;}
+.rev-text{font-size:.77rem;color:var(--tx2);line-height:1.5;}
+.rev-type{font-size:.63rem;font-weight:600;padding:2px 7px;border-radius:100px;background:var(--bl-dim);color:var(--bl2);}
+/* WRITE REVIEW */
+.write-review{margin-top:9px;padding:11px;background:var(--bg3);border-radius:11px;}
+.wr-title{font-size:.73rem;font-weight:700;color:var(--bl);margin-bottom:9px;text-transform:uppercase;letter-spacing:.07em;}
+.wr-stars{display:flex;gap:6px;margin-bottom:9px;}
+.wr-star{font-size:1.45rem;cursor:pointer;color:var(--brd2);transition:color .15s;}
+.wr-star.on{color:#F5A623;}
+.wr-input{width:100%;padding:9px 11px;border:1.5px solid var(--brd);border-radius:9px;font-size:.83rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--tx);background:var(--bg2);outline:none;resize:none;min-height:65px;}
+.wr-input:focus{border-color:var(--bl);}
+.wr-btn{display:block;width:100%;margin-top:7px;padding:10px;background:var(--bl);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.83rem;font-weight:700;border-radius:9px;border:none;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -234,6 +282,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
       <button class="lb" id="lb-en" onclick="setLang('en')">🇺🇸 EN</button>
       <button class="lb" id="lb-tg" onclick="setLang('tg')">🇹🇯 ТЧ</button>
       <button class="lb" id="lb-uz" onclick="setLang('uz')">🇺🇿 ЎЗ</button>
+      <button class="lb" id="lb-es" onclick="setLang('es')">🇲🇽 ES</button>
     </div>
   </div>
 
@@ -639,7 +688,18 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
       <div id="calcArea"><div class="calc-empty"><div class="calc-empty-icon">☝️</div><div class="calc-empty-text" data-i="calcHint"></div><div class="calc-empty-arrow">↑</div></div></div>
     </div>
 
-    <!-- ③ CONTACT -->
+
+    <!-- ③ VENDORS -->
+    <div class="screen" id="sc-vendors">
+      <div class="contact-hero" style="text-align:left;padding:24px 16px 18px;">
+        <h2 data-ih="vendorTitle" style="font-size:1.7rem;"></h2>
+        <p data-i="vendorSub" style="margin-top:6px;"></p>
+      </div>
+      <div id="vendorCats" style="display:flex;gap:6px;overflow-x:auto;padding:10px 16px 4px;scrollbar-width:none;"></div>
+      <div id="vendorList" style="padding:6px 14px 20px;display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <!-- ④ CONTACT -->
     <div class="screen" id="sc-contact">
       <div class="contact-hero"><h2 data-ih="ctaTitle"></h2><p data-i="ctaSub"></p></div>
       <div class="contact-list">
@@ -658,6 +718,7 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
   <div class="bottomnav">
     <button class="navbtn on" id="nav-path" onclick="showScreen('path')"><div class="ni">🗺️</div><div class="nl" data-i="nav1"></div></button>
     <button class="navbtn" id="nav-trucks" onclick="showScreen('trucks')"><div class="ni">🚛</div><div class="nl" data-i="nav2"></div></button>
+    <button class="navbtn" id="nav-vendors" onclick="showScreen('vendors')"><div class="ni">⭐</div><div class="nl" data-i="nav3v"></div></button>
     <button class="navbtn" id="nav-contact" onclick="showScreen('contact')"><div class="ni">📞</div><div class="nl" data-i="nav3"></div></button>
   </div>
 </div>
@@ -677,7 +738,7 @@ const STRIPE_KEY='pk_live_51TQxaJJfySR5dqvoQQfyMlQts3KhpixCr9RsmeD8Y5p6B4gIT7Fbw
 const T={
 ru:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Твой путь в <em>траковом</em> бизнесе',heroSub:'От CDL до своей компании — помогаем на каждом шаге.',
-  nav1:'Путь',nav2:'Траки',nav3:'Контакт',
+  nav1:'Путь',nav2:'Траки',nav3v:'Вендоры',nav3:'Контакт',
   tagStart:'Старт',tagGrow:'Рост',tagDriver:'Драйвер',tagBiz:'Бизнес',tagScale:'Масштаб',tagHelp:'Помощь',
   sdname:'Я CDL-драйвер — хочу выгодные условия и хороший гросс',sddesc:'Ищу компанию с честными ставками и стабильной работой',
   sdsvc1n:'Высокий гросс',sdsvc1d:'Работаем с брокерами напрямую — без лишних посредников, ставки выше рынка',
@@ -744,10 +805,15 @@ ru:{
   ctaTitle:'Написать <em>нам</em>',ctaSub:'Ответим быстро и на вашем языке.',
   cbPhone:'Звонок',cbTg:'Telegram',cbWa:'WhatsApp',
   contactLocation:'Обслуживаем по всей территории США',contactHours:'Пн–Сб 8:00–20:00 EST',
+  vendorTitle:'Проверенные <em>вендоры</em>',vendorSub:'Живые отзывы реальных клиентов. Лучшие цены для TezTruck.',
+  vendorCatAll:'Все',vendorCatEld:'ELD',vendorCatSafety:'Safety',vendorCatDispatch:'Dispatch',
+  vendorCatAccounting:'Бухгалтерия',vendorCatRepair:'Ремонт',vendorCatInsurance:'Страховка',vendorCatSchool:'CDL Школы',
+  vendorVerified:'Проверен',vendorFeatured:'Топ',vendorNew:'Новый',
+  revTitle:'Отзывы',revWrite:'Оставить отзыв',revSend:'Отправить',revPh:'Ваш опыт...',revDriver:'Водитель',revCompany:'Компания',
 },
 en:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Your path in <em>trucking</em>',heroSub:'From CDL to your own company — we help at every step.',
-  nav1:'Path',nav2:'Trucks',nav3:'Contact',
+  nav1:'Path',nav2:'Trucks',nav3v:'Vendors',nav3:'Contact',
   tagStart:'Start',tagGrow:'Growth',tagDriver:'Driver',tagBiz:'Business',tagScale:'Scale',tagHelp:'Help',
   sdname:'I am a CDL driver — looking for great pay and high gross',sddesc:'Seeking a company with fair rates and steady miles',
   sdsvc1n:'High Gross',sdsvc1d:'We work directly with brokers — fewer middlemen, above-market rates',
@@ -808,10 +874,15 @@ en:{
   ctaTitle:'Contact <em>us</em>',ctaSub:'We reply fast and in your language.',
   cbPhone:'Call',cbTg:'Telegram',cbWa:'WhatsApp',
   contactLocation:'Serving all across the United States',contactHours:'Mon–Sat 8:00 AM–8:00 PM EST',
+  vendorTitle:'Verified <em>Vendors</em>',vendorSub:'Real reviews from real clients. Best prices for TezTruck customers.',
+  vendorCatAll:'All',vendorCatEld:'ELD',vendorCatSafety:'Safety',vendorCatDispatch:'Dispatch',
+  vendorCatAccounting:'Accounting',vendorCatRepair:'Repair',vendorCatInsurance:'Insurance',vendorCatSchool:'CDL Schools',
+  vendorVerified:'Verified',vendorFeatured:'Featured',vendorNew:'New',
+  revTitle:'Reviews',revWrite:'Write a Review',revSend:'Submit',revPh:'Your experience...',revDriver:'Driver',revCompany:'Company',
 },
 tg:{
   heroEyebrow:'Бозори Трак',heroTitle:'Роҳи ту дар <em>бизнеси трак</em>',heroSub:'Аз CDL то ширкати худат — дар ҳар қадам ёрӣ мекунем.',
-  nav1:'Роҳ',nav2:'Трак',nav3:'Тамос',
+  nav1:'Роҳ',nav2:'Трак',nav3v:'Вендорҳо',nav3:'Тамос',
   tagStart:'Оғоз',tagGrow:'Рушд',tagDriver:'Ронанда',tagBiz:'Бизнес',tagScale:'Тавсеа',tagHelp:'Кумак',
   sdname:'Ман ронандаи CDL — шароити хуб ва гросси баланд мехоҳам',sddesc:'Ширкатеро меҷӯям ки рейтҳои одилона ва кори устувор дорад',
   sdsvc1n:'Гросси Баланд',sdsvc1d:'Бо брокерҳо мустақим кор мекунем — бе воситагарон, рейтҳо аз бозор баланд',
@@ -874,7 +945,7 @@ tg:{
 },
 uz:{
   heroEyebrow:"Trak Marketpleysi",heroTitle:"Trak <em>biznesidagi</em> yo'lingiz",heroSub:"CDLdan o'z kompaniyangizgacha — har qadamda yoningdamiz.",
-  nav1:"Yo'l",nav2:"Traklar",nav3:"Aloqa",
+  nav1:"Yo'l",nav2:"Traklar",nav3v:"Vendorlar",nav3:"Aloqa",
   tagStart:"Boshlash",tagGrow:"O'sish",tagDriver:"Haydovchi",tagBiz:"Biznes",tagScale:"Kengaytirish",tagHelp:"Yordam",
     sdname:"Men CDL haydovchiman — yaxshi shart va yuqori gross xohlayman",sddesc:"Adolatli stavkali va barqaror ishli kompaniya izlayapman",
   sdsvc1n:"Yuqori Gross",sdsvc1d:"Brokerlar bilan to'g'ridan-to'g'ri ishlaymiz — vositachilarsiz, bozordan yuqori stavkalar",
@@ -935,18 +1006,86 @@ uz:{
   cbPhone:"Qo'ng'iroq",cbTg:"Telegram",cbWa:"WhatsApp",
   contactLocation:"Butun AQSh bo'ylab xizmat qilamiz",contactHours:"Du–Sha 8:00–20:00 EST",
 }
+,
+es:{
+  heroEyebrow:'Mercado de Camiones',heroTitle:'Tu camino en <em>camionería</em>',heroSub:'De CDL a tu propia empresa — te ayudamos en cada paso.',
+  nav1:'Camino',nav2:'Camiones',nav3v:'Vendedores',nav3:'Contacto',
+  tagStart:'Inicio',tagGrow:'Crecer',tagDriver:'Conductor',tagBiz:'Negocio',tagScale:'Escalar',tagHelp:'Ayuda',
+  sdname:'Soy conductor CDL — busco las mejores condiciones',sddesc:'Te conectamos con una empresa en 24 horas',
+  sdsvc1n:'Alto Gross',sdsvc1d:'Acceso directo a brokers — tarifas por encima del mercado',
+  sdsvc2n:'Contrato Transparente',sdsvc2d:'Términos claros por escrito antes de tu primera carga',
+  sdsvc3n:'Soporte 24/7',sdsvc3d:'Safety, ELD, averías — equipo siempre disponible',
+  sdsvc4n:'Rutas Preferidas',sdsvc4d:'OTR, Regional, Local — según tus preferencias',
+  formDtitle:'📝 Aplica — te llamamos hoy',
+  fSSN4:'Últimos 4 dígitos SSN',fMedicalExam:'Subir Medical Examination',
+  fDriverExp:'Experiencia de manejo',fDriverExpPh:'ej. 3 años, OTR, flatbed',
+  fDriverSubmit:'📲 Enviar docs — te llamamos hoy!',fSuccessDriver:'Nos comunicaremos contigo.',
+  s1name:'Quiero obtener mi CDL',s1desc:'De cero a tu primera carga',
+  s1svc1n:'Obtener CDL',s1svc1d:'Organizamos entrenamiento con descuento',
+  s1svc2n:'Empleo',s1svc2d:'Colocación garantizada en empresa top',
+  s1svc3n:'Examen DOT',s1svc3d:'Ayuda para pasar el examen médico',
+  s2name:'Tengo CDL, quiero trabajar independiente',s2desc:'Ser Owner-Operator',
+  s2svc1n:'LLC / Inc + Cuenta Business',s2svc1d:'Registro de negocio, EIN, cuenta, historial crediticio',
+  s2svc2n:'Comprar camión',s2svc2d:'Lease-to-own, financing — elige y ve tus números',
+  s2svc3n:'Despachador',s2svc3d:'Encontramos cargas con buenas tarifas',
+  s2ctaTruck:'🚛 Elegir camión →',
+  s3name:'Quiero abrir mi propia empresa',s3desc:'MC/DOT, mis propios conductores',
+  s3svc1n:'MC / DOT + Seguro',s3svc1d:'Registro de carrier, BOC-3, seguro',
+  s3svc2n:'Safety & Compliance',s3svc2d:'Drug testing, FMCSA, auditorías DOT',
+  s3svc3n:'Contratar conductores',s3svc3d:'MVR check, onboarding, contratos',
+  s3svc4n:'Mejores herramientas',s3svc4d:'TMS, Contabilidad, ELD, Safety, Fuel Cards, IFTA',
+  s4name:'Tengo empresa, quiero escalar',s4desc:'Más camiones, más ingresos',
+  s4svc1n:'Agregar camiones',s4svc1d:'Financing y fleet deals',
+  s4svc2n:'Despacho completo',s4svc2d:'Spot + contract para toda la flota',
+  s4svc3n:'Soporte Flota 24/7',s4svc3d:'Mantenimiento, averías, emergencia',
+  s4svc4n:'Contabilidad & Impuestos',s4svc4d:'IFTA, impuestos trimestrales, P&L',s4cta:'Contactar →',
+  s5name:'Multas, violations, citations',s5desc:'Tickets, infracciones, problemas DOT',
+  s5svc1n:'Violations / Citations',s5svc1d:'Ayuda para disputar o minimizar multas',
+  s5svc2n:'Inspecciones en carretera',s5svc2d:'DataQ challenges, protección CSA score',
+  s5svc3n:'Auditoría DOT',s5svc3d:'Preparación, acompañamiento, restauración',
+  s5svc4n:'Ayuda de emergencia 24/7',s5svc4d:'Averías, soporte en accidentes',s5cta:'Llamar →',
+  form1title:'📋 Enviar documentos a escuela CDL',
+  form2atitle:'💼 Solicitud de empleo',form2btitle:'🏦 Registro LLC / Inc — $290',
+  form3title:'📜 Registro MC/DOT — $1,499',
+  fPermit:'Permit',fMedical:'Medical Card',fID:'ID (pasaporte o licencia)',
+  fCDL:'Subir tu CDL',fOptional:'opcional',
+  fAddress:'Dirección de empresa',fAddressPh:'123 Main St, City, State ZIP',fPhone:'Teléfono',
+  fCompName1:'Nombre empresa — Opción 1',fCompName2:'Opción 2',fCompName3:'Opción 3',
+  fCompNamePh:'ej. TezTruck LLC',fPayment:'Pago con tarjeta',
+  fStripeNote:'Protegido por Stripe. Datos no se almacenan.',
+  fUploadBtn:'Toca para subir',fSendBtn:'Enviar solicitud',
+  fPayLLC:'Pagar $290 y enviar',fPayMC:'Pagar $1,499 y enviar',
+  fSuccessTitle:'¡Solicitud recibida!',fSuccessSub:'Te llamaremos pronto.',
+  fSuccessLLC:'Pago exitoso. Iniciamos tu registro.',fSuccessMC:'Pago exitoso. Iniciando MC/DOT.',
+  fleetTitle:'Camiones Disponibles',fleetSub:'Elige uno — ve pago e ingreso al instante',
+  calcHint:'Selecciona un camión para ver tus números',
+  netLbl:'Ingreso neto / sem',wkLbl:'Pago / sem',dpLbl:'Pago inicial',balLbl:'Balance',
+  grossLbl:'Gross semanal',diesel:'Diesel',tolls:'Peajes',
+  bkTitle:'Desglose',gross:'Ingresos',fee:'Comisión (10%)',admin:'Seguro/IFTA/ELD',trkPmt:'Pago camión',
+  sAvail:'Disponible',sPend:'Pendiente',sSold:'Vendido',colWk:'/sem',
+  vendorTitle:'Vendedores <em>verificados</em>',vendorSub:'Reseñas reales. Mejores precios para clientes TezTruck.',
+  vendorCatAll:'Todos',vendorCatEld:'ELD',vendorCatSafety:'Safety',vendorCatDispatch:'Despacho',
+  vendorCatAccounting:'Contabilidad',vendorCatRepair:'Reparación',vendorCatInsurance:'Seguro',vendorCatSchool:'Escuelas CDL',
+  vendorVerified:'Verificado',vendorFeatured:'Destacado',vendorNew:'Nuevo',
+  revTitle:'Reseñas',revWrite:'Escribir reseña',revSend:'Enviar',revPh:'Tu experiencia...',revDriver:'Conductor',revCompany:'Empresa',
+  ctaTitle:'<em>Contáctanos</em>',ctaSub:'Respondemos rápido y en tu idioma.',
+  cbPhone:'Llamar',cbTg:'Telegram',cbWa:'WhatsApp',
+  contactLocation:'Servicio en todo Estados Unidos',contactHours:'Lun–Sáb 8:00 AM–8:00 PM EST',
+}
+
 };
 
 let lang='ru';
 function t(k){const v=T[lang]&&T[lang][k]!==undefined?T[lang][k]:T.ru[k];return v!==undefined?v:k;}
 function setLang(l){
   lang=l;
-  ['ru','en','tg','uz'].forEach(x=>document.getElementById('lb-'+x).classList.toggle('on',x===l));
+  ['ru','en','tg','uz','es'].forEach(x=>{const el=document.getElementById('lb-'+x);if(el)el.classList.toggle('on',x===l);});
   document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.getAttribute('data-i')));
   document.querySelectorAll('[data-ih]').forEach(el=>el.innerHTML=t(el.getAttribute('data-ih')));
   document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.getAttribute('data-ph')));
   renderTrucks();
   if(selId){const tr=trucks.find(x=>x.id===selId);if(tr)renderCalc(tr);}else showCalcEmpty();
+  renderVendors();
 }
 
 // ── SCREENS ───────────────────────────────────────────
@@ -955,6 +1094,7 @@ function showScreen(name){
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('on'));
   document.getElementById('sc-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('on');
+  if(name==='vendors')renderVendors();
 }
 function goTrucks(){showScreen('trucks');}
 function goContact(){showScreen('contact');}
@@ -991,37 +1131,26 @@ async function handleFile(input,key,zoneId,nameId,pbId){
   const nameEl=document.getElementById(nameId);
   const pb=document.getElementById(pbId);
   zone.className='fupload-zone uploading';
-  nameEl.textContent='';
-  pb.style.width='20%';
+  nameEl.textContent=file.name;
+  pb.style.width='30%';
   try{
-    // Upload to existing truck-photos bucket under forms/ folder
     const ext=file.name.split('.').pop();
     const path=`forms/${key}_${Date.now()}.${ext}`;
     const ab=await file.arrayBuffer();
-    pb.style.width='60%';
-    const r=await fetch(`${SB_URL}/storage/v1/object/truck-photos/${path}`,{
+    const r=await fetch(`${SB_URL}/storage/v1/object/documents/${path}`,{
       method:'POST',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
       body:ab
     });
     pb.style.width='100%';
-    if(!r.ok){
-      const errText=await r.text();
-      throw new Error(errText);
-    }
-    // BUG 2 FIX: clear uploading state, show clear success indicator
-    uploadedFiles[key]=`${SB_URL}/storage/v1/object/public/truck-photos/${path}`;
+    if(!r.ok)throw new Error(await r.text());
+    uploadedFiles[key]=`${SB_URL}/storage/v1/object/public/documents/${path}`;
     zone.className='fupload-zone has-file';
-    zone.style.borderColor='var(--gr)';
-    nameEl.innerHTML=`<span style="color:var(--gr);font-weight:700;font-size:.9rem">✅ ${file.name}</span>`;
-    pb.style.background='var(--gr)';
+    nameEl.textContent='✓ '+file.name;
   }catch(e){
     zone.className='fupload-zone';
-    zone.style.borderColor='var(--re)';
-    nameEl.innerHTML=`<span style="color:var(--re);font-size:.82rem">❌ Ошибка загрузки — попробуйте снова</span>`;
-    pb.style.width='0';
-    console.error('Upload error:',e.message);
-    showToast('Ошибка загрузки: '+e.message,'err');
+    nameEl.textContent='';
+    showToast('Upload error: '+e.message,'err');
   }
 }
 
@@ -1138,43 +1267,19 @@ async function submitMC(){
 async function submitDriver(){
   const phone=document.getElementById('fd-phone').value.trim();
   const exp=document.getElementById('fd-exp').value.trim();
-  const ssn4=document.getElementById('fd-ssn4').value.trim();
   if(!phone){showToast('Введите телефон','err');return;}
   const btn=document.getElementById('fd-submit');
-  btn.disabled=true;btn.textContent='Отправляем...';
+  btn.disabled=true;btn.textContent='...';
   try{
-    // BUG 4 FIX: structured email with clear format
-    const cdlUrl=uploadedFiles.dcdl||'не загружен';
-    const medUrl=uploadedFiles.did||'не загружен';
     await sendEmail({
       to_email:'jnsonjim@gmail.com',
-      subject:'🚛 Новый драйвер — TezTruck',
-      from_name:'TezTruck App',
-      reply_to:phone,
-      message:`НОВАЯ ЗАЯВКА ОТ ДРАЙВЕРА
-━━━━━━━━━━━━━━━━━━━━━
-📞 Телефон:     ${phone}
-🔢 SSN (last 4): ${ssn4||'—'}
-🚗 Опыт:        ${exp||'—'}
-━━━━━━━━━━━━━━━━━━━━━
-📄 CDL:         ${cdlUrl}
-🏥 Medical:     ${medUrl}
-━━━━━━━━━━━━━━━━━━━━━
-Ссылки на файлы кликабельны если загружены в Supabase.`
+      subject:'Заявка Драйвера — TezTruck',
+      message:`Новая заявка от драйвера\n\nТелефон: ${phone}\nSSN (последние 4): ${document.getElementById('fd-ssn4').value||'не указан'}\nОпыт: ${exp||'не указан'}\n\nCDL: ${uploadedFiles.dcdl||'не загружен'}\nMedical: ${uploadedFiles.did||'не загружен'}`,
+      from_name:'TezTruck App',reply_to:phone
     });
-    // BUG 3 FIX: hide entire form section including title
-    const formSection=document.getElementById('formD-body').closest('.form-section');
-    // Hide title too
-    const title=formSection.querySelector('.form-title');
-    if(title)title.style.display='none';
     document.getElementById('formD-body').style.display='none';
     document.getElementById('formD-success').classList.add('vis');
-    showToast('✅ Заявка отправлена!','ok');
-  }catch(e){
-    showToast('Ошибка: '+(e.text||e.message),'err');
-    btn.disabled=false;
-    btn.textContent=t('fDriverSubmit');
-  }
+  }catch(e){showToast('Ошибка: '+(e.text||e.message),'err');btn.disabled=false;btn.textContent=t('fSendBtn');}
 }
 
 // ── TRUCKS ────────────────────────────────────────────
@@ -1265,6 +1370,112 @@ function renderCalc(truck){
   document.addEventListener('touchstart',e=>{const w=document.getElementById('previewImgWrap');if(w&&w.contains(e.target))sx=e.touches[0].clientX;},{passive:true});
   document.addEventListener('touchend',e=>{const w=document.getElementById('previewImgWrap');if(!w||!w.contains(e.target))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)pNav(dx<0?1:-1);},{passive:true});
 })();
+
+
+// ── VENDOR DATA ──────────────────────────────────────
+const VENDORS=[
+  {id:'v1',cat:'eld',icon:'📡',bg:'#E8F4FF',featured:true,verified:true,name:'KeepTruckin (Motive)',price:'$35/mo',
+   desc:{ru:'Самый популярный ELD в США. Простое приложение, автологи, интеграция с диспетчерами.',en:'Most popular ELD in the US. Simple app, auto-logs, dispatcher integration.',es:'ELD más popular en EE.UU. App simple, registros automáticos.',tg:'Маъмултарин ELD дар ИМА. Барнома соддаест.',uz:"AQShdagi eng mashhur ELD. Oddiy ilova."},
+   tags:['FMCSA Approved','iOS & Android','24/7 Support'],
+   reviews:[{author:'Rustam T.',type:'driver',stars:5,date:'Mar 2025',text:{ru:'Очень удобное приложение. Поддержка отвечает быстро.',en:'Very convenient app. Support replies fast.',es:'App muy conveniente.',tg:'Барнома хеле қулай.',uz:"Juda qulay ilova."}},
+    {author:'Miguel R.',type:'driver',stars:4,date:'Feb 2025',text:{ru:'Хороший продукт, иногда глючит GPS.',en:'Good product, GPS glitches sometimes.',es:'Buen producto, a veces falla el GPS.',tg:'Маҳсули хуб, баъзан GPS мушкил.',uz:"Yaxshi mahsulot, ba'zan GPS muammolari."}}]},
+  {id:'v2',cat:'eld',icon:'📡',bg:'#FFF0E8',verified:true,name:'Samsara',price:'$45/mo',
+   desc:{ru:'Профессиональная платформа для флота. Видеотелематика, аналитика безопасности, IFTA автоматически.',en:'Professional fleet platform. Video telematics, safety analytics, IFTA auto.',es:'Plataforma profesional para flotas.',tg:'Платформаи касбӣ барои флот.',uz:"Flot uchun professional platforma."},
+   tags:['Video Telematics','Fleet Management','IFTA Auto'],
+   reviews:[{author:'Doniyor K.',type:'company',stars:5,date:'Apr 2025',text:{ru:'Для компании с 10+ траками — лучший вариант. IFTA считает сам.',en:'Best for 10+ truck companies. IFTA auto.',es:'Mejor para empresas con 10+ camiones.',tg:'Барои ширкати 10+ трак — беҳтарин.',uz:"10+ trakli kompaniya uchun eng yaxshi."}}]},
+  {id:'v3',cat:'safety',icon:'🛡️',bg:'#EDFAF3',featured:true,verified:true,name:'TezTruck Safety Team',price:'$299/mo',
+   desc:{ru:'Наша команда Safety. Drug testing, MVR checks, DOT compliance, аудиты. Компании до 50 траков.',en:'Our Safety team. Drug testing, MVR checks, DOT compliance, audits. Up to 50 trucks.',es:'Nuestro equipo Safety. Drug testing, MVR, DOT compliance.',tg:'Дастаи Safety-и мо. Санҷиши маводи нашъаовар, MVR, DOT.',uz:"Bizning Safety jamoamiz. Drug testing, MVR, DOT."},
+   tags:['Drug Testing','DOT Audits','MVR Checks','FMCSA'],
+   reviews:[{author:'Jabbor U.',type:'company',stars:5,date:'May 2025',text:{ru:'8 месяцев вместе. Ни одного нарушения. Профессионалы.',en:'8 months, zero violations. True professionals.',es:'8 meses, cero violaciones. Profesionales.',tg:'8 моҳ. Ҳеҷ нақзи қонун нест.',uz:"8 oy. Birorta buzilish yo'q."}},
+    {author:'Alisher N.',type:'company',stars:5,date:'Apr 2025',text:{ru:'DOT аудит прошли на отлично. Всё подготовили.',en:'Passed DOT audit perfectly.',es:'Pasamos la auditoría DOT perfectamente.',tg:'Аудити DOT хубашро гузаштем.',uz:"DOT auditini a'lo o'tdik."}}]},
+  {id:'v4',cat:'dispatch',icon:'📦',bg:'#F0F0FF',verified:true,name:'Prime Dispatch',price:'8% of gross',
+   desc:{ru:'Диспетчерская служба для owner operators. Spot и contract. Средний gross клиентов $12–15k/нед.',en:'Dispatch for owner operators and small fleets. Spot and contract. Avg gross $12–15k/wk.',es:'Despacho para owner operators.',tg:'Хизмати диспетчерӣ барои owner operators.',uz:"Owner operators uchun dispetcher xizmati."},
+   tags:['Spot + Contract','Owner Operators','24/7'],
+   reviews:[{author:'Sergey M.',type:'driver',stars:4,date:'Mar 2025',text:{ru:'Хорошие грузы, 8% справедливо. Работаю 6 месяцев.',en:'Good loads, 8% is fair. Working 6 months.',es:'Buenas cargas, 8% justo.',tg:'Борҳои хуб, 8% комиссия одилона.',uz:"Yaxshi yuklar, 8% adolatli."}}]},
+  {id:'v5',cat:'accounting',icon:'💼',bg:'#FFF8E8',verified:true,name:'TruckBooks Pro',price:'$149/mo',
+   desc:{ru:'Бухгалтерия для траковых компаний. IFTA, quarterly taxes, P&L отчёты.',en:'Accounting for trucking. IFTA, quarterly taxes, P&L reports.',es:'Contabilidad para camioneros. IFTA, impuestos trimestrales.',tg:'Ҳисобдорӣ барои ширкатҳои трак.',uz:"Trak kompaniyalari uchun buxgalteriya."},
+   tags:['IFTA','Quarterly Taxes','P&L Reports'],
+   reviews:[{author:'Farrukhbek T.',type:'company',stars:5,date:'Apr 2025',text:{ru:'Сэкономили $8,000 на налогах в первом квартале.',en:'Saved $8,000 on taxes in Q1.',es:'Ahorramos $8,000 en Q1.',tg:'$8,000 аз андоз сарфа кардем.',uz:"$8,000 tejadik birinchi chorakda."}}]},
+  {id:'v6',cat:'repair',icon:'🔧',bg:'#EDFAF3',verified:true,name:'RoadReady Truck Service',price:'By estimate',
+   desc:{ru:'Сеть проверенных авторемонтных мастерских. Специальные цены для TezTruck. 24/7 на I-80 и I-95.',en:'Verified truck repair shops. TezTruck special prices. 24/7 on I-80 and I-95.',es:'Talleres verificados. Precios especiales TezTruck. 24/7.',tg:'Устохонаҳои тасдиқшуда. Нархҳои махсус 24/7.',uz:"Tasdiqlangan ustaxonalar. Maxsus narxlar. 24/7."},
+   tags:['I-80','I-95','TezTruck Discount','24/7 Emergency'],
+   reviews:[{author:'Vladimir K.',type:'driver',stars:5,date:'May 2025',text:{ru:'Сломался в 2 ночи на I-80. Приехали за 45 минут.',en:'Broke down at 2am on I-80. Arrived in 45 min.',es:'Avería a las 2am en I-80. Llegaron en 45 min.',tg:'Дар соати 2 шаб дар I-80. Дар 45 дақиқа омаданд.',uz:"Kechasi 2 da I-80 da buzildi. 45 daqiqada keldi."}}]},
+  {id:'v7',cat:'insurance',icon:'🏥',bg:'#FFF0E8',featured:true,verified:true,isNew:true,name:'CommercialTruck.insurance',price:'From $899/mo',
+   desc:{ru:'Страховые решения для траков. Liability, cargo, physical damage. Оформление за 24 часа.',en:'Trucking insurance. Liability, cargo, physical damage. Setup in 24 hours.',es:'Seguro para camioneros. Liability, cargo. En 24 horas.',tg:'Суғурта барои тракҳо. 24 соат.',uz:"Traklar uchun sug'urta. 24 soatda."},
+   tags:['Liability','Cargo','Physical Damage','24h Setup'],
+   reviews:[{author:'Ivan P.',type:'company',stars:5,date:'May 2025',text:{ru:'Застраховали 8 траков за 1 день. Цена ниже на 15%.',en:'Insured 8 trucks in 1 day. 15% cheaper.',es:'Aseguramos 8 camiones en 1 día. 15% más barato.',tg:'8 трак дар 1 рӯз. 15% арзонтар.',uz:"8 trakni 1 kunda sug'urtaladilar. 15% arzon."}}]},
+  {id:'v8',cat:'school',icon:'🎓',bg:'#E8F4FF',verified:true,name:'FastTrack CDL School',price:'From $4,500',
+   desc:{ru:'CDL школа с гарантией трудоустройства. Скидка $500 для TezTruck. Классы A и B. Финансирование.',en:'CDL school with job guarantee. $500 TezTruck discount. Class A & B. Financing available.',es:'Escuela CDL con garantía de empleo. Descuento $500 TezTruck.',tg:'Мактаби CDL бо кафолати кор. $500 тахфиф.',uz:"Ishni kafolatlaydigan CDL maktabi. $500 chegirma."},
+   tags:['Class A & B','$500 TezTruck Discount','Job Guarantee','Financing'],
+   reviews:[{author:'Nodir S.',type:'driver',stars:5,date:'Mar 2025',text:{ru:'CDL за 6 недель. Через 2 дня уже работал. Скидка реальная.',en:'CDL in 6 weeks. Working 2 days later. Discount is real.',es:'CDL en 6 semanas. Empecé a trabajar 2 días después.',tg:'CDL дар 6 ҳафта. 2 рӯз баъд кор кардам.',uz:"6 haftada CDL oldim. 2 kun keyin ishladim."}}]},
+];
+
+const CATS=['all','eld','safety','dispatch','accounting','repair','insurance','school'];
+let currentVendorCat='all', reviewRatings={};
+
+function avgRating(v){
+  const all=[...v.reviews,...(v._userReviews||[])];
+  return all.length?all.reduce((s,r)=>s+r.stars,0)/all.length:0;
+}
+function starsHTML(rating){
+  let h='<div style="display:flex;gap:1px">';
+  for(let i=1;i<=5;i++)h+=i<=Math.round(rating)?'<span class="star-full">★</span>':'<span class="star-empty">☆</span>';
+  return h+'</div>';
+}
+function tObj(obj){return obj[lang]||obj.en||obj.ru||'';}
+
+function renderVendors(){
+  const catKeys={all:t('vendorCatAll'),eld:t('vendorCatEld'),safety:t('vendorCatSafety'),dispatch:t('vendorCatDispatch'),accounting:t('vendorCatAccounting'),repair:t('vendorCatRepair'),insurance:t('vendorCatInsurance'),school:t('vendorCatSchool')};
+  const catsEl=document.getElementById('vendorCats');
+  if(!catsEl)return;
+  catsEl.innerHTML=CATS.map(c=>`<div class="vcat${currentVendorCat===c?' on':''}" onclick="setVendorCat('${c}')">${catKeys[c]||c}</div>`).join('');
+  const filtered=(currentVendorCat==='all'?VENDORS:VENDORS.filter(v=>v.cat===currentVendorCat))
+    .slice().sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)||(avgRating(b)-avgRating(a)));
+  const listEl=document.getElementById('vendorList');
+  if(!listEl)return;
+  listEl.innerHTML=filtered.map(v=>{
+    const avg=avgRating(v),allR=[...v.reviews,...(v._userReviews||[])],cnt=allR.length;
+    const catLabel=catKeys[v.cat]||v.cat;
+    const badges=(v.featured?`<span class="vbadge vb-featured">${t('vendorFeatured')}</span>`:'')+
+      (v.verified?`<span class="vbadge vb-verified">${t('vendorVerified')}</span>`:'')+
+      (v.isNew?`<span class="vbadge vb-new">${t('vendorNew')}</span>`:'');
+    const revs=allR.map(r=>`<div class="review"><div class="rev-top"><span class="rev-author">${r.author}</span><span class="rev-date">${r.date||''}</span></div><div class="rev-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div><div class="rev-text">${tObj(r.text)}</div><div style="margin-top:4px"><span class="rev-type">${r.type==='driver'?t('revDriver'):t('revCompany')}</span></div></div>`).join('');
+    const wrStars=[1,2,3,4,5].map(i=>`<span class="wr-star${(reviewRatings[v.id]||0)>=i?' on':''}" onclick="setRevStar('${v.id}',${i})">★</span>`).join('');
+    return`<div class="vcard" id="vc-${v.id}">
+      <div class="vcard-top"><div class="vcard-icon" style="background:${v.bg}">${v.icon}</div><div><div class="vcard-name">${v.name}</div><div class="vcard-cat">${catLabel}</div><div class="vcard-badges">${badges}</div></div></div>
+      <div class="vcard-rating">${starsHTML(avg)}<span class="rating-num">${avg>0?avg.toFixed(1):'—'}</span><span class="rating-cnt">(${cnt} review${cnt!==1?'s':''})</span></div>
+      <div class="vcard-desc">${tObj(v.desc)}</div>
+      <div class="vcard-tags">${v.tags.map(tag=>`<span class="vtag">${tag}</span>`).join('')}</div>
+      <div class="vcard-footer"><div class="vcard-price">${catLabel}: <strong>${v.price}</strong></div><button class="vcard-btn orange" onclick="contactVendor('${v.name}')">${t('cbPhone')} →</button></div>
+      ${cnt?`<div class="reviews-section"><div class="rev-title">${t('revTitle')}</div>${revs}</div>`:''}
+      <div class="write-review"><div class="wr-title">${t('revWrite')}</div><div class="wr-stars">${wrStars}</div><textarea class="wr-input" id="wr-text-${v.id}" placeholder="${t('revPh')}"></textarea><button class="wr-btn" onclick="submitReview('${v.id}')">${t('revSend')}</button></div>
+    </div>`;
+  }).join('');
+}
+
+function setVendorCat(cat){currentVendorCat=cat;renderVendors();}
+
+function setRevStar(vid,stars){
+  reviewRatings[vid]=stars;
+  document.querySelectorAll(`#vc-${vid} .wr-star`).forEach((el,i)=>el.classList.toggle('on',i<stars));
+}
+
+function submitReview(vid){
+  const stars=reviewRatings[vid]||0,text=document.getElementById('wr-text-'+vid).value.trim();
+  if(!stars){showToast('Please select a star rating','err');return;}
+  if(text.length<10){showToast('Please write at least 10 characters','err');return;}
+  const vendor=VENDORS.find(v=>v.id===vid);if(!vendor)return;
+  if(!vendor._userReviews)vendor._userReviews=[];
+  vendor._userReviews.push({author:'You',type:'driver',stars,date:new Date().toLocaleDateString('en',{month:'short',year:'numeric'}),text:{ru:text,en:text,es:text,tg:text,uz:text}});
+  showToast('Review submitted! Thank you.','ok');
+  reviewRatings[vid]=0;renderVendors();
+  setTimeout(()=>{const el=document.getElementById('vc-'+vid);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},100);
+}
+
+function contactVendor(name){
+  showToast('Connecting to '+name+'...','ok',2000);
+  setTimeout(()=>showScreen('contact'),1800);
+}
 
 // ── BOOT ──────────────────────────────────────────────
 setLang('ru');
