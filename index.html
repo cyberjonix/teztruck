@@ -991,26 +991,37 @@ async function handleFile(input,key,zoneId,nameId,pbId){
   const nameEl=document.getElementById(nameId);
   const pb=document.getElementById(pbId);
   zone.className='fupload-zone uploading';
-  nameEl.textContent=file.name;
-  pb.style.width='30%';
+  nameEl.textContent='';
+  pb.style.width='20%';
   try{
+    // Upload to existing truck-photos bucket under forms/ folder
     const ext=file.name.split('.').pop();
     const path=`forms/${key}_${Date.now()}.${ext}`;
     const ab=await file.arrayBuffer();
-    const r=await fetch(`${SB_URL}/storage/v1/object/documents/${path}`,{
+    pb.style.width='60%';
+    const r=await fetch(`${SB_URL}/storage/v1/object/truck-photos/${path}`,{
       method:'POST',
       headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':file.type,'x-upsert':'true'},
       body:ab
     });
     pb.style.width='100%';
-    if(!r.ok)throw new Error(await r.text());
-    uploadedFiles[key]=`${SB_URL}/storage/v1/object/public/documents/${path}`;
+    if(!r.ok){
+      const errText=await r.text();
+      throw new Error(errText);
+    }
+    // BUG 2 FIX: clear uploading state, show clear success indicator
+    uploadedFiles[key]=`${SB_URL}/storage/v1/object/public/truck-photos/${path}`;
     zone.className='fupload-zone has-file';
-    nameEl.textContent='✓ '+file.name;
+    zone.style.borderColor='var(--gr)';
+    nameEl.innerHTML=`<span style="color:var(--gr);font-weight:700;font-size:.9rem">✅ ${file.name}</span>`;
+    pb.style.background='var(--gr)';
   }catch(e){
     zone.className='fupload-zone';
-    nameEl.textContent='';
-    showToast('Upload error: '+e.message,'err');
+    zone.style.borderColor='var(--re)';
+    nameEl.innerHTML=`<span style="color:var(--re);font-size:.82rem">❌ Ошибка загрузки — попробуйте снова</span>`;
+    pb.style.width='0';
+    console.error('Upload error:',e.message);
+    showToast('Ошибка загрузки: '+e.message,'err');
   }
 }
 
@@ -1127,19 +1138,43 @@ async function submitMC(){
 async function submitDriver(){
   const phone=document.getElementById('fd-phone').value.trim();
   const exp=document.getElementById('fd-exp').value.trim();
+  const ssn4=document.getElementById('fd-ssn4').value.trim();
   if(!phone){showToast('Введите телефон','err');return;}
   const btn=document.getElementById('fd-submit');
-  btn.disabled=true;btn.textContent='...';
+  btn.disabled=true;btn.textContent='Отправляем...';
   try{
+    // BUG 4 FIX: structured email with clear format
+    const cdlUrl=uploadedFiles.dcdl||'не загружен';
+    const medUrl=uploadedFiles.did||'не загружен';
     await sendEmail({
       to_email:'jnsonjim@gmail.com',
-      subject:'Заявка Драйвера — TezTruck',
-      message:`Новая заявка от драйвера\n\nТелефон: ${phone}\nSSN (последние 4): ${document.getElementById('fd-ssn4').value||'не указан'}\nОпыт: ${exp||'не указан'}\n\nCDL: ${uploadedFiles.dcdl||'не загружен'}\nMedical: ${uploadedFiles.did||'не загружен'}`,
-      from_name:'TezTruck App',reply_to:phone
+      subject:'🚛 Новый драйвер — TezTruck',
+      from_name:'TezTruck App',
+      reply_to:phone,
+      message:`НОВАЯ ЗАЯВКА ОТ ДРАЙВЕРА
+━━━━━━━━━━━━━━━━━━━━━
+📞 Телефон:     ${phone}
+🔢 SSN (last 4): ${ssn4||'—'}
+🚗 Опыт:        ${exp||'—'}
+━━━━━━━━━━━━━━━━━━━━━
+📄 CDL:         ${cdlUrl}
+🏥 Medical:     ${medUrl}
+━━━━━━━━━━━━━━━━━━━━━
+Ссылки на файлы кликабельны если загружены в Supabase.`
     });
+    // BUG 3 FIX: hide entire form section including title
+    const formSection=document.getElementById('formD-body').closest('.form-section');
+    // Hide title too
+    const title=formSection.querySelector('.form-title');
+    if(title)title.style.display='none';
     document.getElementById('formD-body').style.display='none';
     document.getElementById('formD-success').classList.add('vis');
-  }catch(e){showToast('Ошибка: '+(e.text||e.message),'err');btn.disabled=false;btn.textContent=t('fSendBtn');}
+    showToast('✅ Заявка отправлена!','ok');
+  }catch(e){
+    showToast('Ошибка: '+(e.text||e.message),'err');
+    btn.disabled=false;
+    btn.textContent=t('fDriverSubmit');
+  }
 }
 
 // ── TRUCKS ────────────────────────────────────────────
