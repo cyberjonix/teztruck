@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TezTruck — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D1117;
+  --bg2: #161B22;
+  --bg3: #21262D;
+  --bg4: #30363D;
+  --or: #E8490A;
+  --or2: #FF6B35;
+  --bl: #1F6FEB;
+  --gr: #3FB950;
+  --re: #F85149;
+  --am: #D29922;
+  --pu: #BC8CFF;
+  --tx: #E6EDF3;
+  --tx2: #8B949E;
+  --tx3: #484F58;
+  --brd: #30363D;
+  --brd2: #21262D;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--tx); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+/* LOGIN */
+.login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(232,73,10,0.06) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 20%, rgba(31,111,235,0.06) 0%, transparent 60%);
+}
+.login-box {
+  background: var(--bg2); border: 1px solid var(--brd); border-radius: 16px;
+  padding: 40px; width: 360px; text-align: center;
+}
+.login-logo { font-size: 2rem; font-weight: 700; color: var(--tx); margin-bottom: 4px; }
+.login-logo em { color: var(--or); font-style: normal; }
+.login-sub { font-size: .8rem; color: var(--tx2); margin-bottom: 28px; letter-spacing: .1em; text-transform: uppercase; }
+.login-input {
+  width: 100%; padding: 12px 16px; background: var(--bg3); border: 1px solid var(--brd);
+  border-radius: 8px; color: var(--tx); font-family: 'JetBrains Mono', monospace; font-size: .9rem;
+  outline: none; margin-bottom: 12px; letter-spacing: .1em; transition: border-color .15s;
+}
+.login-input:focus { border-color: var(--or); }
+.login-btn {
+  width: 100%; padding: 12px; background: var(--or); color: #fff; border: none;
+  border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .95rem;
+  cursor: pointer; transition: opacity .15s;
+}
+.login-btn:hover { opacity: .88; }
+.login-err { color: var(--re); font-size: .8rem; margin-top: 8px; display: none; }
+
+/* APP LAYOUT */
+.app { display: none; flex-direction: column; min-height: 100vh; }
+.app.vis { display: flex; }
+
+/* HEADER */
+header {
+  height: 56px; background: var(--bg2); border-bottom: 1px solid var(--brd);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+}
+.h-logo { font-size: 1.1rem; font-weight: 700; }
+.h-logo em { color: var(--or); font-style: normal; }
+.h-badge {
+  font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  background: rgba(232,73,10,0.15); color: var(--or); border: 1px solid rgba(232,73,10,0.3);
+  padding: 3px 10px; border-radius: 100px; margin-left: 10px;
+}
+.h-right { display: flex; align-items: center; gap: 12px; }
+.h-time { font-size: .75rem; color: var(--tx2); font-family: 'JetBrains Mono', monospace; }
+.logout-btn {
+  font-size: .75rem; font-weight: 600; padding: 6px 12px; background: var(--bg3);
+  border: 1px solid var(--brd); color: var(--tx2); border-radius: 6px; cursor: pointer;
+  transition: all .15s;
+}
+.logout-btn:hover { color: var(--re); border-color: var(--re); }
+
+/* MAIN */
+main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--brd); border-radius: 12px;
+  padding: 16px 18px; position: relative; overflow: hidden;
+}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.stat-card.sc-or::before { background: var(--or); }
+.stat-card.sc-bl::before { background: var(--bl); }
+.stat-card.sc-gr::before { background: var(--gr); }
+.stat-card.sc-am::before { background: var(--am); }
+.stat-card.sc-pu::before { background: var(--pu); }
+.stat-num { font-size: 1.8rem; font-weight: 700; color: var(--tx); font-family: 'JetBrains Mono', monospace; line-height: 1; }
+.stat-lbl { font-size: .72rem; color: var(--tx2); margin-top: 4px; font-weight: 500; }
+.stat-icon { position: absolute; top: 14px; right: 14px; font-size: 1.3rem; opacity: .3; }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; background: var(--bg2); border: 1px solid var(--brd); border-radius: 10px; padding: 3px; margin-bottom: 16px; width: fit-content; }
+.tab {
+  padding: 7px 16px; border-radius: 7px; font-size: .83rem; font-weight: 600;
+  color: var(--tx2); cursor: pointer; transition: all .15s; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+.tab.on { background: var(--bg3); color: var(--tx); }
+
+/* TOOLBAR */
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.t-search {
+  flex: 1; min-width: 200px; max-width: 320px; padding: 8px 14px;
+  background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px;
+  color: var(--tx); font-family: 'DM Sans', sans-serif; font-size: .85rem; outline: none;
+  transition: border-color .15s;
+}
+.t-search:focus { border-color: var(--or); }
+.t-select {
+  padding: 8px 12px; background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px;
+  color: var(--tx); font-family: 'DM Sans', sans-serif; font-size: .83rem; outline: none;
+  cursor: pointer;
+}
+.t-select:focus { border-color: var(--or); }
+.t-btn {
+  padding: 8px 14px; border-radius: 8px; font-size: .83rem; font-weight: 600;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1px solid var(--brd);
+  background: var(--bg2); color: var(--tx2); transition: all .15s; display: flex; align-items: center; gap: 6px;
+}
+.t-btn:hover { border-color: var(--gr); color: var(--gr); }
+.t-btn.primary { background: var(--or); color: #fff; border-color: var(--or); }
+.t-btn.primary:hover { opacity: .88; color: #fff; }
+.t-count { font-size: .75rem; color: var(--tx2); margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+
+/* TABLE */
+.table-wrap { background: var(--bg2); border: 1px solid var(--brd); border-radius: 12px; overflow: hidden; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl thead tr { background: var(--bg3); }
+.tbl th {
+  padding: 10px 14px; text-align: left; font-size: .72rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--tx2);
+  border-bottom: 1px solid var(--brd); white-space: nowrap; cursor: pointer; user-select: none;
+}
+.tbl th:hover { color: var(--tx); }
+.tbl td { padding: 11px 14px; font-size: .83rem; border-bottom: 1px solid var(--brd2); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: rgba(255,255,255,0.02); }
+.tbl .mono { font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+
+/* BADGES */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .68rem; font-weight: 700; padding: 3px 8px; border-radius: 100px;
+  white-space: nowrap; letter-spacing: .03em;
+}
+.b-new { background: rgba(31,111,235,0.15); color: #58A6FF; }
+.b-working { background: rgba(210,153,34,0.15); color: var(--am); }
+.b-closed { background: rgba(63,185,80,0.15); color: var(--gr); }
+.b-looking { background: rgba(31,111,235,0.15); color: #58A6FF; }
+.b-employed { background: rgba(63,185,80,0.15); color: var(--gr); }
+.b-passive { background: rgba(72,79,88,0.4); color: var(--tx2); }
+.b-cdla { background: rgba(232,73,10,0.15); color: var(--or2); }
+.b-cdlb { background: rgba(188,140,255,0.15); color: var(--pu); }
+.b-cdlc { background: rgba(210,153,34,0.15); color: var(--am); }
+.b-import { background: rgba(72,79,88,0.3); color: var(--tx3); }
+.b-website { background: rgba(63,185,80,0.1); color: #56d364; }
+
+/* STATUS SELECT */
+.status-sel {
+  background: transparent; border: none; font-family: 'DM Sans', sans-serif; font-size: .68rem;
+  font-weight: 700; cursor: pointer; outline: none; padding: 0;
+}
+
+/* PHONE LINK */
+.ph-link { color: var(--tx); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: .78rem; }
+.ph-link:hover { color: var(--or); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 60px 20px; color: var(--tx2); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 10px; opacity: .3; }
+.empty-text { font-size: .9rem; }
+
+/* LOADING */
+.loading { text-align: center; padding: 40px; color: var(--tx2); font-size: .85rem; }
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--brd); border-top-color: var(--or); border-radius: 50%; animation: spin .7s linear infinite; margin-right: 8px; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; background: var(--bg3);
+  border: 1px solid var(--brd); color: var(--tx); padding: 10px 18px;
+  border-radius: 10px; font-size: .83rem; font-weight: 600; opacity: 0;
+  transition: all .25s; pointer-events: none; z-index: 999;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.toast.show { opacity: 1; }
+.toast.ok { border-color: var(--gr); color: var(--gr); }
+.toast.err { border-color: var(--re); color: var(--re); }
+
+/* PAGINATION */
+.pagination { display: flex; align-items: center; gap: 6px; margin-top: 14px; justify-content: flex-end; }
+.pg-btn {
+  padding: 6px 12px; background: var(--bg2); border: 1px solid var(--brd);
+  color: var(--tx2); border-radius: 6px; cursor: pointer; font-size: .78rem;
+  font-family: 'DM Sans', sans-serif; transition: all .15s;
+}
+.pg-btn:hover { border-color: var(--or); color: var(--or); }
+.pg-btn.on { background: var(--or); border-color: var(--or); color: #fff; }
+.pg-btn:disabled { opacity: .35; cursor: default; }
+.pg-info { font-size: .75rem; color: var(--tx2); font-family: 'JetBrains Mono', monospace; }
+
+/* RESPONSIVE */
+@media(max-width: 768px) {
+  main { padding: 14px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .tbl th:nth-child(n+5), .tbl td:nth-child(n+5) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">Tez<em>Truck</em></div>
+    <div class="login-sub">Admin Panel</div>
+    <input class="login-input" type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Войти</button>
+    <div class="login-err" id="loginErr">Неверный пароль</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <header>
+    <div style="display:flex;align-items:center">
+      <div class="h-logo">Tez<em>Truck</em></div>
+      <span class="h-badge">Admin</span>
+    </div>
+    <div class="h-right">
+      <div class="h-time" id="hTime"></div>
+      <button class="logout-btn" onclick="doLogout()">Выйти</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- STATS -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card sc-or"><div class="stat-num" id="st-drivers">—</div><div class="stat-lbl">Водителей всего</div><div class="stat-icon">🚛</div></div>
+      <div class="stat-card sc-bl"><div class="stat-num" id="st-looking">—</div><div class="stat-lbl">Ищут работу</div><div class="stat-icon">🔍</div></div>
+      <div class="stat-card sc-gr"><div class="stat-num" id="st-companies">—</div><div class="stat-lbl">Заявок компаний</div><div class="stat-icon">🏢</div></div>
+      <div class="stat-card sc-am"><div class="stat-num" id="st-cdl">—</div><div class="stat-lbl">CDL заявок</div><div class="stat-icon">🎓</div></div>
+      <div class="stat-card sc-pu"><div class="stat-num" id="st-owners">—</div><div class="stat-lbl">Owner Op заявок</div><div class="stat-icon">🔑</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('drivers')">🚛 Водители</button>
+      <button class="tab" onclick="switchTab('companies')">🏢 Компании</button>
+      <button class="tab" onclick="switchTab('cdl')">🎓 CDL заявки</button>
+      <button class="tab" onclick="switchTab('owners')">🔑 Owner Op</button>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <input class="t-search" type="text" id="searchInput" placeholder="Поиск по имени, телефону..." oninput="applyFilters()">
+      <select class="t-select" id="filterStatus" onchange="applyFilters()">
+        <option value="">Все статусы</option>
+      </select>
+      <select class="t-select" id="filterCDL" onchange="applyFilters()">
+        <option value="">Все CDL</option>
+        <option value="A">Class A</option>
+        <option value="B">Class B</option>
+        <option value="C">Class C</option>
+      </select>
+      <button class="t-btn" onclick="refresh()">↻ Обновить</button>
+      <button class="t-btn" onclick="exportCSV()">⬇ CSV</button>
+      <span class="t-count" id="rowCount"></span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div id="tableArea"><div class="loading"><span class="spinner"></span>Загружаем данные...</div></div>
+    </div>
+    <div class="pagination" id="paginationArea"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL = 'https://wuyuhxddswxrrzquogsh.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
+const ADMIN_PASS = 'teztruck2025';
+const PAGE_SIZE = 25;
+
+let currentTab = 'drivers';
+let allData = [];
+let filteredData = [];
+let currentPage = 1;
+let sortCol = 'created_at';
+let sortAsc = false;
+
+// ── AUTH ──────────────────────────────────────────────
+function doLogin() {
+  const pass = document.getElementById('passInput').value;
+  if (pass === ADMIN_PASS) {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('app').classList.add('vis');
+    sessionStorage.setItem('tt_admin', '1');
+    init();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('passInput').value = '';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('tt_admin');
+  location.reload();
+}
+if (sessionStorage.getItem('tt_admin') === '1') {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('app').classList.add('vis');
+  window.addEventListener('DOMContentLoaded', init);
+}
+
+// ── CLOCK ─────────────────────────────────────────────
+function updateClock() {
+  const el = document.getElementById('hTime');
+  if (el) el.textContent = new Date().toLocaleString('ru-RU', {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── API ───────────────────────────────────────────────
+async function sbGet(table, params = '') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbPatch(table, id, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// ── INIT ──────────────────────────────────────────────
+async function init() {
+  await loadStats();
+  await loadTable();
+}
+
+async function loadStats() {
+  try {
+    const [drivers, looking, companies, cdl, owners] = await Promise.all([
+      sbGet('drivers', 'select=id'),
+      sbGet('drivers', 'select=id&status=eq.looking'),
+      sbGet('company_leads', 'select=id'),
+      sbGet('cdl_leads', 'select=id'),
+      sbGet('owner_leads', 'select=id'),
+    ]);
+    document.getElementById('st-drivers').textContent = drivers.length;
+    document.getElementById('st-looking').textContent = looking.length;
+    document.getElementById('st-companies').textContent = companies.length;
+    document.getElementById('st-cdl').textContent = cdl.length;
+    document.getElementById('st-owners').textContent = owners.length;
+  } catch(e) {
+    console.error('Stats error:', e);
+  }
+}
+
+async function loadTable() {
+  document.getElementById('tableArea').innerHTML = '<div class="loading"><span class="spinner"></span>Загружаем...</div>';
+  try {
+    const table = {
+      drivers: 'drivers',
+      companies: 'company_leads',
+      cdl: 'cdl_leads',
+      owners: 'owner_leads'
+    }[currentTab];
+
+    allData = await sbGet(table, 'order=created_at.desc&limit=1000');
+    updateStatusFilter();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('tableArea').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Ошибка загрузки: ${e.message}</div></div>`;
+  }
+}
+
+// ── FILTERS ───────────────────────────────────────────
+function updateStatusFilter() {
+  const sel = document.getElementById('filterStatus');
+  const statuses = [...new Set(allData.map(r => r.status).filter(Boolean))];
+  const statusLabels = {
+    new: 'Новая', in_progress: 'В работе', closed: 'Закрыта',
+    looking: 'Ищет работу', employed: 'Трудоустроен', passive: 'Пассивный',
+    contacted: 'Contacted', enrolled: 'Enrolled'
+  };
+  sel.innerHTML = '<option value="">Все статусы</option>' +
+    statuses.map(s => `<option value="${s}">${statusLabels[s] || s}</option>`).join('');
+
+  // Show/hide CDL filter
+  const cdlFilter = document.getElementById('filterCDL');
+  cdlFilter.style.display = currentTab === 'drivers' ? '' : 'none';
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  const cdl = document.getElementById('filterCDL').value;
+
+  filteredData = allData.filter(row => {
+    const text = [row.first_name, row.last_name, row.phone, row.company_name, row.email]
+      .filter(Boolean).join(' ').toLowerCase();
+    if (search && !text.includes(search)) return false;
+    if (status && row.status !== status) return false;
+    if (cdl && row.cdl_class !== cdl) return false;
+    return true;
+  });
+
+  // Sort
+  filteredData.sort((a, b) => {
+    let av = a[sortCol] ?? '', bv = b[sortCol] ?? '';
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    return sortAsc ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+  });
+
+  currentPage = 1;
+  document.getElementById('rowCount').textContent = `${filteredData.length} записей`;
+  renderTable();
+  renderPagination();
+}
+
+function setSort(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = false; }
+  applyFilters();
+}
+
+// ── RENDER ────────────────────────────────────────────
+function renderTable() {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page = filteredData.slice(start, start + PAGE_SIZE);
+
+  if (!page.length) {
+    document.getElementById('tableArea').innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Ничего не найдено</div></div>';
+    return;
+  }
+
+  const renderers = {
+    drivers: renderDriversTable,
+    companies: renderCompaniesTable,
+    cdl: renderCDLTable,
+    owners: renderOwnersTable,
+  };
+  document.getElementById('tableArea').innerHTML = renderers[currentTab](page);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function statusBadge(s) {
+  const map = {
+    new: ['b-new', 'Новая'],
+    in_progress: ['b-working', 'В работе'],
+    closed: ['b-closed', 'Закрыта'],
+    looking: ['b-looking', 'Ищет работу'],
+    employed: ['b-employed', 'Работает'],
+    passive: ['b-passive', 'Пассивный'],
+    contacted: ['b-working', 'Contacted'],
+    enrolled: ['b-closed', 'Enrolled'],
+  };
+  const [cls, label] = map[s] || ['b-passive', s || '—'];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function cdlBadge(c) {
+  if (!c) return '—';
+  const cls = { A: 'b-cdla', B: 'b-cdlb', C: 'b-cdlc' }[c] || 'b-passive';
+  return `<span class="badge ${cls}">CDL ${c}</span>`;
+}
+
+function sourceBadge(s) {
+  const cls = s === 'website' ? 'b-website' : 'b-import';
+  return `<span class="badge ${cls}">${s || 'website'}</span>`;
+}
+
+function statusDropdown(id, currentStatus, table) {
+  const options = {
+    drivers: ['looking','employed','passive'],
+    companies: ['new','in_progress','closed'],
+    cdl: ['new','contacted','enrolled','closed'],
+    owners: ['new','contacted','closed'],
+  }[table] || ['new','in_progress','closed'];
+  const labels = {
+    looking:'Ищет работу',employed:'Работает',passive:'Пассивный',
+    new:'Новая',in_progress:'В работе',closed:'Закрыта',
+    contacted:'Contacted',enrolled:'Enrolled'
+  };
+  return `<select class="status-sel badge ${currentStatus==='looking'||currentStatus==='new'?'b-new':currentStatus==='employed'||currentStatus==='closed'?'b-closed':'b-working'}"
+    onchange="updateStatus('${id}','${table}',this.value,this)">
+    ${options.map(o => `<option value="${o}" ${o===currentStatus?'selected':''}>${labels[o]||o}</option>`).join('')}
+  </select>`;
+}
+
+function renderDriversTable(rows) {
+  const sortArrow = col => col === sortCol ? (sortAsc ? ' ↑' : ' ↓') : '';
+  return `<table class="tbl">
+    <thead><tr>
+      <th onclick="setSort('first_name')">Имя${sortArrow('first_name')}</th>
+      <th onclick="setSort('phone')">Телефон${sortArrow('phone')}</th>
+      <th onclick="setSort('cdl_class')">CDL${sortArrow('cdl_class')}</th>
+      <th>Опыт</th>
+      <th>Auth</th>
+      <th>Маршрут</th>
+      <th>Домой</th>
+      <th onclick="setSort('status')">Статус${sortArrow('status')}</th>
+      <th onclick="setSort('source')">Источник${sortArrow('source')}</th>
+      <th onclick="setSort('created_at')">Дата${sortArrow('created_at')}</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(r => `<tr>
+        <td><strong>${r.first_name || '—'}</strong>${r.last_name ? ' ' + r.last_name : ''}</td>
+        <td><a class="ph-link" href="tel:${r.phone}">${r.phone || '—'}</a></td>
+        <td>${cdlBadge(r.cdl_class)}</td>
+        <td class="mono">${r.experience_years != null ? r.experience_years + ' yr' : '—'}</td>
+        <td><span class="badge b-passive" style="font-size:.62rem">${r.work_auth || '—'}</span></td>
+        <td><span class="badge b-passive" style="font-size:.62rem">${r.route_type || '—'}</span></td>
+        <td><span class="badge b-passive" style="font-size:.62rem">${r.home_time || '—'}</span></td>
+        <td>${statusDropdown(r.id, r.status, 'drivers')}</td>
+        <td>${sourceBadge(r.source)}</td>
+        <td class="mono" style="font-size:.72rem;color:var(--tx2)">${fmtDate(r.created_at)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function renderCompaniesTable(rows) {
+  const needLabels = {
+    hire_drivers: 'Нанять водителей',
+    open_company: 'Открыть компанию',
+    safety_dispatch: 'Safety/Dispatch',
+    other: 'Другое'
+  };
+  const sortArrow = col => col === sortCol ? (sortAsc ? ' ↑' : ' ↓') : '';
+  return `<table class="tbl">
+    <thead><tr>
+      <th onclick="setSort('company_name')">Компания${sortArrow('company_name')}</th>
+      <th onclick="setSort('phone')">Телефон${sortArrow('phone')}</th>
+      <th>Потребность</th>
+      <th onclick="setSort('status')">Статус${sortArrow('status')}</th>
+      <th>Язык</th>
+      <th>Заметки</th>
+      <th onclick="setSort('created_at')">Дата${sortArrow('created_at')}</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(r => `<tr>
+        <td><strong>${r.company_name || '—'}</strong></td>
+        <td><a class="ph-link" href="tel:${r.phone}">${r.phone || '—'}</a></td>
+        <td><span class="badge b-passive" style="font-size:.62rem">${needLabels[r.need] || r.need || '—'}</span></td>
+        <td>${statusDropdown(r.id, r.status, 'companies')}</td>
+        <td class="mono" style="font-size:.72rem">${r.lang || '—'}</td>
+        <td style="color:var(--tx2);font-size:.75rem;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes || '—'}</td>
+        <td class="mono" style="font-size:.72rem;color:var(--tx2)">${fmtDate(r.created_at)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function renderCDLTable(rows) {
+  const sortArrow = col => col === sortCol ? (sortAsc ? ' ↑' : ' ↓') : '';
+  return `<table class="tbl">
+    <thead><tr>
+      <th onclick="setSort('first_name')">Имя${sortArrow('first_name')}</th>
+      <th onclick="setSort('phone')">Телефон${sortArrow('phone')}</th>
+      <th onclick="setSort('state')">Штат${sortArrow('state')}</th>
+      <th onclick="setSort('status')">Статус${sortArrow('status')}</th>
+      <th>Язык</th>
+      <th onclick="setSort('created_at')">Дата${sortArrow('created_at')}</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(r => `<tr>
+        <td><strong>${r.first_name || '—'}</strong></td>
+        <td><a class="ph-link" href="tel:${r.phone}">${r.phone || '—'}</a></td>
+        <td class="mono">${r.state || '—'}</td>
+        <td>${statusDropdown(r.id, r.status, 'cdl')}</td>
+        <td class="mono" style="font-size:.72rem">${r.lang || '—'}</td>
+        <td class="mono" style="font-size:.72rem;color:var(--tx2)">${fmtDate(r.created_at)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function renderOwnersTable(rows) {
+  const sortArrow = col => col === sortCol ? (sortAsc ? ' ↑' : ' ↓') : '';
+  return `<table class="tbl">
+    <thead><tr>
+      <th onclick="setSort('first_name')">Имя${sortArrow('first_name')}</th>
+      <th onclick="setSort('phone')">Телефон${sortArrow('phone')}</th>
+      <th onclick="setSort('cdl_class')">CDL${sortArrow('cdl_class')}</th>
+      <th onclick="setSort('status')">Статус${sortArrow('status')}</th>
+      <th>Язык</th>
+      <th onclick="setSort('created_at')">Дата${sortArrow('created_at')}</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(r => `<tr>
+        <td><strong>${r.first_name || '—'}</strong></td>
+        <td><a class="ph-link" href="tel:${r.phone}">${r.phone || '—'}</a></td>
+        <td>${cdlBadge(r.cdl_class)}</td>
+        <td>${statusDropdown(r.id, r.status, 'owners')}</td>
+        <td class="mono" style="font-size:.72rem">${r.lang || '—'}</td>
+        <td class="mono" style="font-size:.72rem;color:var(--tx2)">${fmtDate(r.created_at)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ── PAGINATION ────────────────────────────────────────
+function renderPagination() {
+  const total = filteredData.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const area = document.getElementById('paginationArea');
+  if (pages <= 1) { area.innerHTML = ''; return; }
+
+  const start = (currentPage - 1) * PAGE_SIZE + 1;
+  const end = Math.min(currentPage * PAGE_SIZE, total);
+
+  let btns = `<span class="pg-info">${start}–${end} из ${total}</span>`;
+  btns += `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>←</button>`;
+
+  let from = Math.max(1, currentPage - 2);
+  let to = Math.min(pages, from + 4);
+  if (to - from < 4) from = Math.max(1, to - 4);
+  for (let i = from; i <= to; i++) {
+    btns += `<button class="pg-btn ${i===currentPage?'on':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  btns += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>→</button>`;
+  area.innerHTML = btns;
+}
+
+function goPage(p) {
+  const pages = Math.ceil(filteredData.length / PAGE_SIZE);
+  if (p < 1 || p > pages) return;
+  currentPage = p;
+  renderTable();
+  renderPagination();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('on', ['drivers','companies','cdl','owners'][i] === tab);
+  });
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterCDL').value = '';
+  sortCol = 'created_at'; sortAsc = false;
+  loadTable();
+}
+
+// ── STATUS UPDATE ─────────────────────────────────────
+async function updateStatus(id, table, newStatus, selectEl) {
+  try {
+    await sbPatch(table, id, { status: newStatus });
+    // Update local data
+    const row = allData.find(r => r.id === id);
+    if (row) row.status = newStatus;
+    showToast('✓ Статус обновлён', 'ok');
+  } catch(e) {
+    showToast('Ошибка: ' + e.message, 'err');
+  }
+}
+
+// ── EXPORT CSV ────────────────────────────────────────
+function exportCSV() {
+  if (!filteredData.length) { showToast('Нет данных для экспорта', 'err'); return; }
+  const keys = Object.keys(filteredData[0]);
+  const rows = [keys.join(','), ...filteredData.map(r =>
+    keys.map(k => JSON.stringify(r[k] ?? '')).join(',')
+  )];
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `teztruck_${currentTab}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ CSV экспортирован', 'ok');
+}
+
+// ── REFRESH ───────────────────────────────────────────
+async function refresh() {
+  await loadStats();
+  await loadTable();
+  showToast('↻ Данные обновлены', 'ok');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+let toastTm;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(toastTm);
+  toastTm = setTimeout(() => el.className = 'toast', 2500);
+}
+
+// ── KEYBOARD ──────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'r' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); refresh(); }
+  if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TezTruck — Driver Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0B0F1A;--ink2:#2D3548;--ink3:#6B7A99;
+  --paper:#F7F6F3;--card:#FFFFFF;--line:#E8E8E4;--line2:#F0F0EC;
+  --or:#E8490A;--or-soft:rgba(232,73,10,0.09);--or-glow:rgba(232,73,10,0.18);
+  --navy:#0F2D52;--navy-soft:rgba(15,45,82,0.08);
+  --mint:#0A7A3C;--mint-soft:rgba(10,122,60,0.09);
+  --re:#C0281A;
+  font-size:16px;
+}
+html{height:100%}
+body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* LOGIN GATE */
+.gate{position:fixed;inset:0;z-index:999;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate.hidden{display:none}
+.gate-box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:40px;width:100%;max-width:380px;text-align:center;box-shadow:0 8px 40px rgba(11,15,26,.08)}
+.gate-logo{font-size:1.5rem;font-weight:800;color:var(--ink);margin-bottom:4px;letter-spacing:-.02em}
+.gate-logo span{color:var(--or)}
+.gate-sub{font-size:.8rem;color:var(--ink3);margin-bottom:28px;letter-spacing:.08em;text-transform:uppercase}
+.gate-label{font-size:.83rem;font-weight:600;color:var(--ink3);margin-bottom:6px;display:block;text-align:left}
+.gate-input{width:100%;padding:12px 16px;border:1.5px solid var(--line);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.95rem;color:var(--ink);background:var(--paper);outline:none;margin-bottom:10px;transition:border-color .15s}
+.gate-input:focus{border-color:var(--navy)}
+.gate-btn{width:100%;padding:13px;background:var(--or);color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;border-radius:10px;border:none;cursor:pointer;transition:opacity .15s;margin-bottom:8px}
+.gate-btn:hover{opacity:.88}
+.gate-err{font-size:.78rem;color:var(--re);display:none;margin-top:4px}
+.gate-help{font-size:.75rem;color:var(--ink3);margin-top:12px}
+.gate-help a{color:var(--or);text-decoration:none;font-weight:600}
+
+/* TOP NAV */
+.topnav{height:58px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.tn-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:1.15rem;font-weight:800;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.logo span{color:var(--or)}
+.plan-tag{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:var(--or-soft);color:var(--or)}
+.tn-right{display:flex;align-items:center;gap:16px}
+.quota-badge{font-size:.8rem;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.qb-num{font-weight:800;color:var(--or)}
+.logout-btn{font-size:.78rem;font-weight:600;color:var(--ink3);background:none;border:1px solid var(--line);padding:6px 12px;border-radius:7px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif}
+.logout-btn:hover{border-color:var(--re);color:var(--re)}
+
+/* LAYOUT */
+.layout{display:flex;height:calc(100vh - 58px)}
+.sidebar{width:280px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);padding:20px;overflow-y:auto}
+.main{flex:1;overflow-y:auto;padding:24px}
+
+/* SIDEBAR FILTERS */
+.filter-group{margin-bottom:20px}
+.fg-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;display:block}
+.f-search{width:100%;padding:10px 13px;border:1.5px solid var(--line);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .15s;margin-bottom:4px}
+.f-search:focus{border-color:var(--or)}
+.f-chips{display:flex;flex-wrap:wrap;gap:6px}
+.f-chip{padding:5px 11px;border-radius:100px;border:1.5px solid var(--line);font-size:.75rem;font-weight:600;color:var(--ink3);cursor:pointer;transition:all .15s;background:var(--card)}
+.f-chip:hover{border-color:var(--or);color:var(--or)}
+.f-chip.on{background:var(--or);border-color:var(--or);color:#fff}
+.apply-btn{display:block;width:100%;padding:11px;background:var(--ink);color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;border-radius:9px;border:none;cursor:pointer;transition:background .15s;margin-top:8px}
+.apply-btn:hover{background:var(--navy)}
+.reset-btn{display:block;width:100%;padding:9px;background:none;color:var(--ink3);font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;border-radius:9px;border:1px solid var(--line);cursor:pointer;margin-top:6px}
+.divider{height:1px;background:var(--line);margin:16px 0}
+
+/* MAIN HEADER */
+.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.mh-title{font-size:1.1rem;font-weight:700;color:var(--ink)}
+.mh-count{font-size:.83rem;color:var(--ink3)}
+.sort-row{display:flex;align-items:center;gap:8px}
+.sort-label{font-size:.78rem;color:var(--ink3)}
+.sort-sel{font-size:.83rem;font-family:'Outfit',sans-serif;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:6px 10px;outline:none;cursor:pointer}
+
+/* DRIVER CARDS GRID */
+.d-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+/* DRIVER CARD */
+.d-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:all .2s;cursor:pointer}
+.d-card:hover{box-shadow:0 6px 24px rgba(11,15,26,0.09);border-color:#D0D0CC;transform:translateY(-1px)}
+.dc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.dc-av{width:44px;height:44px;border-radius:12px;background:var(--line2);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.dc-info{flex:1;min-width:0}
+.dc-name{font-size:.95rem;font-weight:700;color:var(--ink);line-height:1.2}
+.dc-loc{font-size:.75rem;color:var(--ink3);margin-top:2px}
+.dc-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.ds-looking{background:#22C55E}.ds-open{background:#F59E0B}.ds-passive{background:#94A3B8}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.ch{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:100px;background:var(--line2);color:var(--ink2)}
+.ch.o{background:var(--or-soft);color:var(--or)}.ch.g{background:var(--mint-soft);color:var(--mint)}.ch.n{background:var(--navy-soft);color:var(--navy)}
+.dc-phone-wrap{margin-top:4px}
+.unlock-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;background:var(--or-soft);color:var(--or);border:1.5px solid rgba(232,73,10,0.2);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:700;cursor:pointer;transition:all .15s}
+.unlock-btn:hover{background:var(--or);color:#fff;border-color:var(--or)}
+.unlock-btn.used{background:var(--mint-soft);color:var(--mint);border-color:rgba(10,122,60,0.2);cursor:default}
+.phone-revealed{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--mint-soft);border:1px solid rgba(10,122,60,0.2);border-radius:9px}
+.ph-num{font-size:.9rem;font-weight:700;color:var(--ink);flex:1}
+.ph-call{font-size:.72rem;font-weight:700;padding:5px 10px;background:var(--mint);color:#fff;border-radius:6px;text-decoration:none;flex-shrink:0;transition:opacity .15s}
+.ph-call:hover{opacity:.85}
+.dc-meta{display:flex;align-items:center;gap:6px;margin-top:9px;font-size:.72rem;color:var(--ink3);flex-wrap:wrap}
+.meta-dot{color:var(--line)}
+.dc-new-badge{font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:100px;background:var(--or-soft);color:var(--or)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.25}
+.empty-text{font-size:.92rem}
+
+/* LOADING */
+.loading{text-align:center;padding:60px;color:var(--ink3)}
+.spin{display:inline-block;width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* QUOTA WARNING */
+.quota-warn{background:rgba(200,137,26,0.08);border:1px solid rgba(200,137,26,0.25);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.83rem;color:#92650A;display:none}
+.quota-warn.show{display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:100px;font-size:.82rem;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+.toast.ok{background:var(--mint)}
+.toast.warn{background:#C8891A}
+
+/* MOBILE SIDEBAR TOGGLE */
+.sidebar-toggle{display:none;padding:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:8px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;color:var(--ink2);cursor:pointer}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-290px;top:58px;bottom:0;z-index:40;transition:left .25s;box-shadow:4px 0 20px rgba(11,15,26,.12)}
+  .sidebar.open{left:0}
+  .sidebar-toggle{display:block}
+  .main{padding:16px}
+  .layout{height:auto;min-height:calc(100vh - 58px)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">Tez<span>Truck</span></div>
+    <div class="gate-sub">Driver Database Access</div>
+    <label class="gate-label">Email</label>
+    <input class="gate-input" type="email" id="g-email" placeholder="you@company.com" onkeydown="if(event.key==='Enter')login()">
+    <label class="gate-label" style="margin-top:6px">Password</label>
+    <input class="gate-input" type="password" id="g-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    <div class="gate-err" id="g-err">Incorrect email or password</div>
+    <button class="gate-btn" onclick="login()" style="margin-top:14px">Sign In →</button>
+    <div class="gate-help">No account? <a href="pricing.html">Subscribe to get access →</a></div>
+    <div class="gate-help" style="margin-top:6px">Need help? <a href="https://wa.me/12673725777">WhatsApp us</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appWrap" style="display:none">
+
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <div class="tn-left">
+      <a class="logo" href="index.html">Tez<span>Truck</span></a>
+      <div class="plan-tag" id="planTag">Pro</div>
+      <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">⚙ Filters</button>
+    </div>
+    <div class="tn-right">
+      <div class="quota-badge">
+        <span>Contacts left:</span>
+        <span class="qb-num" id="quotaLeft">—</span>
+        <span style="color:var(--ink3)">/ <span id="quotaTotal">—</span></span>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+
+      <div class="filter-group">
+        <span class="fg-label">Search</span>
+        <input class="f-search" id="f-search" placeholder="Name, state, city..." oninput="applyFilters()">
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Status</span>
+        <div class="f-chips" id="chips-status">
+          <div class="f-chip on" data-v="all" onclick="chipToggle(this,'status',true)">All</div>
+          <div class="f-chip" data-v="looking" onclick="chipToggle(this,'status',true)">🟢 Looking</div>
+          <div class="f-chip" data-v="open" onclick="chipToggle(this,'status',true)">🟡 Open</div>
+          <div class="f-chip" data-v="passive" onclick="chipToggle(this,'status',true)">⚪ Passive</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">CDL Class</span>
+        <div class="f-chips" id="chips-cdl">
+          <div class="f-chip" data-v="A" onclick="chipToggle(this,'cdl',false)">Class A</div>
+          <div class="f-chip" data-v="B" onclick="chipToggle(this,'cdl',false)">Class B</div>
+          <div class="f-chip" data-v="C" onclick="chipToggle(this,'cdl',false)">Class C</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Experience</span>
+        <div class="f-chips" id="chips-exp">
+          <div class="f-chip" data-v="0" onclick="chipToggle(this,'exp',false)">Newbie</div>
+          <div class="f-chip" data-v="1" onclick="chipToggle(this,'exp',false)">1 year</div>
+          <div class="f-chip" data-v="2" onclick="chipToggle(this,'exp',false)">2 years</div>
+          <div class="f-chip" data-v="3" onclick="chipToggle(this,'exp',false)">3+ years</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Work Authorization</span>
+        <div class="f-chips" id="chips-auth">
+          <div class="f-chip" data-v="gc" onclick="chipToggle(this,'auth',false)">Green Card</div>
+          <div class="f-chip" data-v="cit" onclick="chipToggle(this,'auth',false)">Citizenship</div>
+          <div class="f-chip" data-v="ead" onclick="chipToggle(this,'auth',false)">EAD</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Route Type</span>
+        <div class="f-chips" id="chips-route">
+          <div class="f-chip" data-v="otr" onclick="chipToggle(this,'route',false)">OTR</div>
+          <div class="f-chip" data-v="regional" onclick="chipToggle(this,'route',false)">Regional</div>
+          <div class="f-chip" data-v="local" onclick="chipToggle(this,'route',false)">Local</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Home Time</span>
+        <div class="f-chips" id="chips-home">
+          <div class="f-chip" data-v="weekly" onclick="chipToggle(this,'home',false)">Weekly</div>
+          <div class="f-chip" data-v="biweekly" onclick="chipToggle(this,'home',false)">Biweekly</div>
+          <div class="f-chip" data-v="flex" onclick="chipToggle(this,'home',false)">Flexible</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="filter-group">
+        <span class="fg-label">Endorsements</span>
+        <div class="f-chips" id="chips-end">
+          <div class="f-chip" data-v="hazmat" onclick="chipToggle(this,'end',false)">Hazmat</div>
+          <div class="f-chip" data-v="tanker" onclick="chipToggle(this,'end',false)">Tanker</div>
+          <div class="f-chip" data-v="doubles" onclick="chipToggle(this,'end',false)">Doubles</div>
+        </div>
+      </div>
+
+      <button class="reset-btn" onclick="resetFilters()">✕ Reset all filters</button>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+      <div class="main-header">
+        <div>
+          <div class="mh-title">Driver Database</div>
+          <div class="mh-count" id="resultCount">Loading...</div>
+        </div>
+        <div class="sort-row">
+          <span class="sort-label">Sort:</span>
+          <select class="sort-sel" id="sortSel" onchange="applyFilters()">
+            <option value="new">Newest first</option>
+            <option value="exp">Most experienced</option>
+            <option value="looking">Looking first</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="quota-warn" id="quotaWarn">
+        ⚠️ You have <strong id="quotaLeftWarn">0</strong> contacts remaining this month.
+        <a href="pricing.html" style="color:#92650A;font-weight:700">Upgrade your plan →</a>
+      </div>
+
+      <div id="gridArea">
+        <div class="loading"><span class="spin"></span>Loading drivers...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL='https://wuyuhxddswxrrzquogsh.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
+
+// DEMO ACCOUNTS — в продакшене заменить на Supabase Auth
+const ACCOUNTS={
+  'demo@teztruck.com':{pass:'demo123',plan:'Pro',quota:100},
+  'starter@teztruck.com':{pass:'start123',plan:'Starter',quota:20},
+  'fleet@teztruck.com':{pass:'fleet123',plan:'Fleet',quota:500},
+};
+
+let currentUser=null,allDrivers=[],filteredDrivers=[],unlockedIds=new Set(),usedQuota=0;
+const filters={status:'all',cdl:[],exp:[],auth:[],route:[],home:[],end:[]};
+
+// ── AUTH ─────────────────────────────────────────────
+function login(){
+  const email=document.getElementById('g-email').value.trim().toLowerCase();
+  const pass=document.getElementById('g-pass').value;
+  const acc=ACCOUNTS[email];
+  if(!acc||acc.pass!==pass){
+    document.getElementById('g-err').style.display='block';
+    document.getElementById('g-pass').value='';
+    return;
+  }
+  currentUser={email,...acc};
+  localStorage.setItem('tt_user',JSON.stringify({email,quota:acc.quota,plan:acc.plan,usedQuota:0,unlocked:[]}));
+  startApp();
+}
+function logout(){
+  localStorage.removeItem('tt_user');
+  location.reload();
+}
+
+// Restore session
+const saved=JSON.parse(localStorage.getItem('tt_user')||'null');
+if(saved){
+  const acc=ACCOUNTS[saved.email]||{plan:saved.plan,quota:saved.quota};
+  currentUser={email:saved.email,plan:acc.plan||saved.plan,quota:acc.quota||saved.quota};
+  usedQuota=saved.usedQuota||0;
+  unlockedIds=new Set(saved.unlocked||[]);
+  window.addEventListener('DOMContentLoaded',startApp);
+}
+
+function startApp(){
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('appWrap').style.display='';
+  document.getElementById('planTag').textContent=currentUser.plan;
+  updateQuota();
+  loadDrivers();
+}
+
+function updateQuota(){
+  const left=currentUser.quota-usedQuota;
+  document.getElementById('quotaLeft').textContent=left;
+  document.getElementById('quotaTotal').textContent=currentUser.quota;
+  document.getElementById('quotaLeftWarn').textContent=left;
+  const warn=document.getElementById('quotaWarn');
+  warn.classList.toggle('show',left<=5&&left>=0);
+}
+
+// ── DATA ─────────────────────────────────────────────
+async function loadDrivers(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/drivers?order=created_at.desc&limit=2000',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    allDrivers=await r.json();
+    if(!Array.isArray(allDrivers)||!allDrivers.length){
+      allDrivers=getDemoDrivers();
+    }
+  }catch(e){
+    allDrivers=getDemoDrivers();
+  }
+  applyFilters();
+}
+
+function getDemoDrivers(){
+  const names=[['Rustam','A.'],['Jabbor','M.'],['Miguel','R.'],['Alisher','N.'],['Doniyor','K.'],['Nodir','S.'],['Vladimir','K.'],['Farrukhbek','T.'],['Ivan','P.'],['Sergey','M.'],['Jose','L.'],['Timur','B.'],['Aziz','O.'],['Sanjar','U.'],['Dilshod','Y.'],['Ahmed','H.'],['Carlos','M.'],['Dmitri','V.'],['Husayn','R.'],['Marco','A.']];
+  const states=['Pennsylvania','New Jersey','Texas','California','Florida','Illinois','Ohio','Georgia','New York','Michigan'];
+  const cdls=['A','A','A','A','A','A','B'];
+  const statuses=['looking','looking','looking','open','open','passive'];
+  const routes=['otr','regional','local'];
+  const auths=['gc','cit','ead'];
+  const ends=['hazmat','tanker','doubles','none','none'];
+  return names.map(([fn,ln],i)=>({
+    id:'demo-'+i,first_name:fn,last_name:ln,
+    phone:'+1 ('+['267','551','713','442','305','312','614','404','212','313','832','215','408','510','718','626','281','347','786','561'][i]+') '+Math.floor(100+Math.random()*900)+'-'+Math.floor(1000+Math.random()*9000),
+    cdl_class:cdls[i%cdls.length],
+    experience_years:[0,1,2,3,4,5][i%6],
+    work_auth:auths[i%auths.length],
+    route_type:routes[i%routes.length],
+    home_time:['weekly','biweekly','flex'][i%3],
+    endorsements:ends[i%ends.length],
+    state:states[i%states.length],
+    status:statuses[i%statuses.length],
+    source:i<10?'import':'website',
+    created_at:new Date(Date.now()-(i*86400000*Math.random()*14)).toISOString()
+  }));
+}
+
+// ── FILTERS ──────────────────────────────────────────
+function chipToggle(el,group,exclusive){
+  if(exclusive){
+    document.querySelectorAll('#chips-'+group+' .f-chip').forEach(c=>c.classList.remove('on'));
+    el.classList.add('on');
+    filters[group]=el.dataset.v;
+  }else{
+    el.classList.toggle('on');
+    filters[group]=Array.from(document.querySelectorAll('#chips-'+group+' .f-chip.on')).map(c=>c.dataset.v);
+  }
+  applyFilters();
+}
+
+function resetFilters(){
+  Object.keys(filters).forEach(k=>filters[k]=k==='status'?'all':[]);
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));
+  document.querySelector('#chips-status .f-chip[data-v="all"]').classList.add('on');
+  document.getElementById('f-search').value='';
+  applyFilters();
+}
+
+function applyFilters(){
+  const search=document.getElementById('f-search').value.toLowerCase();
+  const sort=document.getElementById('sortSel').value;
+
+  filteredDrivers=allDrivers.filter(d=>{
+    if(search){
+      const txt=[d.first_name,d.last_name,d.state,d.city].filter(Boolean).join(' ').toLowerCase();
+      if(!txt.includes(search))return false;
+    }
+    if(filters.status&&filters.status!=='all'&&d.status!==filters.status)return false;
+    if(filters.cdl.length&&!filters.cdl.includes(d.cdl_class))return false;
+    if(filters.exp.length&&!filters.exp.includes(String(d.experience_years)))return false;
+    if(filters.auth.length&&!filters.auth.some(a=>d.work_auth&&d.work_auth.includes(a)))return false;
+    if(filters.route.length&&!filters.route.includes(d.route_type))return false;
+    if(filters.home.length&&!filters.home.includes(d.home_time))return false;
+    if(filters.end.length&&!filters.end.some(e=>d.endorsements&&d.endorsements.includes(e)))return false;
+    return true;
+  });
+
+  filteredDrivers.sort((a,b)=>{
+    if(sort==='exp')return(b.experience_years||0)-(a.experience_years||0);
+    if(sort==='looking')return(a.status==='looking'?0:1)-(b.status==='looking'?0:1);
+    return new Date(b.created_at)-new Date(a.created_at);
+  });
+
+  document.getElementById('resultCount').textContent=filteredDrivers.length+' drivers found';
+  renderGrid();
+}
+
+// ── RENDER ────────────────────────────────────────────
+function renderGrid(){
+  const grid=document.getElementById('gridArea');
+  if(!filteredDrivers.length){
+    grid.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">No drivers match your filters</div></div>';
+    return;
+  }
+  const statusMap={looking:{cls:'ds-looking',label:'Actively looking'},open:{cls:'ds-open',label:'Open to offers'},passive:{cls:'ds-passive',label:'Passive'}};
+  const routeLabels={otr:'OTR',regional:'Regional',local:'Local'};
+  const homeLabels={weekly:'Home weekly',biweekly:'Home biweekly',flex:'Flexible'};
+  const authLabels={gc:'Green Card',cit:'Citizenship',ead:'EAD'};
+  const isNew=d=>Date.now()-new Date(d.created_at)<7*86400000;
+
+  grid.innerHTML='<div class="d-grid">'+filteredDrivers.map(d=>{
+    const st=statusMap[d.status]||statusMap.passive;
+    const unlocked=unlockedIds.has(d.id);
+    const endArr=(d.endorsements||'').split(',').filter(e=>e&&e!=='none');
+    return `<div class="d-card">
+      <div class="dc-top">
+        <div class="dc-av">👨‍✈️</div>
+        <div class="dc-info">
+          <div class="dc-name">${d.first_name||''} ${d.last_name||''} ${isNew(d)?'<span class="dc-new-badge">NEW</span>':''}</div>
+          <div class="dc-loc">${d.state||'Unknown'} · ${d.experience_years!=null?(d.experience_years===0?'Newbie':d.experience_years+' yr'):'—'} exp</div>
+        </div>
+        <div class="dc-status-dot ${st.cls}" title="${st.label}"></div>
+      </div>
+      <div class="chips">
+        ${d.cdl_class?`<span class="ch o">CDL-${d.cdl_class}</span>`:''}
+        ${d.route_type?`<span class="ch n">${routeLabels[d.route_type]||d.route_type}</span>`:''}
+        ${d.work_auth?`<span class="ch">${authLabels[d.work_auth]||d.work_auth}</span>`:''}
+        ${endArr.map(e=>`<span class="ch g">${e.charAt(0).toUpperCase()+e.slice(1)}</span>`).join('')}
+      </div>
+      <div class="dc-phone-wrap">
+        ${unlocked
+          ?`<div class="phone-revealed"><span class="ph-num">${d.phone}</span><a class="ph-call" href="tel:${d.phone}">📞 Call</a></div>`
+          :`<button class="unlock-btn" onclick="unlock('${d.id}')">🔒 Unlock Phone Number — 1 contact</button>`}
+      </div>
+      <div class="dc-meta">
+        <span>${st.label}</span>
+        ${d.home_time?`<span class="meta-dot">·</span><span>${homeLabels[d.home_time]||d.home_time}</span>`:''}
+      </div>
+    </div>`;
+  }).join('')+ '</div>';
+}
+
+// ── UNLOCK ────────────────────────────────────────────
+function unlock(id){
+  const left=currentUser.quota-usedQuota;
+  if(left<=0){
+    toast('No contacts left this month. Upgrade your plan.','warn');
+    return;
+  }
+  unlockedIds.add(id);
+  usedQuota++;
+  // Save to localStorage
+  const saved=JSON.parse(localStorage.getItem('tt_user')||'null')||{};
+  saved.usedQuota=usedQuota;
+  saved.unlocked=[...unlockedIds];
+  localStorage.setItem('tt_user',JSON.stringify(saved));
+  updateQuota();
+  renderGrid();
+  toast('✓ Phone number unlocked!','ok');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+let ttm;
+function toast(m,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=m;el.className='toast show '+(type||'');
+  clearTimeout(ttm);ttm=setTimeout(()=>el.className='toast',2500);
+}
+</script>
+</body>
+</html>

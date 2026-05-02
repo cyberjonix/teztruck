@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TezTruck — Hire CDL Drivers</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0B0F1A;--ink2:#2D3548;--ink3:#6B7A99;
+  --paper:#FAFAF8;--card:#FFFFFF;--line:#E8E8E4;--line2:#F0F0EC;
+  --or:#E8490A;--or-soft:rgba(232,73,10,0.09);--or-glow:rgba(232,73,10,0.18);
+  --navy:#0F2D52;--navy-soft:rgba(15,45,82,0.08);
+  --mint:#0A7A3C;--mint-soft:rgba(10,122,60,0.09);
+  --gold:#C8891A;
+  font-size:16px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:50;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(250,250,248,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.logo{font-size:1.35rem;font-weight:800;color:var(--ink);text-decoration:none;letter-spacing:-.02em}
+.logo span{color:var(--or)}
+.back{font-size:.83rem;font-weight:600;color:var(--ink3);text-decoration:none;transition:color .15s}
+.back:hover{color:var(--or)}
+
+/* HERO */
+.hero{padding:90px 40px 80px;display:grid;grid-template-columns:1fr 1fr;gap:60px;max-width:1160px;margin:0 auto;align-items:center}
+.hero-left{}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--or);background:var(--or-soft);padding:5px 13px;border-radius:100px;margin-bottom:22px}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--or);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-size:clamp(2.4rem,4vw,3.6rem);font-weight:900;line-height:1.02;letter-spacing:-.03em;color:var(--ink);margin-bottom:18px}
+h1 em{color:var(--or);font-style:normal}
+.hero-sub{font-size:1.05rem;color:var(--ink3);line-height:1.7;margin-bottom:34px;max-width:440px}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;background:var(--or);color:#fff;font-size:.95rem;font-weight:700;border-radius:12px;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px var(--or-glow)}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--or-glow)}
+.hero-right{display:flex;flex-direction:column;gap:0}
+
+/* STAT STACK */
+.stat-stack{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 4px 30px rgba(11,15,26,0.07)}
+.stat-row{display:flex;align-items:center;gap:18px;padding:18px 24px;border-bottom:1px solid var(--line2)}
+.stat-row:last-child{border-bottom:none}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.si-or{background:var(--or-soft)}.si-navy{background:var(--navy-soft)}.si-mint{background:var(--mint-soft)}
+.stat-n{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;line-height:1}
+.stat-l{font-size:.78rem;color:var(--ink3);margin-top:2px;font-weight:500}
+.stat-badge{margin-left:auto;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:100px;background:var(--mint-soft);color:var(--mint)}
+
+/* PREVIEW SECTION */
+.preview{padding:0 40px 80px;max-width:1160px;margin:0 auto}
+.sec-tag{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.sec-title{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:10px;line-height:1.1}
+.sec-sub{font-size:.95rem;color:var(--ink3);line-height:1.7;margin-bottom:32px;max-width:500px}
+
+.driver-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;position:relative}
+.d-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;transition:box-shadow .2s}
+.d-card:not(.locked):hover{box-shadow:0 6px 24px rgba(11,15,26,0.09)}
+.d-card.locked{position:relative;overflow:hidden}
+.d-card.locked::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(250,250,248,.97) 65%);border-radius:16px}
+.lock-pill{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:2;background:var(--ink);color:#fff;font-size:.7rem;font-weight:700;padding:6px 14px;border-radius:100px;white-space:nowrap;display:flex;align-items:center;gap:5px;cursor:pointer;transition:background .15s}
+.lock-pill:hover{background:var(--or)}
+.d-top{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.d-av{width:42px;height:42px;border-radius:11px;background:var(--line2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.d-name{font-size:.92rem;font-weight:700;color:var(--ink);line-height:1.2}
+.d-loc{font-size:.75rem;color:var(--ink3);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.ch{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:100px;background:var(--line2);color:var(--ink2)}
+.ch.o{background:var(--or-soft);color:var(--or)}.ch.g{background:var(--mint-soft);color:var(--mint)}.ch.n{background:var(--navy-soft);color:var(--navy)}
+.d-phone{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--line2);border-radius:9px}
+.d-ph{font-size:.82rem;font-weight:700;color:var(--ink);flex:1}
+.d-ph.blur{filter:blur(5px);user-select:none;color:var(--ink3)}
+.d-ph-hint{font-size:.68rem;color:var(--ink3)}
+.d-status{display:flex;align-items:center;gap:6px;margin-top:9px;font-size:.75rem;color:var(--ink3)}
+.d-dot{width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0}
+
+/* PRICING */
+.pricing{padding:80px 40px;background:var(--ink);position:relative;overflow:hidden}
+.pricing::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;border-radius:50%;background:radial-gradient(ellipse,rgba(232,73,10,.15) 0%,transparent 70%);pointer-events:none}
+.pricing-inner{max-width:1040px;margin:0 auto;position:relative}
+.pricing .sec-tag{color:#FF7A4A}
+.pricing .sec-title{color:#fff}
+.pricing .sec-sub{color:rgba(255,255,255,.55);margin-bottom:48px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+
+.plan{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;transition:border-color .2s}
+.plan:hover{border-color:rgba(255,255,255,.2)}
+.plan.pop{background:var(--card);border-color:var(--card);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.pop-badge{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--or);background:var(--or-soft);padding:4px 10px;border-radius:100px;margin-bottom:14px}
+.plan-name{font-size:1rem;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:16px}
+.plan.pop .plan-name{color:var(--ink3)}
+.plan-price{display:flex;align-items:flex-start;gap:2px;margin-bottom:4px;line-height:1}
+.plan-price .cur{font-size:1.3rem;font-weight:700;margin-top:6px;color:#fff}
+.plan.pop .plan-price .cur{color:var(--ink)}
+.plan-price .amount{font-size:3rem;font-weight:900;letter-spacing:-.04em;color:#fff}
+.plan.pop .plan-price .amount{color:var(--ink)}
+.plan-period{font-size:.78rem;color:rgba(255,255,255,.4);margin-bottom:24px}
+.plan.pop .plan-period{color:var(--ink3)}
+.plan-contacts{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,.06);border-radius:10px;margin-bottom:20px}
+.plan.pop .plan-contacts{background:var(--or-soft)}
+.pc-num{font-size:1.4rem;font-weight:900;color:var(--or);line-height:1}
+.pc-label{font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.3}
+.plan.pop .pc-label{color:var(--ink2)}
+.feats{display:flex;flex-direction:column;gap:9px;margin-bottom:26px}
+.feat{display:flex;gap:9px;align-items:flex-start;font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.7)}
+.plan.pop .feat{color:var(--ink2)}
+.feat-y{color:var(--mint);flex-shrink:0;margin-top:1px;font-weight:700}.feat-n{color:rgba(255,255,255,.2);flex-shrink:0;margin-top:1px}
+.plan-btn{display:block;width:100%;padding:13px;text-align:center;border-radius:11px;font-size:.93rem;font-weight:700;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.plan-btn.default{background:rgba(255,255,255,.1);color:#fff}
+.plan-btn.default:hover{background:rgba(255,255,255,.18)}
+.plan-btn.primary{background:var(--or);color:#fff;box-shadow:0 4px 18px rgba(232,73,10,.4)}
+.plan-btn.primary:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(232,73,10,.45)}
+.plan-note{text-align:center;margin-top:24px;font-size:.78rem;color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(11,15,26,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:22px;padding:36px;width:100%;max-width:440px;position:relative;animation:up .22s ease}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.mcl{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:none;background:var(--line2);color:var(--ink3);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mcl:hover{background:var(--line);color:var(--ink)}
+.m-plan-pill{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--line2);border-radius:10px;margin-bottom:22px}
+.mpp-name{font-size:.92rem;font-weight:700}
+.mpp-sep{color:var(--line);font-size:.9rem}
+.mpp-price{font-size:.92rem;font-weight:800;color:var(--or);margin-left:auto}
+.mpp-contacts{font-size:.72rem;font-weight:600;color:var(--ink3)}
+.modal h3{font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.modal-sub{font-size:.85rem;color:var(--ink3);margin-bottom:22px;line-height:1.6}
+.frow{margin-bottom:12px}
+.fl{font-size:.8rem;font-weight:600;color:var(--ink3);margin-bottom:5px;display:block}
+.fi{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.92rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--navy)}
+.stripe-box{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.stripe-safe{display:flex;align-items:center;justify-content:center;gap:5px;font-size:.72rem;color:var(--ink3);margin-top:7px}
+.pay-btn{display:block;width:100%;padding:14px;background:var(--or);color:#fff;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;border-radius:11px;border:none;cursor:pointer;margin-top:14px;transition:all .2s;box-shadow:0 4px 16px rgba(232,73,10,.28)}
+.pay-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,73,10,.35)}
+.pay-btn:disabled{opacity:.5;cursor:default;transform:none}
+.pay-err{font-size:.78rem;color:#C0281A;margin-top:7px;display:none}
+
+/* SUCCESS */
+.suc{display:none;text-align:center}
+.suc.vis{display:block}
+.suc-icon{font-size:3.2rem;margin-bottom:14px}
+.suc-title{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;color:var(--mint);margin-bottom:8px}
+.suc-sub{font-size:.88rem;color:var(--ink3);line-height:1.65;margin-bottom:20px}
+.suc-steps{text-align:left;background:var(--mint-soft);border-radius:12px;padding:16px 18px;margin-bottom:18px;display:flex;flex-direction:column;gap:8px}
+.suc-step{font-size:.83rem;color:var(--ink2);display:flex;gap:9px;align-items:flex-start;line-height:1.5}
+.wa-btn{display:block;padding:13px;background:#25D366;color:#fff;font-family:'Outfit',sans-serif;font-size:.93rem;font-weight:700;border-radius:11px;text-decoration:none;text-align:center;transition:opacity .15s}
+.wa-btn:hover{opacity:.88}
+
+/* FAQ */
+.faq{padding:72px 40px;max-width:720px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--line);padding:18px 0;cursor:pointer}
+.faq-q{font-size:.95rem;font-weight:700;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq-ic{color:var(--ink3);transition:transform .2s;font-size:.8rem;flex-shrink:0}
+.faq-item.open .faq-ic{transform:rotate(180deg);color:var(--or)}
+.faq-a{font-size:.88rem;color:var(--ink3);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,margin-top .3s}
+.faq-item.open .faq-a{max-height:200px;margin-top:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:100px;font-size:.82rem;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:999}
+.toast.show{opacity:1}
+
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding:60px 24px 48px}.hero-right{display:none}.plans{grid-template-columns:1fr;max-width:400px;margin:0 auto}.preview,.faq{padding:48px 24px}.pricing{padding:60px 24px}}
+@media(max-width:640px){nav{padding:0 20px}.pricing .sec-sub{display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">Tez<span>Truck</span></a>
+  <a class="back" href="index.html">← Back</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">For Trucking Companies</div>
+    <h1>Find your next<br><em>CDL driver</em><br>in 24 hours</h1>
+    <p class="hero-sub">Access 2,500+ pre-screened drivers filtered by CDL class, experience, region, endorsements and availability. Call them directly — no middlemen.</p>
+    <a class="hero-cta" href="#pricing">See Pricing Plans ↓</a>
+  </div>
+  <div class="hero-right">
+    <div class="stat-stack">
+      <div class="stat-row">
+        <div class="stat-icon si-or">🚛</div>
+        <div><div class="stat-n">2,500+</div><div class="stat-l">Verified CDL Drivers</div></div>
+        <div class="stat-badge">Live</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon si-navy">📍</div>
+        <div><div class="stat-n">48</div><div class="stat-l">States Covered</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon si-mint">⚡</div>
+        <div><div class="stat-n">24h</div><div class="stat-l">Average Placement Time</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-icon si-or">🎓</div>
+        <div><div class="stat-n">CDL-A</div><div class="stat-l">Majority Class A Drivers</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<div class="preview">
+  <div class="sec-tag">Database Preview</div>
+  <div class="sec-title">Real drivers. Real contacts.</div>
+  <p class="sec-sub">Subscribe to unlock phone numbers and access all 2,500+ profiles with advanced filters.</p>
+  <div class="driver-grid">
+
+    <div class="d-card">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Rustam A.</div><div class="d-loc">Pennsylvania · 3 yrs</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch g">OTR</span><span class="ch">Hazmat</span><span class="ch">Green Card</span></div>
+      <div class="d-phone"><span class="d-ph blur">+1 (267) 4••-••••</span><span class="d-ph-hint">🔒 unlock</span></div>
+      <div class="d-status"><div class="d-dot"></div>Actively looking for work</div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Jabbor M.</div><div class="d-loc">New Jersey · 5 yrs</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch n">Regional</span><span class="ch">Tanker</span><span class="ch">Citizenship</span></div>
+      <div class="d-phone"><span class="d-ph blur">+1 (551) 2••-••••</span><span class="d-ph-hint">🔒 unlock</span></div>
+      <div class="d-status"><div class="d-dot"></div>Open to offers</div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Miguel R.</div><div class="d-loc">Texas · 2 yrs</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch n">Local</span><span class="ch">EAD</span></div>
+      <div class="d-phone"><span class="d-ph blur">+1 (713) 8••-••••</span><span class="d-ph-hint">🔒 unlock</span></div>
+      <div class="d-status"><div class="d-dot"></div>Actively looking for work</div>
+    </div>
+
+    <div class="d-card locked">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Alisher N.</div><div class="d-loc">California · 4 yrs</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch g">OTR</span><span class="ch">Doubles</span></div>
+      <div class="d-phone"><span class="d-ph">+1 (442) 6••-••••</span></div>
+      <div class="lock-pill" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🔒 Subscribe to unlock</div>
+    </div>
+
+    <div class="d-card locked">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Doniyor K.</div><div class="d-loc">Florida · 1 yr</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch g">OTR</span><span class="ch">Citizenship</span></div>
+      <div class="d-phone"><span class="d-ph">+1 (305) 1••-••••</span></div>
+      <div class="lock-pill" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🔒 Subscribe to unlock</div>
+    </div>
+
+    <div class="d-card locked">
+      <div class="d-top"><div class="d-av">👨‍✈️</div><div><div class="d-name">Nodir S.</div><div class="d-loc">Illinois · Newbie</div></div></div>
+      <div class="chips"><span class="ch o">CDL-A</span><span class="ch n">Local</span><span class="ch">EAD</span></div>
+      <div class="d-phone"><span class="d-ph">+1 (312) 7••-••••</span></div>
+      <div class="lock-pill" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">🔒 Subscribe to unlock</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="sec-tag">Subscription Plans</div>
+    <div class="sec-title">Simple, honest pricing</div>
+    <p class="sec-sub">One successful hire pays for a full year of subscription. No contracts, cancel anytime.</p>
+
+    <div class="plans">
+
+      <!-- STARTER -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><span class="cur">$</span><span class="amount">199</span></div>
+        <div class="plan-period">per month · cancel anytime</div>
+        <div class="plan-contacts">
+          <div><div class="pc-num">20</div></div>
+          <div class="pc-label">driver phone numbers<br>unlocked per month</div>
+        </div>
+        <div class="feats">
+          <div class="feat"><span class="feat-y">✓</span>Filter by state & CDL class</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by experience level</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by work authorization</div>
+          <div class="feat"><span class="feat-y">✓</span>New driver email alerts</div>
+          <div class="feat"><span class="feat-n">–</span><span style="opacity:.45">Endorsements filter</span></div>
+          <div class="feat"><span class="feat-n">–</span><span style="opacity:.45">Instant SMS alerts</span></div>
+          <div class="feat"><span class="feat-n">–</span><span style="opacity:.45">CSV export</span></div>
+        </div>
+        <button class="plan-btn default" onclick="openCheckout('starter','Starter','199','20')">Get Started →</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan pop">
+        <div class="pop-badge">⭐ Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><span class="cur" style="color:var(--or)">$</span><span class="amount" style="color:var(--ink)">399</span></div>
+        <div class="plan-period">per month · cancel anytime</div>
+        <div class="plan-contacts">
+          <div><div class="pc-num">100</div></div>
+          <div class="pc-label">driver phone numbers<br>unlocked per month</div>
+        </div>
+        <div class="feats">
+          <div class="feat"><span class="feat-y">✓</span>Filter by state & CDL class</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by experience level</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by work authorization</div>
+          <div class="feat"><span class="feat-y">✓</span>New driver email alerts</div>
+          <div class="feat"><span class="feat-y">✓</span>Endorsements filter</div>
+          <div class="feat"><span class="feat-y">✓</span>Instant SMS when driver matches</div>
+          <div class="feat"><span class="feat-y">✓</span>CSV export</div>
+        </div>
+        <button class="plan-btn primary" onclick="openCheckout('pro','Pro','399','100')">Get Pro →</button>
+      </div>
+
+      <!-- FLEET -->
+      <div class="plan">
+        <div class="plan-name">Fleet</div>
+        <div class="plan-price"><span class="cur">$</span><span class="amount">799</span></div>
+        <div class="plan-period">per month · cancel anytime</div>
+        <div class="plan-contacts">
+          <div><div class="pc-num">500</div></div>
+          <div class="pc-label">driver phone numbers<br>unlocked per month</div>
+        </div>
+        <div class="feats">
+          <div class="feat"><span class="feat-y">✓</span>Filter by state & CDL class</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by experience level</div>
+          <div class="feat"><span class="feat-y">✓</span>Filter by work authorization</div>
+          <div class="feat"><span class="feat-y">✓</span>New driver email alerts</div>
+          <div class="feat"><span class="feat-y">✓</span>Endorsements + home time filters</div>
+          <div class="feat"><span class="feat-y">✓</span>Instant SMS + WhatsApp alerts</div>
+          <div class="feat"><span class="feat-y">✓</span>CSV export + API access</div>
+        </div>
+        <button class="plan-btn default" onclick="openCheckout('fleet','Fleet','799','500')">Get Fleet →</button>
+      </div>
+
+    </div>
+    <p class="plan-note">🔒 Stripe secure checkout &nbsp;·&nbsp; All major cards &nbsp;·&nbsp; No hidden fees</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<div class="faq">
+  <div class="sec-tag">FAQ</div>
+  <div class="sec-title" style="margin-bottom:28px">Common questions</div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">What do I get right after paying? <span class="faq-ic">▼</span></div>
+    <div class="faq-a">Within 2 hours of payment we activate your account and send you login credentials by email and WhatsApp. You can then log in to the driver database, use all filters, and start unlocking phone numbers immediately.</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">What does "20 / 100 / 500 phone numbers per month" mean? <span class="faq-ic">▼</span></div>
+    <div class="faq-a">Each time you click "Unlock" on a driver profile, one contact is used from your monthly quota. Unused contacts do not roll over. Your quota resets on the same day each month.</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Are drivers actively looking for work? <span class="faq-ic">▼</span></div>
+    <div class="faq-a">Our database shows driver status: Actively Looking, Open to Offers, and Passive. We recommend filtering by "Actively Looking" first — these drivers registered recently and are ready to start within days.</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">Can I cancel anytime? <span class="faq-ic">▼</span></div>
+    <div class="faq-a">Yes. No contracts, no cancellation fees. Cancel any time by messaging us on WhatsApp or Telegram and we'll stop the subscription immediately.</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="faq-q">How do I get support? <span class="faq-ic">▼</span></div>
+    <div class="faq-a">Call us at 267-372-5777, WhatsApp, or Telegram @insonixub. We speak Russian, Uzbek, Tajik, Spanish and English. We typically respond within 30 minutes during business hours.</div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="mcl" onclick="closeCheckout()">×</button>
+    <div class="m-plan-pill">
+      <span class="mpp-name" id="mName"></span>
+      <span class="mpp-sep">·</span>
+      <span class="mpp-contacts" id="mContacts"></span>
+      <span class="mpp-price" id="mPrice"></span>
+    </div>
+    <div id="formWrap">
+      <h3>Start your subscription</h3>
+      <p class="modal-sub">You'll get access within 2 hours. We'll send your login by email and WhatsApp.</p>
+      <div class="frow"><label class="fl">Company Name</label><input class="fi" id="f-co" placeholder="ABC Trucking LLC"></div>
+      <div class="frow"><label class="fl">Phone</label><input class="fi" type="tel" id="f-ph" placeholder="+1 (555) 000-0000"></div>
+      <div class="frow"><label class="fl">Email</label><input class="fi" type="email" id="f-em" placeholder="you@company.com"></div>
+      <div class="frow"><label class="fl">Card Details</label><div class="stripe-box"><div id="card-el"></div></div><div class="stripe-safe">🔒 Secured by Stripe · We never store card data</div></div>
+      <div class="pay-err" id="perr"></div>
+      <button class="pay-btn" id="pbtn" onclick="pay()">Subscribe & Get Access →</button>
+    </div>
+    <div class="suc" id="sucWrap">
+      <div class="suc-icon">🎉</div>
+      <div class="suc-title">You're subscribed!</div>
+      <p class="suc-sub">We're activating your account right now.</p>
+      <div class="suc-steps">
+        <div class="suc-step">✅ Check your email — login details within 2 hours</div>
+        <div class="suc-step">✅ Call us: <a href="tel:+12673725777" style="color:var(--or);font-weight:700">267-372-5777</a></div>
+        <div class="suc-step">✅ Or message WhatsApp for fastest response</div>
+      </div>
+      <a class="wa-btn" href="https://wa.me/12673725777?text=Hi, I just subscribed to TezTruck and need access to the driver database" target="_blank">💬 Message us on WhatsApp →</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL='https://wuyuhxddswxrrzquogsh.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1eXVoeGRkc3d4cnJ6cXVvZ3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzgwNjUsImV4cCI6MjA5MjkxNDA2NX0.Sk29BBsI7NUoRBFXOoIMvo8R1oVDfdmQELnye0NyEkc';
+const STRIPE_KEY='pk_live_51TQxaJJfySR5dqvoQQfyMlQts3KhpixCr9RsmeD8Y5p6B4gIT7Fbwxz6iyGHJW5zqgLCcNBajB158WoxZpAqgTBz00TbcbEgsA';
+let stripe,card,plan={};
+setTimeout(()=>{
+  stripe=Stripe(STRIPE_KEY);
+  const el=stripe.elements();
+  card=el.create('card',{style:{base:{fontFamily:"'Outfit',sans-serif",fontSize:'15px',color:'#0B0F1A','::placeholder':{color:'#6B7A99'}},invalid:{color:'#C0281A'}},hidePostalCode:true});
+  card.mount('#card-el');
+},100);
+function openCheckout(id,name,price,contacts){
+  plan={id,name,price,contacts};
+  document.getElementById('mName').textContent=name;
+  document.getElementById('mPrice').textContent='$'+price+'/mo';
+  document.getElementById('mContacts').textContent=contacts+' contacts/mo';
+  document.getElementById('pbtn').textContent='Subscribe $'+price+'/mo →';
+  document.getElementById('formWrap').style.display='';
+  document.getElementById('sucWrap').classList.remove('vis');
+  document.getElementById('perr').style.display='none';
+  document.getElementById('overlay').classList.add('open');
+}
+function closeCheckout(){document.getElementById('overlay').classList.remove('open');}
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCheckout();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCheckout();});
+async function pay(){
+  const co=document.getElementById('f-co').value.trim();
+  const ph=document.getElementById('f-ph').value.trim();
+  const em=document.getElementById('f-em').value.trim();
+  if(!co||!ph||!em){showErr('Please fill in all fields');return;}
+  if(!em.includes('@')){showErr('Enter a valid email');return;}
+  const btn=document.getElementById('pbtn');
+  btn.disabled=true;btn.textContent='Processing...';
+  document.getElementById('perr').style.display='none';
+  try{
+    const{paymentMethod,error}=await stripe.createPaymentMethod({type:'card',card,billing_details:{name:co,email:em,phone:ph}});
+    if(error){showErr(error.message);btn.disabled=false;btn.textContent='Subscribe $'+plan.price+'/mo →';return;}
+    await fetch(SB_URL+'/rest/v1/company_leads',{method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify({company_name:co,phone:ph,email:em,need:'hire_drivers',status:'new',notes:'Plan: '+plan.name+' $'+plan.price+'/mo | '+plan.contacts+' contacts | PM: '+paymentMethod.id,lang:'en'})});
+    document.getElementById('formWrap').style.display='none';
+    document.getElementById('sucWrap').classList.add('vis');
+  }catch(e){showErr(e.message||'Error, please try again');btn.disabled=false;btn.textContent='Subscribe $'+plan.price+'/mo →';}
+}
+function showErr(m){const el=document.getElementById('perr');el.textContent=m;el.style.display='block';}
+let ttm;
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.className='toast show';clearTimeout(ttm);ttm=setTimeout(()=>el.className='toast',2500);}
+</script>
+</body>
+</html>
