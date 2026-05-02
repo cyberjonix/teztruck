@@ -38,12 +38,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Plus Jak
 .screen.active{opacity:1;pointer-events:auto;transform:none;}
 
 /* BOTTOM NAV */
-.bottomnav{height:var(--nav-h);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--bg2);border-top:1px solid var(--brd);padding-bottom:env(safe-area-inset-bottom);}
-.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;cursor:pointer;color:var(--tx3);transition:color .15s;position:relative;}
-.navbtn.on{color:var(--bl);}
-.navbtn.on::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--bl);border-radius:0 0 3px 3px;}
-.ni{font-size:1.4rem;}
-.nl{font-size:.7rem;font-weight:700;letter-spacing:.02em;}
+.bottomnav{height:var(--nav-h);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:#0A0F1C;border-top:none;padding-bottom:env(safe-area-inset-bottom);gap:3px;padding:10px 6px 0;}
+.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:none;background:transparent;cursor:pointer;transition:all .22s;border-radius:12px;padding:7px 4px 10px;font-family:'Plus Jakarta Sans',sans-serif;color:#2D3D55;}
+.navbtn.on{background:rgba(232,73,10,0.18);color:#E8490A;}
+.navbtn .ni{width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.navbtn .ni svg{width:22px;height:22px;transition:transform .2s;}
+.navbtn.on .ni svg{transform:scale(1.1);}
+.nl{font-size:.68rem;font-weight:700;letter-spacing:.02em;color:#2D3D55;transition:color .22s;}
+.navbtn.on .nl{color:#E8490A;}
 
 /* HERO */
 .path-hero{padding:28px 20px 24px;background:linear-gradient(160deg,var(--bl) 0%,var(--bl2) 100%);position:relative;overflow:hidden;}
@@ -55,6 +57,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Plus Jak
 
 /* STAGES */
 .stages-list{padding:16px;}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px;}
+.hstat{background:rgba(0,0,0,0.25);border-radius:10px;padding:14px 8px;text-align:center;}
+.hstat-n{font-size:1.6rem;font-weight:700;color:#FFFFFF;line-height:1;}
+.hstat-l{font-size:.65rem;font-weight:600;color:rgba(255,255,255,0.6);margin-top:5px;letter-spacing:.05em;text-transform:uppercase;}
+.hero-company-btn{display:block;margin-top:14px;padding:13px 16px;background:var(--or);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.92rem;font-weight:700;border-radius:10px;text-align:center;text-decoration:none;letter-spacing:.01em;transition:opacity .15s;}
+.hero-company-btn:active{opacity:.82;}
 .stage-item{background:var(--bg2);border:1.5px solid var(--brd);border-radius:var(--r);margin-bottom:12px;overflow:hidden;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(27,79,140,0.07);}
 .stage-item.open{border-color:var(--bl);box-shadow:0 4px 16px rgba(27,79,140,0.12);}
 .stage-trigger{display:flex;align-items:center;gap:13px;padding:17px 16px;cursor:pointer;}
@@ -294,6 +302,21 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
         <div class="hero-tag" data-i="heroEyebrow"></div>
         <h1 data-ih="heroTitle"></h1>
         <p data-i="heroSub"></p>
+        <div class="hero-stats">
+          <div class="hstat">
+            <div class="hstat-n"><span data-drivers>2,500+</span></div>
+            <div class="hstat-l" data-i="statDrivers">Drivers</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-n">24h</div>
+            <div class="hstat-l" data-i="statPlacement">Placement</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-n">48</div>
+            <div class="hstat-l" data-i="statStates">States</div>
+          </div>
+        </div>
+        <a class="hero-company-btn" href="pricing.html" data-i="heroCoBtnText"></a>
       </div>
       <div class="stages-list">
 
@@ -716,10 +739,22 @@ input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
   </div>
 
   <div class="bottomnav">
-    <button class="navbtn on" id="nav-path" onclick="showScreen('path')"><div class="ni">🗺️</div><div class="nl" data-i="nav1"></div></button>
-    <button class="navbtn" id="nav-trucks" onclick="showScreen('trucks')"><div class="ni">🚛</div><div class="nl" data-i="nav2"></div></button>
-    <button class="navbtn" id="nav-vendors" onclick="showScreen('vendors')"><div class="ni">⭐</div><div class="nl" data-i="nav3v"></div></button>
-    <button class="navbtn" id="nav-contact" onclick="showScreen('contact')"><div class="ni">📞</div><div class="nl" data-i="nav3"></div></button>
+    <button class="navbtn on" id="nav-path" onclick="showScreen('path')">
+      <div class="ni"><svg viewBox="0 0 22 22" fill="none"><path d="M3 17L8 7l4 6 3-4 4 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="7" r="1.8" fill="currentColor"/></svg></div>
+      <div class="nl" data-i="nav1"></div>
+    </button>
+    <button class="navbtn" id="nav-trucks" onclick="showScreen('trucks')">
+      <div class="ni"><svg viewBox="0 0 22 22" fill="none"><rect x="2" y="10" width="12" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><path d="M14 13h4l2 4H14v-4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" fill="currentColor"/><circle cx="17" cy="18" r="1.8" fill="currentColor"/></svg></div>
+      <div class="nl" data-i="nav2"></div>
+    </button>
+    <button class="navbtn" id="nav-vendors" onclick="showScreen('vendors')">
+      <div class="ni"><svg viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="12" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="12" y="12" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></div>
+      <div class="nl" data-i="nav3v"></div>
+    </button>
+    <button class="navbtn" id="nav-contact" onclick="showScreen('contact')">
+      <div class="ni"><svg viewBox="0 0 22 22" fill="none"><path d="M4 4h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H8l-5 4V5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+      <div class="nl" data-i="nav3"></div>
+    </button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -738,7 +773,8 @@ const STRIPE_KEY='pk_live_51TQxaJJfySR5dqvoQQfyMlQts3KhpixCr9RsmeD8Y5p6B4gIT7Fbw
 const T={
 ru:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Твой путь в <em>траковом</em> бизнесе',heroSub:'От CDL до своей компании — помогаем на каждом шаге.',
-  nav1:'Путь',nav2:'Траки',nav3v:'Вендоры',nav3:'Контакт',
+  statDrivers:'Водителей',statPlacement:'Трудоустройство',statStates:'Штатов',heroCoBtnText:'🏢 Я — компания, ищу водителей →',
+  nav1:'Мой путь',nav2:'Траки',nav3v:'Сервисы',nav3:'Помощь',
   tagStart:'Старт',tagGrow:'Рост',tagDriver:'Драйвер',tagBiz:'Бизнес',tagScale:'Масштаб',tagHelp:'Помощь',
   sdname:'Я CDL-драйвер — хочу выгодные условия и хороший гросс',sddesc:'Ищу компанию с честными ставками и стабильной работой',
   sdsvc1n:'Высокий гросс',sdsvc1d:'Работаем с брокерами напрямую — без лишних посредников, ставки выше рынка',
@@ -813,7 +849,8 @@ ru:{
 },
 en:{
   heroEyebrow:'Trucking Marketplace',heroTitle:'Your path in <em>trucking</em>',heroSub:'From CDL to your own company — we help at every step.',
-  nav1:'Path',nav2:'Trucks',nav3v:'Vendors',nav3:'Contact',
+  statDrivers:'Drivers',statPlacement:'Placement',statStates:'States',heroCoBtnText:'🏢 I\'m a Company — Hire Drivers →',
+  nav1:'My Path',nav2:'Trucks',nav3v:'Services',nav3:'Help',
   tagStart:'Start',tagGrow:'Growth',tagDriver:'Driver',tagBiz:'Business',tagScale:'Scale',tagHelp:'Help',
   sdname:'I am a CDL driver — looking for great pay and high gross',sddesc:'Seeking a company with fair rates and steady miles',
   sdsvc1n:'High Gross',sdsvc1d:'We work directly with brokers — fewer middlemen, above-market rates',
@@ -882,7 +919,8 @@ en:{
 },
 tg:{
   heroEyebrow:'Бозори Трак',heroTitle:'Роҳи ту дар <em>бизнеси трак</em>',heroSub:'Аз CDL то ширкати худат — дар ҳар қадам ёрӣ мекунем.',
-  nav1:'Роҳ',nav2:'Трак',nav3v:'Вендорҳо',nav3:'Тамос',
+  statDrivers:'Ронандагон',statPlacement:'Кор ёфтан',statStates:'Иёлатҳо',heroCoBtnText:'🏢 Ман ширкатам — ронандагон лозим →',
+  nav1:'Роҳи ман',nav2:'Тракҳо',nav3v:'Хизматҳо',nav3:'Кумак',
   tagStart:'Оғоз',tagGrow:'Рушд',tagDriver:'Ронанда',tagBiz:'Бизнес',tagScale:'Тавсеа',tagHelp:'Кумак',
   sdname:'Ман ронандаи CDL — шароити хуб ва гросси баланд мехоҳам',sddesc:'Ширкатеро меҷӯям ки рейтҳои одилона ва кори устувор дорад',
   sdsvc1n:'Гросси Баланд',sdsvc1d:'Бо брокерҳо мустақим кор мекунем — бе воситагарон, рейтҳо аз бозор баланд',
@@ -945,7 +983,8 @@ tg:{
 },
 uz:{
   heroEyebrow:"Trak Marketpleysi",heroTitle:"Trak <em>biznesidagi</em> yo'lingiz",heroSub:"CDLdan o'z kompaniyangizgacha — har qadamda yoningdamiz.",
-  nav1:"Yo'l",nav2:"Traklar",nav3v:"Vendorlar",nav3:"Aloqa",
+  statDrivers:"Haydovchilar",statPlacement:"Ish topish",statStates:"Shtatlar",heroCoBtnText:"🏢 Men kompaniyaman — haydovchi kerak →",
+  nav1:"Yo'lim",nav2:"Traklar",nav3v:"Xizmatlar",nav3:"Yordam",
   tagStart:"Boshlash",tagGrow:"O'sish",tagDriver:"Haydovchi",tagBiz:"Biznes",tagScale:"Kengaytirish",tagHelp:"Yordam",
     sdname:"Men CDL haydovchiman — yaxshi shart va yuqori gross xohlayman",sddesc:"Adolatli stavkali va barqaror ishli kompaniya izlayapman",
   sdsvc1n:"Yuqori Gross",sdsvc1d:"Brokerlar bilan to'g'ridan-to'g'ri ishlaymiz — vositachilarsiz, bozordan yuqori stavkalar",
@@ -1009,7 +1048,8 @@ uz:{
 ,
 es:{
   heroEyebrow:'Mercado de Camiones',heroTitle:'Tu camino en <em>camionería</em>',heroSub:'De CDL a tu propia empresa — te ayudamos en cada paso.',
-  nav1:'Camino',nav2:'Camiones',nav3v:'Vendedores',nav3:'Contacto',
+  statDrivers:'Conductores',statPlacement:'Empleo',statStates:'Estados',heroCoBtnText:'🏢 Soy empresa — busco conductores →',
+  nav1:'Mi camino',nav2:'Camiones',nav3v:'Servicios',nav3:'Ayuda',
   tagStart:'Inicio',tagGrow:'Crecer',tagDriver:'Conductor',tagBiz:'Negocio',tagScale:'Escalar',tagHelp:'Ayuda',
   sdname:'Soy conductor CDL — busco las mejores condiciones',sddesc:'Te conectamos con una empresa en 24 horas',
   sdsvc1n:'Alto Gross',sdsvc1d:'Acceso directo a brokers — tarifas por encima del mercado',
@@ -1482,6 +1522,19 @@ setLang('ru');
 loadTrucks();
 // Init Stripe after DOM ready
 setTimeout(initStripe, 100);
+</script>
+
+<script>
+// ── DRIVER COUNTER ────────────────────────────────────
+(function(){
+  var BASE=2500, START=new Date('2025-01-01');
+  var today=new Date(); today.setHours(0,0,0,0);
+  var days=Math.floor((today-START)/86400000);
+  var total=BASE;
+  for(var i=0;i<days;i++) total+=((START.getTime()/86400000+i)%7<4)?3:4;
+  var fmt=total.toLocaleString('en-US')+'+';
+  document.querySelectorAll('[data-drivers]').forEach(function(el){el.textContent=fmt;});
+})();
 </script>
 </body>
 </html>
