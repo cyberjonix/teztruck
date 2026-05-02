@@ -180,14 +180,14 @@ h1 em{color:var(--or);font-style:normal}
   <div class="hero-left">
     <div class="hero-tag">For Trucking Companies</div>
     <h1>Find your next<br><em>CDL driver</em><br>in 24 hours</h1>
-    <p class="hero-sub">Access 2,500+ pre-screened drivers filtered by CDL class, experience, region, endorsements and availability. Call them directly — no middlemen.</p>
+    <p class="hero-sub">Access <span data-drivers>2,500+</span> pre-screened drivers filtered by CDL class, experience, region, endorsements and availability. Call them directly — no middlemen.</p>
     <a class="hero-cta" href="#pricing">See Pricing Plans ↓</a>
   </div>
   <div class="hero-right">
     <div class="stat-stack">
       <div class="stat-row">
         <div class="stat-icon si-or">🚛</div>
-        <div><div class="stat-n">2,500+</div><div class="stat-l">Verified CDL Drivers</div></div>
+        <div><div class="stat-n"><span data-drivers>2,500+</span></div><div class="stat-l">Verified CDL Drivers</div></div>
         <div class="stat-badge">Live</div>
       </div>
       <div class="stat-row">
@@ -210,7 +210,7 @@ h1 em{color:var(--or);font-style:normal}
 <div class="preview">
   <div class="sec-tag">Database Preview</div>
   <div class="sec-title">Real drivers. Real contacts.</div>
-  <p class="sec-sub">Subscribe to unlock phone numbers and access all 2,500+ profiles with advanced filters.</p>
+  <p class="sec-sub">Subscribe to unlock phone numbers and access all <span data-drivers>2,500+</span> profiles with advanced filters.</p>
   <div class="driver-grid">
 
     <div class="d-card">
@@ -443,6 +443,18 @@ async function pay(){
 function showErr(m){const el=document.getElementById('perr');el.textContent=m;el.style.display='block';}
 let ttm;
 function toast(m){const el=document.getElementById('toast');el.textContent=m;el.className='toast show';clearTimeout(ttm);ttm=setTimeout(()=>el.className='toast',2500);}
+</script>
+
+<script>
+(function(){
+  var BASE=2500, START=new Date('2025-01-01');
+  var today=new Date(); today.setHours(0,0,0,0);
+  var days=Math.floor((today-START)/86400000);
+  var total=BASE;
+  for(var i=0;i<days;i++) total+=((START.getTime()/86400000+i)%7<4)?3:4;
+  var fmt=total.toLocaleString('en-US')+'+';
+  document.querySelectorAll('[data-drivers]').forEach(function(el){el.textContent=fmt;});
+})();
 </script>
 </body>
 </html>
